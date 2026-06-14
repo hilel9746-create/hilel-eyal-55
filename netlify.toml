@@ -2,6 +2,18 @@
   publish = "."
   functions = "netlify/functions"
 
+[[edge_functions]]
+  function = "calculator-auth"
+  path = "/Calculator.html"
+
+[[edge_functions]]
+  function = "calculator-auth"
+  path = "/Calculator"
+
+[[edge_functions]]
+  function = "calculator-auth"
+  path = "/calculator"
+
 [[redirects]]
   from = "/Calculator"
   to = "/Calculator.html"

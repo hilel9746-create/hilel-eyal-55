@@ -6,3 +6,8 @@
 
 # Office temporary files
 ~$*
+
+# Local environment variables
+.env
+.env.*
+!.env.example
