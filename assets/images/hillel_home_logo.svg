@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">Yellow House Logo</title>
+  <desc id="desc">Minimal yellow house with dark outline</desc>
+  <g fill="none" stroke="#263238" stroke-linecap="round" stroke-linejoin="round" stroke-width="9">
+    <path d="M46 123L128 48l82 75"/>
+    <path d="M66 110v102h124V110"/>
+    <path d="M98 212v-56h60v56"/>
+    <path d="M92 112h72"/>
+  </g>
+  <path d="M46 123L128 48l82 75v0l-18 16-64-58-64 58-18-16z" fill="#f6c21a"/>
+  <path d="M66 110v102h40v-56h44v56h40V110L128 52z" fill="#ffc61c"/>
+  <path d="M116 156h24v56h-24z" fill="#fff0b3"/>
+</svg>

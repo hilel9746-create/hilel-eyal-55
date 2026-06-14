@@ -1,0 +1,125 @@
+Netlify support diagnostics for cashbuyersohio.net
+
+Date: 2026-05-27
+Workspace: /Users/itaykarkason/Python Projects/hillel/cashbuyersohio_website
+
+1) Netlify account status
+
+Command:
+npx netlify-cli status
+
+Output:
+Current Netlify User
+Name: hilel stabri
+Email: hilel9746@gmail.com
+Teams:
+  - H LLC TEAM
+
+Current project: bucolic-dolphin-2c9fad
+Netlify TOML:   /Users/itaykarkason/Python Projects/hillel/cashbuyersohio_website/netlify.toml
+Admin URL:      https://app.netlify.com/projects/bucolic-dolphin-2c9fad
+Project URL:    https://cashbuyersohio.net
+Project Id:     d627f5e5-971e-4259-b3d1-3d4f2b1b87c0
+
+2) Site details
+
+Command:
+npx netlify-cli api getSite --data '{"site_id":"d627f5e5-971e-4259-b3d1-3d4f2b1b87c0"}'
+
+Key output:
+id: d627f5e5-971e-4259-b3d1-3d4f2b1b87c0
+name: bucolic-dolphin-2c9fad
+custom_domain: cashbuyersohio.net
+url: https://cashbuyersohio.net
+deploy_url: http://6a16c7d51992ae1e812c9c32--bucolic-dolphin-2c9fad.netlify.app
+published_deploy.id: 6a16c7d51992ae1e812c9c32
+published_deploy.state: ready
+published_deploy.context: production
+managed_dns: true
+dns_zone_id: 69f6648f836dbcd2d9a76d0a
+uses_netlify_registrar: true
+
+3) DNS zone before cleanup
+
+Command:
+npx netlify-cli api getDnsRecords --data '{"zone_id":"69f6648f836dbcd2d9a76d0a"}'
+
+Important records that existed:
+- hostname: cashbuyersohio.net
+  type: A
+  value: 162.159.140.166
+
+- hostname: www.cashbuyersohio.net
+  type: CNAME
+  value: cashbuyersohio.net
+
+- hostname: www.cashbuyersohio.net
+  type: CNAME
+  value: bucolic-dolphin-2c9fad.netlify.app
+
+4) DNS zone after cleanup and Netlify-managed configuration
+
+Command:
+npx netlify-cli api configureDNSForSite --data '{"site_id":"d627f5e5-971e-4259-b3d1-3d4f2b1b87c0"}'
+
+Key output after reconfiguration:
+- hostname: cashbuyersohio.net
+  type: NETLIFY
+  value: bucolic-dolphin-2c9fad.netlify.app
+  managed: true
+
+- hostname: www.cashbuyersohio.net
+  type: NETLIFY
+  value: bucolic-dolphin-2c9fad.netlify.app
+  managed: true
+
+Remaining non-site records kept:
+- resend._domainkey.cashbuyersohio.net TXT
+- send.cashbuyersohio.net MX
+- send.cashbuyersohio.net SPF
+- _dmarc.cashbuyersohio.net TXT
+
+5) DNS resolution checks
+
+Command:
+dig @dns1.p05.nsone.net cashbuyersohio.net A +noall +answer +ttlid
+dig @dns2.p05.nsone.net cashbuyersohio.net A +noall +answer +ttlid
+dig @dns3.p05.nsone.net cashbuyersohio.net A +noall +answer +ttlid
+dig @dns4.p05.nsone.net cashbuyersohio.net A +noall +answer +ttlid
+
+Observed at one point:
+dns1 -> 162.159.140.166
+dns2 -> 75.2.60.5
+dns3 -> 162.159.140.166
+dns4 -> 162.159.140.166
+
+Observed later:
+dns1 -> 162.159.140.166
+dns2 -> 75.2.60.5
+dns3 -> 162.159.140.166
+dns4 -> 162.159.140.166
+
+Public resolvers were inconsistent during propagation:
+- 1.1.1.1 sometimes returned 75.2.60.5
+- 8.8.8.8 sometimes returned 75.2.60.5
+- 9.9.9.9 sometimes returned 162.159.140.166
+
+6) Live HTTPS check
+
+Command:
+curl -v -o /tmp/cashbuyersohio-check.html --max-time 20 https://cashbuyersohio.net/
+
+Observed when the wrong IP was returned:
+* Trying 162.159.140.166:443...
+* Connected to cashbuyersohio.net (162.159.140.166) port 443
+server: cloudflare
+cf-ray: a0255d75e80af65a-LHR
+
+Fetched HTML contained:
+- title: Top Services & Why Choose Us
+- h1: Ready to Schedule Your Appointment?
+- leadconnector content present
+
+7) Summary
+
+Netlify site configuration is correct for bucolic-dolphin-2c9fad and the custom domain cashbuyersohio.net is attached. The issue is that some authoritative DNS responses for the zone were still serving the old A record value 162.159.140.166 during propagation, which routes the apex domain to the wrong site.

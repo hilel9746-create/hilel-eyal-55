@@ -1,0 +1,2791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Hillel Wholesaler · Deal Analyzer</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F5F2EE;
+  --white:#FFFFFF;
+  --ink:#18181B;
+  --ink2:#3F3F46;
+  --ink3:#71717A;
+  --gold:#D4920A;
+  --gold-light:#FEF3C7;
+  --gold-mid:#FDE68A;
+  --navy:#1E3A5F;
+  --navy2:#2D5281;
+  --green:#15803D;
+  --green-bg:#F0FDF4;
+  --red:#DC2626;
+  --red-bg:#FEF2F2;
+  --blue:#1D4ED8;
+  --blue-bg:#EFF6FF;
+  --border:#E4E4E7;
+  --border2:#D4D4D8;
+  --radius:12px;
+  --shadow:0 1px 3px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.06);
+  --shadow-lg:0 8px 32px rgba(0,0,0,.1);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased}
+input,select,textarea,button{-webkit-appearance:none;appearance:none;touch-action:manipulation}
+input[type=number]{-moz-appearance:textfield}
+input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+
+/* ===== TOP LOGO BAR ===== */
+.topbar{
+  background:var(--navy);
+  padding:0 2rem;
+  display:flex;align-items:center;justify-content:space-between;
+  height:64px;position:sticky;top:0;z-index:200;
+}
+.logo{display:flex;align-items:center;gap:.75rem}
+.logo-box{
+  width:38px;height:38px;border-radius:8px;
+  background:linear-gradient(135deg,#D4920A,#F59E0B);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--navy);letter-spacing:.02em;
+  box-shadow:0 2px 8px rgba(212,146,10,.4);
+}
+.logo-text{font-family:'Bebas Neue',sans-serif;font-size:1.35rem;letter-spacing:.08em;color:#fff}
+.logo-sub{font-size:.68rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-top:1px}
+.topbar-contact{display:flex;gap:1.25rem;align-items:center}
+.topbar-contact a{
+  font-size:.8rem;font-weight:500;color:rgba(255,255,255,.5);
+  text-decoration:none;display:flex;align-items:center;gap:.4rem;
+  transition:color .15s;
+}
+.topbar-contact a:hover{color:rgba(255,255,255,.9)}
+.topbar-contact a svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+
+/* ===== STEP NAV ===== */
+.stepnav{
+  background:var(--white);border-bottom:1px solid var(--border);
+  overflow-x:auto;white-space:nowrap;
+  display:flex;padding:0 1.5rem;
+  scrollbar-width:none;
+}
+.stepnav::-webkit-scrollbar{display:none}
+.step-btn{
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.85rem 1.25rem;border:none;background:transparent;
+  font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:600;
+  letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);
+  cursor:pointer;border-bottom:2px solid transparent;
+  transition:all .2s;white-space:nowrap;
+}
+.step-btn .snum{
+  width:20px;height:20px;border-radius:50%;
+  background:var(--border);color:var(--ink3);
+  font-size:.65rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;flex-shrink:0;
+}
+.step-btn.active{color:var(--navy);border-bottom-color:var(--gold)}
+.step-btn.active .snum{background:var(--navy);color:#fff}
+.step-btn.done .snum{background:var(--green);color:#fff}
+.step-btn.done{color:var(--green)}
+
+/* ===== PAGES ===== */
+.page{display:none;min-height:calc(100vh - 120px)}
+.page.active{display:block}
+.wrap{max-width:900px;margin:0 auto;padding:2rem 1.5rem 5rem}
+
+/* ===== SECTION CARDS ===== */
+.card{
+  background:var(--white);border:1px solid var(--border);
+  border-radius:var(--radius);padding:1.5rem;margin-bottom:1.25rem;
+  box-shadow:var(--shadow);
+}
+.card-head{
+  display:flex;align-items:center;gap:.65rem;
+  margin-bottom:1.25rem;padding-bottom:1rem;
+  border-bottom:1px solid var(--border);
+}
+.card-icon{
+  width:32px;height:32px;border-radius:8px;
+  background:var(--gold-light);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;flex-shrink:0;
+}
+.card-title{font-size:.9rem;font-weight:700;color:var(--ink)}
+.card-sub{font-size:.75rem;color:var(--ink3);margin-top:1px}
+
+/* ===== FORM ELEMENTS ===== */
+.grid{display:grid;gap:.85rem}
+.grid-2{grid-template-columns:1fr 1fr}
+.grid-3{grid-template-columns:1fr 1fr 1fr}
+.span-2{grid-column:span 2}
+.span-3{grid-column:span 3}
+
+.field{display:flex;flex-direction:column;gap:.35rem}
+.field label{
+  font-size:.7rem;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink3);
+}
+.field input,.field select,.field textarea{
+  background:var(--bg);border:1.5px solid var(--border2);
+  border-radius:8px;padding:.65rem .9rem;
+  font-family:'Outfit',sans-serif;font-size:.9rem;color:var(--ink);
+  outline:none;transition:all .18s;width:100%;
+}
+.field input:focus,.field select:focus,.field textarea:focus{
+  border-color:var(--navy);background:var(--white);
+  box-shadow:0 0 0 3px rgba(30,58,95,.07);
+}
+.field input::placeholder{color:var(--ink3)}
+.field select option{background:var(--white)}
+.field textarea{resize:vertical;min-height:80px}
+.field .hint{font-size:.7rem;color:var(--ink3)}
+
+/* $ prefix */
+.prefixed{position:relative}
+.prefixed::before{
+  content:'$';position:absolute;left:.75rem;top:50%;transform:translateY(-50%);
+  color:var(--ink3);font-size:.85rem;pointer-events:none;font-weight:600;
+}
+.prefixed input{padding-left:1.5rem}
+.suffixed{position:relative}
+.suffixed::after{
+  content:attr(data-suf);position:absolute;right:.75rem;top:50%;transform:translateY(-50%);
+  color:var(--ink3);font-size:.78rem;pointer-events:none;
+}
+.suffixed input{padding-right:2rem}
+
+/* ===== STAT BOX ===== */
+.stat-box{
+  border-radius:10px;padding:.9rem 1.1rem;
+  border:1.5px solid var(--border);background:var(--bg);
+}
+.stat-box.amber{background:var(--gold-light);border-color:#FCD34D}
+.stat-box.green{background:var(--green-bg);border-color:#86EFAC}
+.stat-box.blue{background:var(--blue-bg);border-color:#BFDBFE}
+.stat-box.red{background:var(--red-bg);border-color:#FECACA}
+.stat-label{font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-bottom:.3rem}
+.stat-box.green .stat-label{color:var(--green)}
+.stat-box.blue .stat-label{color:var(--blue)}
+.stat-box.amber .stat-label{color:var(--gold)}
+.stat-box.red .stat-label{color:var(--red)}
+.stat-val{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:.04em;color:var(--ink);line-height:1}
+.stat-box.green .stat-val{color:var(--green)}
+.stat-box.blue .stat-val{color:var(--blue)}
+.stat-box.amber .stat-val{color:var(--gold)}
+.stat-box.red .stat-val{color:var(--red)}
+.stat-note{font-size:.7rem;color:var(--ink3);margin-top:.3rem}
+
+/* ===== ADDRESS LINKS ===== */
+.addr-links{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:.65rem;
+  margin-top:.75rem;
+}
+.addr-link{
+  display:flex;align-items:center;gap:.5rem;
+  padding:.65rem .85rem;border-radius:8px;
+  background:var(--bg);border:1.5px solid var(--border2);
+  text-decoration:none;color:var(--ink2);font-size:.8rem;font-weight:600;
+  transition:all .18s;
+}
+.addr-link:hover{border-color:var(--navy);background:var(--white);color:var(--navy)}
+.addr-link svg{width:16px;height:16px;flex-shrink:0}
+
+/* ===== PHOTOS ===== */
+.drop-zone{
+  border:2px dashed var(--border2);border-radius:10px;
+  padding:2rem;text-align:center;cursor:pointer;
+  background:var(--bg);transition:all .2s;
+}
+.drop-zone:hover,.drop-zone.drag{border-color:var(--gold);background:var(--gold-light)}
+.drop-zone svg{margin:0 auto .6rem;display:block;stroke:var(--gold)}
+.drop-zone p{font-size:.85rem;font-weight:500;color:var(--ink2)}
+.drop-zone span{font-size:.72rem;color:var(--ink3)}
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:.65rem;margin-top:.85rem}
+.photo-item{aspect-ratio:4/3;border-radius:8px;overflow:hidden;position:relative;background:var(--bg);border:1px solid var(--border)}
+.photo-item img{width:100%;height:100%;object-fit:cover;display:block}
+.photo-del{
+  position:absolute;top:4px;right:4px;
+  width:22px;height:22px;border-radius:50%;
+  background:rgba(0,0,0,.55);color:#fff;font-size:.7rem;
+  border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .15s;
+}
+.photo-item:hover .photo-del{opacity:1}
+
+/* ===== REPAIRS TABLE ===== */
+.repairs-wrap{overflow-x:auto}
+.repairs-table{width:100%;border-collapse:collapse;min-width:560px}
+.repairs-table th{
+  text-align:left;font-size:.65rem;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink3);padding:.5rem .65rem;
+  border-bottom:2px solid var(--border);
+  background:var(--bg);
+}
+.repairs-table th:last-child,.repairs-table td:last-child{text-align:center;width:44px}
+.repairs-table td{padding:.35rem .4rem;vertical-align:middle}
+.repairs-table tr:not(:last-child) td{border-bottom:1px solid var(--border)}
+.rt-input{
+  width:100%;background:transparent;border:1.5px solid transparent;
+  border-radius:6px;padding:.4rem .55rem;
+  font-family:'Outfit',sans-serif;font-size:.85rem;color:var(--ink);
+  outline:none;transition:all .15s;
+}
+.rt-input:hover{border-color:var(--border2);background:var(--white)}
+.rt-input:focus{border-color:var(--navy);background:var(--white)}
+.rt-input::placeholder{color:var(--ink3)}
+.rt-sel{
+  width:100%;background:transparent;border:1.5px solid transparent;
+  border-radius:6px;padding:.4rem .55rem;
+  font-family:'Outfit',sans-serif;font-size:.82rem;color:var(--ink);
+  outline:none;transition:all .15s;cursor:pointer;
+}
+.rt-sel:hover{border-color:var(--border2);background:var(--white)}
+.rt-cost{position:relative;min-width:90px}
+.rt-cost::before{content:'$';position:absolute;left:.45rem;top:50%;transform:translateY(-50%);font-size:.78rem;color:var(--ink3);pointer-events:none}
+.rt-cost .rt-input{padding-left:1.1rem;text-align:right}
+.del-row{
+  width:26px;height:26px;border-radius:6px;border:none;
+  background:var(--red-bg);color:var(--red);
+  font-size:.78rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto;transition:all .15s;
+}
+.del-row:hover{background:var(--red);color:#fff}
+.add-row-btn{
+  width:100%;margin-top:.65rem;padding:.65rem;
+  background:var(--bg);border:1.5px dashed var(--border2);
+  border-radius:8px;font-family:'Outfit',sans-serif;
+  font-size:.8rem;font-weight:600;color:var(--ink3);
+  cursor:pointer;transition:all .18s;
+  display:flex;align-items:center;justify-content:center;gap:.4rem;
+}
+.add-row-btn:hover{border-color:var(--gold);color:var(--gold);background:var(--gold-light)}
+.total-bar{
+  display:flex;justify-content:space-between;align-items:center;
+  background:var(--navy);border-radius:10px;padding:1rem 1.25rem;margin-top:1rem;
+}
+.total-bar-label{font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.4)}
+.total-bar-val{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.04em;color:#fff}
+
+/* ===== DATA ROWS ===== */
+.data-rows{display:flex;flex-direction:column;gap:.35rem}
+.dr{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:.6rem .85rem;border-radius:7px;
+  background:var(--bg);font-size:.875rem;
+}
+.dr .dl{color:var(--ink2)}
+.dr .dv{font-weight:700;color:var(--ink)}
+.dr .dv.pos{color:var(--green)}
+.dr .dv.neg{color:var(--red)}
+.dr .dv.gold{color:var(--gold)}
+.dr-total{
+  background:var(--navy);border-radius:8px;
+  padding:.75rem .85rem;
+}
+.dr-total .dl{color:rgba(255,255,255,.55);font-size:.82rem}
+.dr-total .dv{color:#fff;font-size:1rem}
+
+/* ===== BUTTONS ===== */
+.btn-primary{
+  display:flex;align-items:center;justify-content:center;gap:.5rem;
+  padding:.85rem 1.75rem;background:var(--navy);color:#fff;
+  border:none;border-radius:9px;font-family:'Outfit',sans-serif;
+  font-size:.88rem;font-weight:700;letter-spacing:.04em;cursor:pointer;
+  transition:all .2s;box-shadow:0 4px 12px rgba(30,58,95,.2);
+}
+.btn-primary:hover{background:var(--navy2);transform:translateY(-1px);box-shadow:0 6px 18px rgba(30,58,95,.25)}
+.btn-secondary{
+  display:flex;align-items:center;justify-content:center;gap:.5rem;
+  padding:.85rem 1.75rem;background:var(--white);color:var(--ink2);
+  border:1.5px solid var(--border2);border-radius:9px;font-family:'Outfit',sans-serif;
+  font-size:.88rem;font-weight:600;cursor:pointer;transition:all .2s;
+}
+.btn-secondary:hover{border-color:var(--navy);color:var(--navy);background:var(--bg)}
+.btn-row{display:flex;gap:.85rem;margin-top:.25rem}
+.btn-analyze{
+  width:100%;padding:1rem;background:linear-gradient(135deg,var(--navy),var(--navy2));
+  color:#fff;border:none;border-radius:10px;font-family:'Outfit',sans-serif;
+  font-size:.95rem;font-weight:700;letter-spacing:.05em;cursor:pointer;
+  transition:all .25s;box-shadow:0 4px 16px rgba(30,58,95,.25);
+  margin-bottom:2rem;
+}
+.btn-analyze:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(30,58,95,.3)}
+
+/* ===== WINNER CARD ===== */
+.winner{
+  background:var(--navy);border-radius:14px;padding:1.75rem 2rem;
+  margin-bottom:1.25rem;position:relative;overflow:hidden;
+}
+.winner::after{
+  content:'';position:absolute;bottom:-60px;right:-60px;
+  width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(212,146,10,.2),transparent 65%);
+  pointer-events:none;
+}
+.winner-eyebrow{font-size:.65rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:.5rem}
+.winner-name{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;letter-spacing:.06em;color:#fff;line-height:1;margin-bottom:.5rem}
+.winner-why{font-size:.85rem;color:rgba(255,255,255,.55);line-height:1.65;max-width:500px}
+.winner-stats{display:flex;gap:2rem;margin-top:1.25rem;flex-wrap:wrap}
+.wst .wl{font-size:.62rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:.25rem}
+.wst .wv{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:.04em;color:#F59E0B}
+
+/* ===== COMPARE TABLE ===== */
+.cmp-table{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:1.25rem;box-shadow:var(--shadow)}
+.cmp-head{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr 1.2fr;padding:.7rem 1.25rem;background:var(--navy)}
+.cmp-head span{font-size:.62rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.4)}
+.cmp-row{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr 1.2fr;padding:.85rem 1.25rem;border-bottom:1px solid var(--border);font-size:.875rem;align-items:center;transition:background .15s}
+.cmp-row:last-child{border-bottom:none}
+.cmp-row:hover{background:var(--bg)}
+.cmp-row.best{background:var(--gold-light);border-left:3px solid var(--gold)}
+.cmp-name{font-weight:700;display:flex;align-items:center;gap:.5rem}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.crown{width:18px;height:18px;border-radius:4px;background:var(--gold);display:inline-flex;align-items:center;justify-content:center;font-size:.6rem;color:var(--navy);font-weight:900}
+.sbar{height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:3px}
+.sfill{height:100%;border-radius:3px;transition:width .9s .2s ease;background:linear-gradient(90deg,var(--navy),var(--navy2))}
+
+/* ===== BREAKDOWN TABS ===== */
+.tabs{display:flex;gap:3px;background:var(--bg);padding:4px;border-radius:9px;border:1px solid var(--border);margin-bottom:1.25rem;overflow-x:auto}
+.tab{
+  flex:1;padding:.5rem .75rem;border:none;background:transparent;
+  font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:700;
+  letter-spacing:.04em;color:var(--ink3);cursor:pointer;border-radius:7px;
+  transition:all .18s;white-space:nowrap;
+}
+.tab.active{background:var(--white);color:var(--navy);box-shadow:var(--shadow);border:1px solid var(--border)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* ===== VERDICT ===== */
+.verdict{
+  background:var(--bg);border-left:3px solid var(--gold);
+  border-radius:0 8px 8px 0;padding:1rem 1.1rem;
+  font-size:.82rem;color:var(--ink2);line-height:1.7;margin-top:1rem;
+}
+
+/* ===== SHARE ===== */
+.share-row{display:flex;gap:.75rem;margin-top:.75rem}
+.share-input{flex:1;background:var(--bg);border:1.5px solid var(--border2);border-radius:8px;padding:.65rem .9rem;font-family:'Outfit',sans-serif;font-size:.82rem;color:var(--ink2)}
+.copy-btn{padding:.65rem 1.25rem;background:var(--navy);color:#fff;border:none;border-radius:8px;font-size:.8rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .18s}
+.copy-btn:hover{background:var(--navy2)}
+.copied{font-size:.75rem;color:var(--green);margin-top:.4rem;display:none}
+
+/* ===== REPORT / PRINT ===== */
+.report-actions{display:flex;gap:.85rem;flex-wrap:wrap;margin:1rem 0 1.25rem}
+.report-actions .btn-secondary{flex:1;min-width:180px}
+.print-report{display:none}
+.report-export-mode .print-report{
+  display:block !important;
+  position:fixed;
+  left:-10000px;
+  top:0;
+  width:960px;
+  pointer-events:none;
+}
+.print-report-shell{
+  max-width:960px;margin:0 auto;padding:24px 24px 40px;
+  background:#fff;color:#111827;font-family:'Outfit',sans-serif;
+}
+.report-header{
+  display:flex;justify-content:space-between;gap:1.5rem;align-items:flex-start;
+  border-bottom:2px solid var(--navy);padding-bottom:1rem;margin-bottom:1.25rem;
+}
+.report-kicker{
+  font-size:.68rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:.4rem;
+}
+.report-title{
+  font-family:'Bebas Neue',sans-serif;font-size:3rem;line-height:1;letter-spacing:.06em;
+  color:var(--ink);margin-bottom:.4rem;
+}
+.report-meta{font-size:.82rem;color:var(--ink3);line-height:1.6;max-width:38rem}
+.report-summary{
+  min-width:265px;background:var(--blue-bg);border:1px solid #BFDBFE;border-radius:12px;padding:1rem 1.1rem;
+}
+.report-summary .metric{
+  display:flex;justify-content:space-between;gap:1rem;padding:.35rem 0;
+  font-size:.85rem;border-bottom:1px solid rgba(29,78,216,.08);
+}
+.report-summary .metric:last-child{border-bottom:none}
+.report-summary .metric span:last-child{font-weight:700;color:var(--navy)}
+.report-section{margin:0 0 1rem}
+.report-section h2{
+  font-size:.72rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--navy);margin:0 0 .7rem;
+}
+.report-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem}
+.report-item{
+  background:#F8FAFC;border:1px solid #E5E7EB;border-radius:10px;padding:.8rem .85rem;
+  break-inside:avoid;
+}
+.report-item .label{
+  font-size:.62rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#64748B;
+  margin-bottom:.25rem;
+}
+.report-item .value{font-size:.9rem;font-weight:600;color:#111827;line-height:1.45;word-break:break-word}
+.report-table{width:100%;border-collapse:collapse;font-size:.78rem}
+.report-table th,.report-table td{
+  border:1px solid #E5E7EB;padding:.55rem .6rem;text-align:left;vertical-align:top;
+}
+.report-table th{
+  background:#F3F4F6;font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#64748B;
+}
+.report-note{
+  font-size:.74rem;color:var(--ink3);line-height:1.6;margin-top:.6rem;
+}
+
+@media print{
+  body{background:#fff}
+  body > *:not(.print-report){display:none !important}
+  .print-report{display:block !important}
+  .print-report-shell{padding:0;max-width:none}
+  .report-section,.report-item,.report-summary{break-inside:avoid}
+  @page{margin:12mm}
+}
+
+/* ===== FOOTER ===== */
+footer{background:var(--navy);padding:1.5rem 2rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;border-top:3px solid var(--gold)}
+.foot-brand{display:flex;align-items:center;gap:.75rem}
+.foot-logo{width:34px;height:34px;border-radius:7px;background:linear-gradient(135deg,#D4920A,#F59E0B);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--navy)}
+.foot-name{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.06em;color:#fff}
+.foot-sub{font-size:.65rem;color:rgba(255,255,255,.35);letter-spacing:.1em;text-transform:uppercase}
+.foot-links{display:flex;gap:1.5rem}
+.foot-link{display:flex;align-items:center;gap:.4rem;color:rgba(255,255,255,.45);text-decoration:none;font-size:.82rem;font-weight:500;transition:color .15s}
+.foot-link:hover{color:#F59E0B}
+.foot-link svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:700px){
+  .topbar{padding:0 1rem;height:56px}
+  .topbar-contact{display:none}
+  .logo-text{font-size:1.1rem}
+  .logo-sub{display:none}
+  .wrap{padding:1rem .9rem 5rem}
+  
+  /* ALL grids single column on mobile */
+  .grid,.grid-2,.grid-3{grid-template-columns:1fr !important}
+  .span-2,.span-3{grid-column:1 !important}
+  
+  /* Address links 1 column */
+  .addr-links{grid-template-columns:1fr !important}
+  
+  /* Cards */
+  .card{padding:1.1rem}
+  .card-head{margin-bottom:1rem;padding-bottom:.75rem}
+  
+  /* Inputs bigger for touch */
+  .field input,.field select,.field textarea{
+    font-size:16px !important;padding:.8rem .9rem;
+  }
+  .prefixed input{padding-left:1.6rem !important}
+  .suffixed input{padding-right:2.2rem !important}
+  
+  /* Step nav */
+  .stepnav{padding:0 .25rem}
+  .step-btn{padding:.7rem .7rem;font-size:.7rem;gap:.3rem}
+  .step-btn .snum{width:18px;height:18px;font-size:.6rem}
+  
+  /* Winner */
+  .winner{padding:1.25rem}
+  .winner-name{font-size:2rem}
+  .winner-stats{gap:1.25rem}
+  
+  /* Compare table */
+  .cmp-head,.cmp-row{grid-template-columns:1.4fr 1fr 1fr;font-size:.74rem;padding:.7rem .85rem}
+  .cmp-head span:nth-child(n+4),.cmp-row span:nth-child(n+4){display:none}
+  
+  /* Tabs */
+  .tab{padding:.45rem .55rem;font-size:.7rem}
+  
+  /* Stat boxes - side by side on results */
+  
+  /* Repairs */
+  .repairs-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .repairs-table{font-size:.8rem;min-width:480px}
+  
+  /* Total bar */
+  .total-bar{flex-direction:row;align-items:center}
+  .total-bar-val{font-size:1.8rem}
+  
+  /* Stat */
+  .stat-val{font-size:1.5rem}
+  
+  /* Buttons */
+  .btn-primary,.btn-secondary{padding:.9rem 1.25rem;font-size:.88rem;width:100%}
+  .btn-analyze{padding:.95rem;font-size:.9rem}
+  .btn-row{flex-direction:column;gap:.6rem}
+  
+  /* Live preview grids in flip/brrrr pages */
+  [style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr !important}
+}
+@keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.card{animation:up .35s ease both}
+.card:nth-child(2){animation-delay:.05s}
+.card:nth-child(3){animation-delay:.1s}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<header class="topbar">
+  <div class="logo">
+    <div class="logo-box">HW</div>
+    <div>
+      <div class="logo-text">Hillel Wholesaler</div>
+      <div class="logo-sub">Deal Analyzer · USA</div>
+    </div>
+  </div>
+  <div class="topbar-contact">
+    <a href="tel:2167747725">
+      <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .84h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+      (216) 774-7725
+    </a>
+    <a href="mailto:hilel9746@gmail.com">
+      <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      hilel9746@gmail.com
+    </a>
+  </div>
+</header>
+
+<!-- STEP NAV -->
+<nav class="stepnav">
+  <button class="step-btn active" onclick="goTo('p1')" id="snav-p1"><span class="snum">1</span>Property</button>
+  <button class="step-btn" onclick="goTo('p2')" id="snav-p2"><span class="snum">2</span>Purchase</button>
+  <button class="step-btn" onclick="goTo('p3')" id="snav-p3"><span class="snum">3</span>Repairs</button>
+  <button class="step-btn" onclick="goTo('p4')" id="snav-p4"><span class="snum">4</span>Rental</button>
+  <button class="step-btn" onclick="goTo('p5')" id="snav-p5"><span class="snum">5</span>Fix & Flip</button>
+  <button class="step-btn" onclick="goTo('p6')" id="snav-p6"><span class="snum">6</span>BRRRR</button>
+  <button class="step-btn" onclick="goTo('p7')" id="snav-p7"><span class="snum">7</span>Creative</button>
+  <button class="step-btn" onclick="goTo('p8')" id="snav-p8"><span class="snum">8</span>Results</button>
+</nav>
+
+<!-- ==================== PAGE 1: PROPERTY ==================== -->
+<div class="page active" id="p1">
+<div class="wrap">
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon">🏠</div>
+      <div><div class="card-title">Property Details</div><div class="card-sub">Enter the address and basic property info</div></div>
+    </div>
+    <div class="grid grid-2">
+      <div class="field span-2">
+        <label>Property Address</label>
+        <input id="addr" type="text" placeholder="123 Main St, Cleveland, OH 44101" oninput="onAddr(this.value)">
+      </div>
+      <div id="addr-links-wrap" style="display:none;grid-column:span 2">
+        <div class="addr-links">
+          <a id="al-maps" href="#" target="_blank" class="addr-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#4285F4" stroke-width="2" width="16" height="16"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Google Maps
+          </a>
+          <a id="al-street" href="#" target="_blank" class="addr-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#34A853" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+            Street View
+          </a>
+          <a id="al-zillow" href="#" target="_blank" class="addr-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#006AFF" stroke-width="2" width="16" height="16"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+            Search Zillow
+          </a>
+        </div>
+      </div>
+      <div class="field">
+        <label>Property Type</label>
+        <select id="ptype">
+          <option>Single Family</option>
+          <option>Multi-Family (2–4 units)</option>
+          <option>Condo / Townhouse</option>
+          <option>Commercial</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Neighborhood Class</label>
+        <select id="pclass">
+          <option>A-Class (high income)</option>
+          <option selected>B-Class (middle income)</option>
+          <option>C-Class (working class)</option>
+          <option>D-Class (distressed)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Bedrooms</label>
+        <input id="beds" type="number" placeholder="3">
+      </div>
+      <div class="field">
+        <label>Bathrooms</label>
+        <input id="baths" type="number" placeholder="1.5" step="0.5">
+      </div>
+      <div class="field">
+        <label>Square Footage</label>
+        <div class="suffixed" data-suf="sqft"><input id="sqft" type="number" placeholder="1,400"></div>
+      </div>
+      <div class="field">
+        <label>Year Built</label>
+        <input id="yearbuilt" type="number" placeholder="1962">
+      </div>
+      <div class="field">
+        <label>Seller Situation</label>
+        <select id="situation">
+          <option value="">Select...</option>
+          <option>Foreclosure / Pre-foreclosure</option>
+          <option>Inherited Property</option>
+          <option>Divorce / Separation</option>
+          <option>Tax Delinquency</option>
+          <option>Tired Landlord</option>
+          <option>Fire / Water Damage</option>
+          <option>Relocation</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Closing Timeline</label>
+        <select id="timeline">
+          <option>ASAP (7–10 days)</option>
+          <option>2–3 weeks</option>
+          <option>30 days</option>
+          <option>45–60 days</option>
+          <option>Flexible</option>
+        </select>
+      </div>
+      <div class="field span-2">
+        <label>Property Notes</label>
+        <textarea id="notes" placeholder="Condition, access, seller motivation..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon">📷</div>
+      <div><div class="card-title">Property Photos</div><div class="card-sub">Upload or drag & drop images</div></div>
+    </div>
+    <div class="drop-zone" id="dz" onclick="document.getElementById('fi').click()" ondrop="onDrop(event)" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#D4920A" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <p>Click to upload or drag & drop photos</p>
+      <span>JPG, PNG, WEBP accepted</span>
+    </div>
+    <input type="file" id="fi" multiple accept="image/*" style="display:none" onchange="addPhotos(this)">
+    <div class="photo-grid" id="pg"></div>
+  </div>
+
+  <input type="file" id="csv-import" accept=".csv,text/csv" style="display:none" onchange="importCsvFile(this)">
+
+  <div class="btn-row">
+    <button class="btn-primary" onclick="goTo('p2')">Next: Purchase Numbers →</button>
+  </div>
+
+</div>
+</div>
+
+<!-- ==================== PAGE 2: PURCHASE ==================== -->
+<div class="page" id="p2">
+<div class="wrap">
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon">💵</div>
+      <div><div class="card-title">Purchase & Acquisition</div><div class="card-sub">Core deal numbers</div></div>
+    </div>
+    <div class="grid grid-3">
+      <div class="field">
+        <label>Purchase Price</label>
+        <div class="prefixed"><input id="n-buy" type="number" placeholder="75,000" value="75000" oninput="calc()"></div>
+      </div>
+      <div class="field">
+        <label>After Repair Value (ARV)</label>
+        <div class="prefixed"><input id="n-arv" type="number" placeholder="150,000" value="150000" oninput="calc()"></div>
+      </div>
+      <div class="field">
+        <label>Closing Costs – Buy</label>
+        <div class="prefixed"><input id="n-cc" type="number" placeholder="2,500" value="2500" oninput="calc()"></div>
+        <span class="hint">Title, escrow, recording</span>
+      </div>
+      <div class="field">
+        <label>Wholesale / Assignment Fee</label>
+        <div class="prefixed"><input id="n-fee" type="number" placeholder="0" value="0" oninput="calc()"></div>
+      </div>
+      <div class="stat-box amber span-2">
+        <div class="stat-label">Total Cash Needed</div>
+        <div class="stat-val" id="s-cash">—</div>
+        <div class="stat-note">Purchase + Repairs + Closing</div>
+      </div>
+    </div>
+    <div class="grid grid-2" style="margin-top:.85rem">
+      <div class="stat-box green">
+        <div class="stat-label">Equity at Purchase</div>
+        <div class="stat-val" id="s-equity">—</div>
+        <div class="stat-note">ARV − Total All-In</div>
+      </div>
+      <div class="stat-box blue">
+        <div class="stat-label">Repair Budget (from page 3)</div>
+        <div class="stat-val" id="s-repairs-sync">$0</div>
+        <div class="stat-note">Auto-synced from Repairs page</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-secondary" onclick="goTo('p1')">← Back</button>
+    <button class="btn-primary" onclick="goTo('p3')">Next: Repairs →</button>
+  </div>
+
+</div>
+</div>
+
+<!-- ==================== PAGE 3: REPAIRS ==================== -->
+<div class="page" id="p3">
+<div class="wrap">
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon">🔨</div>
+      <div><div class="card-title">Repair Items</div><div class="card-sub">Add each item manually — click + to add more rows</div></div>
+    </div>
+    <div class="repairs-wrap">
+      <table class="repairs-table">
+        <thead>
+          <tr>
+            <th style="min-width:160px">Description</th>
+            <th style="min-width:130px">Category</th>
+            <th style="min-width:110px">Contractor</th>
+            <th style="min-width:90px;text-align:right">Cost</th>
+            <th style="min-width:110px">Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="rtbody"></tbody>
+      </table>
+    </div>
+    <button class="add-row-btn" onclick="addRow()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add Repair Item
+    </button>
+    <div class="total-bar">
+      <div>
+        <div class="total-bar-label">Total Repair Budget</div>
+        <div style="font-size:.68rem;color:rgba(255,255,255,.3);margin-top:2px">Synced to all calculations</div>
+      </div>
+      <div class="total-bar-val" id="repairs-total">$0</div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-secondary" onclick="goTo('p2')">← Back</button>
+    <button class="btn-primary" onclick="goTo('p4')">Next: Rental Numbers →</button>
+  </div>
+
+</div>
+</div>
+
+<!-- ==================== PAGE 4: RENTAL ==================== -->
+<div class="page" id="p4">
+<div class="wrap">
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon">🏘️</div>
+      <div><div class="card-title">Rental Income & Expenses</div><div class="card-sub">Used for Buy & Hold, BRRRR, and Airbnb</div></div>
+    </div>
+    <div class="grid grid-3">
+      <div class="field">
+        <label>Monthly Long-Term Rent</label>
+        <div class="prefixed"><input id="n-rent" type="number" placeholder="1,200" value="1200" oninput="calc()"></div>
+      </div>
+      <div class="field">
+        <label>Airbnb Nightly Rate</label>
+        <div class="prefixed"><input id="n-nightly" type="number" placeholder="120" value="120" oninput="calc()"></div>
+      </div>
+      <div class="field">
+        <label>Airbnb Occupancy</label>
+        <div class="suffixed" data-suf="%"><input id="n-occ" type="number" placeholder="65" value="65" oninput="calc()"></div>
+      </div>
+      <div class="field">
+        <label>Property Tax / Month</label>
+        <div class="prefixed"><input id="n-tax" type="number" placeholder="150" value="150" oninput="calc()"></div>
+      </div>
+      <div class="field">
+        <label>Insurance / Month</label>
+        <div class="prefixed"><input id="n-ins" type="number" placeholder="80" value="80" oninput="calc()"></div>
+      </div>
+      <div class="field">
+        <label>Maintenance / Month</label>
+        <div class="prefixed"><input id="n-maint" type="number" placeholder="100" value="100" oninput="calc()"></div>
+      </div>
+      <div class="field">
+        <label>Mgmt Fee</label>
+        <div class="suffixed" data-suf="%"><input id="n-mgmt" type="number" placeholder="10" value="10" oninput="calc()"></div>
+      </div>
+      <div class="field">
+        <label>Vacancy Rate</label>
+        <div class="suffixed" data-suf="%"><input id="n-vac" type="number" placeholder="8" value="8" oninput="calc()"></div>
+      </div>
+      <div class="field">
+        <label>Airbnb Cleaning/Supplies/mo</label>
+        <div class="prefixed"><input id="n-clean" type="number" placeholder="300" value="300" oninput="calc()"></div>
+      </div>
+    </div>
+    <div style="margin-top:1.1rem;padding-top:1.1rem;border-top:1px solid var(--border)">
+      <div style="font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-bottom:.85rem">Excel Buy & Hold Inputs</div>
+      <div class="grid grid-3">
+        <div class="field"><label>Rent Monthly</label><div class="prefixed"><input id="hold-rent-monthly" type="number" value="1285" oninput="calc()"></div></div>
+        <div class="field"><label>Property Tax / Year</label><div class="prefixed"><input id="hold-property-tax" type="number" value="1556" oninput="calc()"></div></div>
+        <div class="field"><label>Insurance / Year</label><div class="prefixed"><input id="hold-insurance" type="number" value="650" oninput="calc()"></div></div>
+        <div class="field"><label>HOA / Year</label><div class="prefixed"><input id="hold-hoa" type="number" value="0" oninput="calc()"></div></div>
+        <div class="field"><label>Vacancy / Year</label><div class="prefixed"><input id="hold-vacancy" type="number" value="0" oninput="calc()"></div></div>
+        <div class="field"><label>Monthly Mortgage</label><div class="prefixed"><input id="hold-monthly-payment" type="number" value="485" oninput="calc()"></div></div>
+        <div class="field"><label>Annual Principal</label><div class="prefixed"><input id="hold-annual-principal" type="number" value="2072" oninput="calc()"></div></div>
+        <div class="field"><label>Cash In Deal</label><div class="prefixed"><input id="hold-cash-in-deal" type="number" value="0" oninput="calc()"></div></div>
+        <div class="field span-2"><span class="hint">Excel has a zero/blank cash-in denominator in this sheet, so ROI and CoC show only when Cash In Deal is greater than zero.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-secondary" onclick="goTo('p3')">← Back</button>
+    <button class="btn-primary" onclick="goTo('p5')">Next: Fix & Flip →</button>
+  </div>
+
+</div>
+</div>
+
+<!-- ==================== PAGE 5: FIX & FLIP ==================== -->
+<div class="page" id="p5">
+<div class="wrap">
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon">🔨</div>
+      <div><div class="card-title">Fix & Flip Numbers</div><div class="card-sub">Selling costs, timeline, financing</div></div>
+    </div>
+    <div class="grid grid-3">
+      <div class="field">
+        <label>Selling Closing Costs</label>
+        <div class="prefixed"><input id="f-csell" type="number" placeholder="3,000" value="3000" oninput="calc()"></div>
+      </div>
+      <div class="field">
+        <label>Agent Commission</label>
+        <div class="suffixed" data-suf="%"><input id="f-comm" type="number" placeholder="6" value="6" oninput="calc()"></div>
+      </div>
+      <div class="field">
+        <label>Monthly Holding Cost</label>
+        <div class="prefixed"><input id="f-hold" type="number" placeholder="800" value="800" oninput="calc()"></div>
+        <span class="hint">Utilities, insurance, loan interest</span>
+      </div>
+      <div class="field">
+        <label>Flip Timeline</label>
+        <div class="suffixed" data-suf="mo"><input id="f-mo" type="number" placeholder="4" value="4" oninput="calc()"></div>
+      </div>
+      <div class="field">
+        <label>Hard Money Rate (annual)</label>
+        <div class="suffixed" data-suf="%"><input id="f-hmr" type="number" placeholder="12" value="12" oninput="calc()"></div>
+      </div>
+      <div class="field">
+        <label>Hard Money Points</label>
+        <div class="suffixed" data-suf="pts"><input id="f-hmp" type="number" placeholder="2" value="2" step="0.5" oninput="calc()"></div>
+      </div>
+    </div>
+    <div style="margin-top:1.1rem;padding-top:1.1rem;border-top:1px solid var(--border)">
+      <div style="font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-bottom:.85rem">Excel Flip + Leverage Inputs</div>
+      <div class="grid grid-3">
+        <div class="field"><label>Excel Purchase</label><div class="prefixed"><input id="flip-purchase" type="number" value="0" oninput="calc()"></div></div>
+        <div class="field"><label>Excel Repairs</label><div class="prefixed"><input id="flip-repairs" type="number" value="0" oninput="calc()"></div></div>
+        <div class="field"><label>Buy Closing Costs</label><div class="prefixed"><input id="flip-buy-closing" type="number" value="1975" oninput="calc()"></div></div>
+        <div class="field"><label>Finance Cost</label><div class="prefixed"><input id="flip-finance-cost" type="number" value="700" oninput="calc()"></div></div>
+        <div class="field"><label>Out of Pocket</label><div class="prefixed"><input id="flip-out-of-pocket" type="number" value="2675" oninput="calc()"></div></div>
+        <div class="field"><label>Selected Scenario</label><div class="suffixed" data-suf="%"><input id="flip-selected-target" type="number" value="20" step="5" oninput="calc()"></div></div>
+      </div>
+      <div style="overflow:auto;margin-top:1rem">
+        <table class="repairs-table" style="min-width:720px">
+          <thead>
+            <tr><th>Target</th><th>Target Sale Price</th><th>Sale Load</th><th>Actual Sale Price</th><th>Profit</th><th>Cash-on-Cash</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>15%</td><td id="flip-t15-target">—</td><td id="flip-t15-load">—</td><td id="flip-t15-actual">—</td><td id="flip-t15-profit">—</td><td id="flip-t15-coc">—</td></tr>
+            <tr><td>20%</td><td id="flip-t20-target">—</td><td id="flip-t20-load">—</td><td id="flip-t20-actual">—</td><td id="flip-t20-profit">—</td><td id="flip-t20-coc">—</td></tr>
+            <tr><td>25%</td><td id="flip-t25-target">—</td><td id="flip-t25-load">—</td><td id="flip-t25-actual">—</td><td id="flip-t25-profit">—</td><td id="flip-t25-coc">—</td></tr>
+            <tr><td>30%</td><td id="flip-t30-target">—</td><td id="flip-t30-load">—</td><td id="flip-t30-actual">—</td><td id="flip-t30-profit">—</td><td id="flip-t30-coc">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div style="margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid var(--border)">
+      <div style="font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-bottom:.85rem">Live Preview</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="data-rows">
+          <div class="dr"><span class="dl">Purchase Price</span><span class="dv" id="fp-buy">—</span></div>
+          <div class="dr"><span class="dl">Repairs</span><span class="dv neg" id="fp-rep">—</span></div>
+          <div class="dr"><span class="dl">Holding Costs</span><span class="dv neg" id="fp-hld">—</span></div>
+          <div class="dr"><span class="dl">Closing – Buy</span><span class="dv neg" id="fp-cb">—</span></div>
+          <div class="dr"><span class="dl">Closing – Sell</span><span class="dv neg" id="fp-cs">—</span></div>
+          <div class="dr"><span class="dl">Commission</span><span class="dv neg" id="fp-cm">—</span></div>
+          <div class="dr"><span class="dl">Hard Money</span><span class="dv neg" id="fp-hm">—</span></div>
+          <div class="dr dr-total"><span class="dl">Total All-In</span><span class="dv" id="fp-tot">—</span></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.75rem">
+          <div class="stat-box amber"><div class="stat-label">Sale Price (ARV)</div><div class="stat-val" id="fp-arv">—</div></div>
+          <div class="stat-box green"><div class="stat-label">Net Profit</div><div class="stat-val" id="fp-profit">—</div><div class="stat-note" id="fp-psub">—</div></div>
+          <div class="stat-box blue"><div class="stat-label">Annualized ROI</div><div class="stat-val" id="fp-roi">—</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-secondary" onclick="goTo('p4')">← Back</button>
+    <button class="btn-primary" onclick="goTo('p7')">Next: Creative Deals →</button>
+  </div>
+
+</div>
+</div>
+
+<!-- ==================== PAGE 6: BRRRR ==================== -->
+<div class="page" id="p6">
+<div class="wrap">
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon">♻️</div>
+      <div><div class="card-title">BRRRR — Refinance Numbers</div><div class="card-sub">Buy, Rehab, Rent, Refinance, Repeat</div></div>
+    </div>
+    <div class="grid grid-3">
+      <div class="field">
+        <label>Refinance LTV</label>
+        <div class="suffixed" data-suf="%"><input id="b-ltv" type="number" placeholder="75" value="75" oninput="calc()"></div>
+        <span class="hint">Typical: 70–75% of ARV</span>
+      </div>
+      <div class="field">
+        <label>Interest Rate</label>
+        <div class="suffixed" data-suf="%"><input id="b-rate" type="number" placeholder="7.5" value="7.5" step="0.1" oninput="calc()"></div>
+      </div>
+      <div class="field">
+        <label>Loan Term</label>
+        <div class="suffixed" data-suf="yrs"><input id="b-term" type="number" placeholder="30" value="30" oninput="calc()"></div>
+      </div>
+      <div class="field">
+        <label>Refi Closing Costs</label>
+        <div class="prefixed"><input id="b-rcc" type="number" placeholder="2,000" value="2000" oninput="calc()"></div>
+      </div>
+    </div>
+    <div style="margin-top:1.1rem;padding-top:1.1rem;border-top:1px solid var(--border)">
+      <div style="font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-bottom:.85rem">Excel BRRRR + Leverage Inputs</div>
+      <div class="grid grid-3">
+        <div class="field"><label>Purchase</label><div class="prefixed"><input id="brrrr-purchase" type="number" value="230000" oninput="calc()"></div></div>
+        <div class="field"><label>Repairs</label><div class="prefixed"><input id="brrrr-repairs" type="number" value="63000" oninput="calc()"></div></div>
+        <div class="field"><label>Hard Money Loan</label><div class="prefixed"><input id="brrrr-hard-loan" type="number" value="700000" oninput="calc()"></div></div>
+        <div class="field"><label>Service Fee</label><div class="prefixed"><input id="brrrr-service-fee" type="number" value="850" oninput="calc()"></div></div>
+        <div class="field"><label>Title/Lender Insurance</label><div class="prefixed"><input id="brrrr-title-lender-insurance" type="number" value="100" oninput="calc()"></div></div>
+        <div class="field"><label>Recording Fee</label><div class="prefixed"><input id="brrrr-recording-fee" type="number" value="100" oninput="calc()"></div></div>
+        <div class="field"><label>Hard Money Monthly Return</label><div class="prefixed"><input id="brrrr-hard-monthly-return" type="number" value="7000" oninput="calc()"></div></div>
+        <div class="field"><label>Hard Money Months</label><div class="suffixed" data-suf="mo"><input id="brrrr-hard-months" type="number" value="6" oninput="calc()"></div></div>
+        <div class="field"><label>Appraisal</label><div class="prefixed"><input id="brrrr-appraisal" type="number" value="360000" oninput="calc()"></div></div>
+        <div class="field"><label>Refi LTV</label><div class="suffixed" data-suf="%"><input id="brrrr-refi-ltv" type="number" value="75" oninput="calc()"></div></div>
+        <div class="field"><label>Rent Monthly</label><div class="prefixed"><input id="brrrr-rent-monthly" type="number" value="2900" oninput="calc()"></div></div>
+        <div class="field"><label>Property Tax / Year</label><div class="prefixed"><input id="brrrr-property-tax" type="number" value="3500" oninput="calc()"></div></div>
+        <div class="field"><label>Insurance / Year</label><div class="prefixed"><input id="brrrr-insurance" type="number" value="2000" oninput="calc()"></div></div>
+        <div class="field"><label>Management / Year</label><div class="prefixed"><input id="brrrr-management-annual" type="number" value="0" oninput="calc()"></div></div>
+        <div class="field"><label>HOA / Year</label><div class="prefixed"><input id="brrrr-hoa" type="number" value="0" oninput="calc()"></div></div>
+        <div class="field"><label>Vacancy / Year</label><div class="prefixed"><input id="brrrr-vacancy" type="number" value="0" oninput="calc()"></div></div>
+        <div class="field"><label>Maintenance</label><div class="suffixed" data-suf="%"><input id="brrrr-maintenance-pct" type="number" value="6" oninput="calc()"></div></div>
+        <div class="field"><label>Refi Monthly Payment</label><div class="prefixed"><input id="brrrr-refi-monthly-payment" type="number" value="1706" oninput="calc()"></div></div>
+        <div class="field"><label>Annual Principal</label><div class="prefixed"><input id="brrrr-annual-principal" type="number" value="3045" oninput="calc()"></div></div>
+        <div class="field"><label>Lien Search</label><div class="prefixed"><input id="brrrr-lien-search" type="number" value="125" oninput="calc()"></div></div>
+        <div class="field"><label>Title Search</label><div class="prefixed"><input id="brrrr-title-search" type="number" value="125" oninput="calc()"></div></div>
+        <div class="field"><label>Title Fee</label><div class="prefixed"><input id="brrrr-title-fee" type="number" value="450" oninput="calc()"></div></div>
+      </div>
+    </div>
+    <div style="margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid var(--border)">
+      <div style="font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-bottom:.85rem">Live Preview</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="data-rows">
+          <div class="dr"><span class="dl">Total All-In</span><span class="dv" id="bp-allin">—</span></div>
+          <div class="dr"><span class="dl">ARV</span><span class="dv gold" id="bp-arv">—</span></div>
+          <div class="dr"><span class="dl">Refinance Amount</span><span class="dv" id="bp-refi">—</span></div>
+          <div class="dr"><span class="dl">Cash Pulled Out</span><span class="dv pos" id="bp-out">—</span></div>
+          <div class="dr"><span class="dl">Cash Left In Deal</span><span class="dv" id="bp-left">—</span></div>
+          <div class="dr"><span class="dl">Monthly Mortgage</span><span class="dv neg" id="bp-pmt">—</span></div>
+          <div class="dr dr-total"><span class="dl">Equity Created</span><span class="dv" id="bp-eq">—</span></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.75rem">
+          <div class="stat-box green"><div class="stat-label">Cash Flow / Month</div><div class="stat-val" id="bp-cf">—</div><div class="stat-note">After mortgage payment</div></div>
+          <div class="stat-box blue"><div class="stat-label">Cash-on-Cash ROI</div><div class="stat-val" id="bp-coc">—</div></div>
+          <div class="stat-box amber"><div class="stat-label">DSCR / ROI</div><div class="stat-val" id="bp-inf">—</div><div class="stat-note" id="bp-infsub">—</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-secondary" onclick="goTo('p5')">← Back</button>
+    <button class="btn-analyze" onclick="analyze()">⚡ Analyze All 4 Strategies</button>
+  </div>
+
+</div>
+</div>
+
+<!-- ==================== PAGE 7: CREATIVE DEALS ==================== -->
+<div class="page" id="p7">
+<div class="wrap">
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon">🧩</div>
+      <div><div class="card-title">Creative Deal Models</div><div class="card-sub">Seller financing, lease option, subject-to, and multifamily</div></div>
+    </div>
+    <div class="grid grid-2">
+      <div class="stat-box amber">
+        <div class="stat-label">What this page does</div>
+        <div class="stat-val" style="font-size:1.05rem;line-height:1.35">Shows the extra deal types that were missing from the current calculator so you can compare the full business picture, not just flips and rentals.</div>
+      </div>
+      <div class="stat-box blue">
+        <div class="stat-label">Business view</div>
+        <div class="stat-val" style="font-size:1.05rem;line-height:1.35">How much cash goes in, what comes back monthly, and what is left after refinance, exit, or sale.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon">🤝</div>
+      <div><div class="card-title">Seller Financing</div><div class="card-sub">Modeled from the spreadsheet's seller-finance workflow</div></div>
+    </div>
+    <div class="grid grid-3">
+      <div class="field"><label>Purchase Price</label><div class="prefixed"><input id="sf-price" type="number" value="350000" oninput="calc()"></div></div>
+      <div class="field"><label>Cash Buyer / Down</label><div class="prefixed"><input id="sf-down" type="number" value="50000" oninput="calc()"></div></div>
+      <div class="field"><label>Closing Costs</label><div class="prefixed"><input id="sf-closing" type="number" value="7662.5" oninput="calc()"></div></div>
+      <div class="field"><label>Upgrades</label><div class="prefixed"><input id="sf-upgrades" type="number" value="2500" oninput="calc()"></div></div>
+      <div class="field"><label>Interest Rate</label><div class="suffixed" data-suf="%"><input id="sf-rate" type="number" value="0" step="0.1" oninput="calc()"></div></div>
+      <div class="field"><label>Amortization</label><div class="suffixed" data-suf="yrs"><input id="sf-term" type="number" value="30" oninput="calc()"></div></div>
+      <div class="field"><label>Principal Monthly</label><div class="prefixed"><input id="sf-principal" type="number" value="825" oninput="calc()"></div></div>
+      <div class="field"><label>Monthly Rent</label><div class="prefixed"><input id="sf-rent" type="number" value="2200" oninput="calc()"></div></div>
+      <div class="field"><label>Property Tax / Year</label><div class="prefixed"><input id="sf-tax" type="number" value="4677" oninput="calc()"></div></div>
+      <div class="field"><label>Insurance / Year</label><div class="prefixed"><input id="sf-insurance" type="number" value="1250" oninput="calc()"></div></div>
+      <div class="field"><label>Maintenance / Year</label><div class="prefixed"><input id="sf-maint" type="number" value="1200" oninput="calc()"></div></div>
+      <div class="field"><label>Management</label><div class="suffixed" data-suf="%"><input id="sf-mgmt" type="number" value="10" oninput="calc()"></div></div>
+      <div class="field"><label>Current Market Value</label><div class="prefixed"><input id="sf-market" type="number" value="309000" oninput="calc()"></div></div>
+      <div class="field"><label>Annual Value Growth</label><div class="suffixed" data-suf="%"><input id="sf-growth" type="number" value="3" oninput="calc()"></div></div>
+      <div class="field"><label>Hold Period</label><div class="suffixed" data-suf="yrs"><input id="sf-years" type="number" value="5" oninput="calc()"></div></div>
+      <div class="field span-2"><span class="hint">Excel logic: cash buyer + closing + upgrades, 0% seller note, monthly principal, balloon balance after 5 years, then cash-out refinance and remaining credit.</span></div>
+    </div>
+    <div style="margin-top:1.1rem;padding-top:1.1rem;border-top:1px solid var(--border)">
+      <div class="grid grid-2">
+        <div class="data-rows">
+          <div class="dr"><span class="dl">Loan Amount</span><span class="dv" id="sf-loan">—</span></div>
+          <div class="dr"><span class="dl">Monthly Payment</span><span class="dv neg" id="sf-pmt">—</span></div>
+          <div class="dr"><span class="dl">Monthly Cash Flow</span><span class="dv" id="sf-cf">—</span></div>
+          <div class="dr"><span class="dl">Cash In Deal</span><span class="dv" id="sf-cashin">—</span></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.75rem">
+          <div class="stat-box green"><div class="stat-label">5Y Credit Balance</div><div class="stat-val" id="sf-profit">—</div></div>
+          <div class="stat-box amber"><div class="stat-label">Remaining Balance</div><div class="stat-val" id="sf-balance">—</div></div>
+          <div class="stat-box blue"><div class="stat-label">ROI</div><div class="stat-val" id="sf-roi">—</div><div class="stat-note" id="sf-dscr">—</div></div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:1.1rem;padding-top:1.1rem;border-top:1px solid var(--border)">
+      <div style="font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-bottom:.85rem">Detailed Pro Forma</div>
+      <div class="grid grid-3">
+        <div class="field"><label>Base Gross Income / Year</label><div class="prefixed"><input id="mf-base-income" type="number" value="170700" oninput="calc()"></div></div>
+        <div class="field"><label>Income Growth / Year</label><div class="suffixed" data-suf="%"><input id="mf-income-growth" type="number" value="5" oninput="calc()"></div></div>
+      <div class="field"><label>Vacancy Lost / Base Year</label><div class="prefixed"><input id="mf-vacancy" type="number" value="3450" oninput="calc()"></div></div>
+        <div class="field"><label>Mgmt + Admin</label><div class="suffixed" data-suf="%"><input id="mf-mgmt" type="number" value="0" oninput="calc()"></div></div>
+        <div class="field"><label>Maintenance</label><div class="suffixed" data-suf="%"><input id="mf-maint-pct" type="number" value="2.5" oninput="calc()"></div></div>
+        <div class="field"><label>Capex</label><div class="suffixed" data-suf="%"><input id="mf-capex-pct" type="number" value="2.5" oninput="calc()"></div></div>
+        <div class="field"><label>Utilities / Year</label><div class="prefixed"><input id="mf-utilities" type="number" value="4905" oninput="calc()"></div></div>
+        <div class="field"><label>Insurance / Year</label><div class="prefixed"><input id="mf-insurance" type="number" value="7900" oninput="calc()"></div></div>
+        <div class="field"><label>Property Taxes / Year</label><div class="prefixed"><input id="mf-property-tax" type="number" value="34377" oninput="calc()"></div></div>
+        <div class="field"><label>Other Fixed / Year</label><div class="prefixed"><input id="mf-other-fixed" type="number" value="0" oninput="calc()"></div></div>
+        <div class="field"><label>Extermination / 5Y</label><div class="prefixed"><input id="mf-extermination" type="number" value="3000" oninput="calc()"></div></div>
+        <div class="field"><label>Move-out / Tenant Replace / Year</label><div class="prefixed"><input id="mf-tenant-replace" type="number" value="2500" oninput="calc()"></div></div>
+        <div class="field"><label>Late Fees / Year</label><div class="prefixed"><input id="mf-late-fees" type="number" value="1000" oninput="calc()"></div></div>
+        <div class="field"><label>Laundry / Year</label><div class="prefixed"><input id="mf-laundry" type="number" value="0" oninput="calc()"></div></div>
+        <div class="field"><label>Deposit Forfeited / Year</label><div class="prefixed"><input id="mf-deposit-forfeit" type="number" value="1500" oninput="calc()"></div></div>
+        <div class="field"><label>Garbage Pickup / Year</label><div class="prefixed"><input id="mf-garbage" type="number" value="3000" oninput="calc()"></div></div>
+        <div class="field"><label>Landscaping / Year</label><div class="prefixed"><input id="mf-landscaping" type="number" value="2400" oninput="calc()"></div></div>
+        <div class="field"><label>Pool / Year</label><div class="prefixed"><input id="mf-pool" type="number" value="0" oninput="calc()"></div></div>
+        <div class="field"><label>Marketing / Year</label><div class="prefixed"><input id="mf-marketing" type="number" value="0" oninput="calc()"></div></div>
+        <div class="field"><label>HOA / Year</label><div class="prefixed"><input id="mf-hoa" type="number" value="0" oninput="calc()"></div></div>
+        <div class="field"><label>Payroll & Office / Year</label><div class="prefixed"><input id="mf-payroll" type="number" value="3000" oninput="calc()"></div></div>
+      </div>
+      <div style="overflow:auto;margin-top:1rem">
+        <table class="repairs-table" style="min-width:860px">
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th>Current</th>
+              <th>Year 1</th>
+              <th>Year 2</th>
+              <th>Year 3</th>
+              <th>Year 4</th>
+              <th>Year 5</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Gross Income</td><td id="mf-t-gross0">—</td><td id="mf-t-gross1">—</td><td id="mf-t-gross2">—</td><td id="mf-t-gross3">—</td><td id="mf-t-gross4">—</td><td id="mf-t-gross5">—</td></tr>
+            <tr><td>Expenses</td><td id="mf-t-exp0">—</td><td id="mf-t-exp1">—</td><td id="mf-t-exp2">—</td><td id="mf-t-exp3">—</td><td id="mf-t-exp4">—</td><td id="mf-t-exp5">—</td></tr>
+            <tr><td>NOI</td><td id="mf-t-noi0">—</td><td id="mf-t-noi1">—</td><td id="mf-t-noi2">—</td><td id="mf-t-noi3">—</td><td id="mf-t-noi4">—</td><td id="mf-t-noi5">—</td></tr>
+            <tr><td>Debt Service</td><td id="mf-t-debt0">—</td><td id="mf-t-debt1">—</td><td id="mf-t-debt2">—</td><td id="mf-t-debt3">—</td><td id="mf-t-debt4">—</td><td id="mf-t-debt5">—</td></tr>
+            <tr><td>Cash Flow</td><td id="mf-t-cf0">—</td><td id="mf-t-cf1">—</td><td id="mf-t-cf2">—</td><td id="mf-t-cf3">—</td><td id="mf-t-cf4">—</td><td id="mf-t-cf5">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon">📜</div>
+      <div><div class="card-title">Rent to Own</div><div class="card-sub">Lease option / lease purchase with upfront fee and monthly credit</div></div>
+    </div>
+    <div class="grid grid-3">
+      <div class="field"><label>Agreed Purchase Price</label><div class="prefixed"><input id="rto-final" type="number" value="365000" oninput="calc()"></div></div>
+      <div class="field"><label>Upfront Option Fee</label><div class="prefixed"><input id="rto-upfront" type="number" value="35000" oninput="calc()"></div></div>
+      <div class="field"><label>Monthly Gross Rent</label><div class="prefixed"><input id="rto-gross" type="number" value="2650" oninput="calc()"></div></div>
+      <div class="field"><label>Monthly Net Rent</label><div class="prefixed"><input id="rto-net" type="number" value="2450" oninput="calc()"></div></div>
+      <div class="field"><label>Monthly Credit to Buyout</label><div class="prefixed"><input id="rto-credit" type="number" value="200" oninput="calc()"></div></div>
+      <div class="field"><label>Term</label><div class="suffixed" data-suf="mo"><input id="rto-months" type="number" value="24" oninput="calc()"></div></div>
+      <div class="field"><label>3rd Party Rent</label><div class="prefixed"><input id="rto-third-rent" type="number" value="2726" oninput="calc()"></div></div>
+      <div class="field"><label>Market Value Growth</label><div class="suffixed" data-suf="%"><input id="rto-growth" type="number" value="3" oninput="calc()"></div></div>
+      <div class="field"><label>Refi LTV</label><div class="suffixed" data-suf="%"><input id="rto-ltv" type="number" value="75" oninput="calc()"></div></div>
+      <div class="field span-2"><span class="hint">Excel logic: final purchase price = purchase price - upfront fee - rent credit. Then compare refinance cash after closing costs against that final purchase price.</span></div>
+    </div>
+    <div style="margin-top:1.1rem;padding-top:1.1rem;border-top:1px solid var(--border)">
+      <div class="grid grid-2">
+        <div class="data-rows">
+          <div class="dr"><span class="dl">Upfront + Annual Rent</span><span class="dv" id="rto-collected">—</span></div>
+          <div class="dr"><span class="dl">Total Rent Credit</span><span class="dv neg" id="rto-credit-total">—</span></div>
+          <div class="dr"><span class="dl">Final Purchase Price</span><span class="dv" id="rto-net-before">—</span></div>
+          <div class="dr"><span class="dl">Balance / Credit</span><span class="dv" id="rto-gap">—</span></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.75rem">
+          <div class="stat-box green"><div class="stat-label">Bank Cash Back</div><div class="stat-val" id="rto-profit">—</div></div>
+          <div class="stat-box amber"><div class="stat-label">Market Value Year 2</div><div class="stat-val" id="rto-roi">—</div></div>
+          <div class="stat-box blue"><div class="stat-label">Net Cash Flow</div><div class="stat-val" id="rto-monthly">—</div><div class="stat-note">After monthly credit</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon">🏦</div>
+      <div><div class="card-title">SUB TO</div><div class="card-sub">Assume the existing mortgage and compare income versus debt service</div></div>
+    </div>
+    <div class="grid grid-3">
+      <div class="field"><label>Purchase Price</label><div class="prefixed"><input id="sub-price" type="number" value="662090" oninput="calc()"></div></div>
+      <div class="field"><label>Cash From Buyer</label><div class="prefixed"><input id="sub-cash" type="number" value="50000" oninput="calc()"></div></div>
+      <div class="field"><label>Existing Mortgage Balance</label><div class="prefixed"><input id="sub-mortgage" type="number" value="612090" oninput="calc()"></div></div>
+      <div class="field"><label>Mortgage Rate</label><div class="suffixed" data-suf="%"><input id="sub-rate" type="number" value="3.25" step="0.01" oninput="calc()"></div></div>
+      <div class="field"><label>Remaining Term</label><div class="suffixed" data-suf="yrs"><input id="sub-term" type="number" value="30" oninput="calc()"></div></div>
+      <div class="field"><label>Monthly Rent</label><div class="prefixed"><input id="sub-rent" type="number" value="4600" oninput="calc()"></div></div>
+      <div class="field"><label>Property Tax / Year</label><div class="prefixed"><input id="sub-tax" type="number" value="15000" oninput="calc()"></div></div>
+      <div class="field"><label>Insurance / Year</label><div class="prefixed"><input id="sub-ins" type="number" value="4382" oninput="calc()"></div></div>
+      <div class="field"><label>Maintenance / Year</label><div class="prefixed"><input id="sub-maint" type="number" value="3312" oninput="calc()"></div></div>
+      <div class="field"><label>Closing Costs</label><div class="prefixed"><input id="sub-close" type="number" value="9141.65" oninput="calc()"></div></div>
+      <div class="field"><label>Annual Principal Paydown</label><div class="prefixed"><input id="sub-principal" type="number" value="12255" oninput="calc()"></div></div>
+      <div class="field"><label>Annual Interest</label><div class="prefixed"><input id="sub-interest" type="number" value="19711.2" oninput="calc()"></div></div>
+      <div class="field"><label>Buyer Annual Debt</label><div class="prefixed"><input id="sub-buyer-annual-debt" type="number" value="31966.2" oninput="calc()"></div></div>
+    </div>
+    <div style="margin-top:1.1rem;padding-top:1.1rem;border-top:1px solid var(--border)">
+      <div class="grid grid-2">
+        <div class="data-rows">
+          <div class="dr"><span class="dl">Monthly Mortgage</span><span class="dv neg" id="sub-pmt">—</span></div>
+          <div class="dr"><span class="dl">NOI / Year</span><span class="dv" id="sub-noi">—</span></div>
+          <div class="dr"><span class="dl">Cash Flow / Month</span><span class="dv" id="sub-cf">—</span></div>
+          <div class="dr"><span class="dl">DSCR</span><span class="dv" id="sub-dscr">—</span></div>
+          <div class="dr"><span class="dl">Original Mortgage / Month</span><span class="dv neg" id="sub-original">—</span></div>
+          <div class="dr"><span class="dl">Buyer Mortgage / Month</span><span class="dv" id="sub-buyer">—</span></div>
+          <div class="dr"><span class="dl">Annual Owner Profit</span><span class="dv" id="sub-owner">—</span></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.75rem">
+          <div class="stat-box green"><div class="stat-label">Annual Cash Flow</div><div class="stat-val" id="sub-profit">—</div></div>
+          <div class="stat-box amber"><div class="stat-label">Cash-on-Cash</div><div class="stat-val" id="sub-balance">—</div></div>
+          <div class="stat-box blue"><div class="stat-label">ROI with Paydown</div><div class="stat-val" id="sub-roi">—</div><div class="stat-note" id="sub-cashin">—</div></div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:1.1rem;padding-top:1.1rem;border-top:1px solid var(--border)">
+      <div style="font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-bottom:.85rem">SUB TO Option Two — Seller Carryback</div>
+      <div class="grid grid-3">
+        <div class="field"><label>Purchase Price</label><div class="prefixed"><input id="sub2-price" type="number" value="204000" oninput="calc()"></div></div>
+        <div class="field"><label>Cash</label><div class="prefixed"><input id="sub2-cash" type="number" value="25000" oninput="calc()"></div></div>
+        <div class="field"><label>Mortgage</label><div class="prefixed"><input id="sub2-mortgage" type="number" value="139000" oninput="calc()"></div></div>
+        <div class="field"><label>Seller Loan</label><div class="prefixed"><input id="sub2-seller-loan" type="number" value="40000" oninput="calc()"></div></div>
+        <div class="field"><label>Closing Costs</label><div class="prefixed"><input id="sub2-close" type="number" value="3301" oninput="calc()"></div></div>
+        <div class="field"><label>TC / Deal Cost</label><div class="prefixed"><input id="sub2-tc" type="number" value="10000" oninput="calc()"></div></div>
+        <div class="field"><label>Rent Monthly</label><div class="prefixed"><input id="sub2-rent" type="number" value="1664" oninput="calc()"></div></div>
+        <div class="field"><label>Property Tax / Year</label><div class="prefixed"><input id="sub2-tax" type="number" value="6000" oninput="calc()"></div></div>
+        <div class="field"><label>Insurance / Year</label><div class="prefixed"><input id="sub2-ins" type="number" value="3032" oninput="calc()"></div></div>
+        <div class="field"><label>HOA / Year</label><div class="prefixed"><input id="sub2-hoa" type="number" value="204" oninput="calc()"></div></div>
+        <div class="field"><label>Maintenance / Year</label><div class="prefixed"><input id="sub2-maint" type="number" value="1198.08" oninput="calc()"></div></div>
+        <div class="field"><label>Mortgage Annual Debt</label><div class="prefixed"><input id="sub2-debt" type="number" value="6372" oninput="calc()"></div></div>
+        <div class="field"><label>Seller Debt / Year</label><div class="prefixed"><input id="sub2-seller-debt" type="number" value="1800" oninput="calc()"></div></div>
+        <div class="field"><label>Annual Principal</label><div class="prefixed"><input id="sub2-principal" type="number" value="5082" oninput="calc()"></div></div>
+      </div>
+      <div class="grid grid-3" style="margin-top:.85rem">
+        <div class="stat-box green"><div class="stat-label">NOI / Annual CF</div><div class="stat-val" id="sub2-noi">—</div><div class="stat-note" id="sub2-cf">—</div></div>
+        <div class="stat-box amber"><div class="stat-label">ROI / CoC</div><div class="stat-val" id="sub2-roi">—</div><div class="stat-note" id="sub2-coc">—</div></div>
+        <div class="stat-box blue"><div class="stat-label">DSCR / Cash In</div><div class="stat-val" id="sub2-dscr">—</div><div class="stat-note" id="sub2-cashin">—</div></div>
+      </div>
+    </div>
+    <div style="margin-top:1.1rem;padding-top:1.1rem;border-top:1px solid var(--border)">
+      <div style="font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-bottom:.85rem">SUB TO Option Three — Wrap Around</div>
+      <div class="grid grid-3">
+        <div class="field"><label>Purchase Price</label><div class="prefixed"><input id="sub3-price" type="number" value="662090" oninput="calc()"></div></div>
+        <div class="field"><label>Cash</label><div class="prefixed"><input id="sub3-cash" type="number" value="50000" oninput="calc()"></div></div>
+        <div class="field"><label>Mortgage</label><div class="prefixed"><input id="sub3-mortgage" type="number" value="612090" oninput="calc()"></div></div>
+        <div class="field"><label>Closing Costs</label><div class="prefixed"><input id="sub3-close" type="number" value="9141.65" oninput="calc()"></div></div>
+        <div class="field"><label>Rent Monthly</label><div class="prefixed"><input id="sub3-rent" type="number" value="4600" oninput="calc()"></div></div>
+        <div class="field"><label>Property Tax / Year</label><div class="prefixed"><input id="sub3-tax" type="number" value="9000" oninput="calc()"></div></div>
+        <div class="field"><label>Insurance / Year</label><div class="prefixed"><input id="sub3-ins" type="number" value="2918" oninput="calc()"></div></div>
+        <div class="field"><label>Maintenance / Year</label><div class="prefixed"><input id="sub3-maint" type="number" value="3312" oninput="calc()"></div></div>
+        <div class="field"><label>Buyer Annual Debt</label><div class="prefixed"><input id="sub3-debt" type="number" value="39420" oninput="calc()"></div></div>
+        <div class="field"><label>Original Annual Debt</label><div class="prefixed"><input id="sub3-original-debt" type="number" value="31966.2" oninput="calc()"></div></div>
+        <div class="field"><label>Annual Principal</label><div class="prefixed"><input id="sub3-principal" type="number" value="9031" oninput="calc()"></div></div>
+      </div>
+      <div class="grid grid-3" style="margin-top:.85rem">
+        <div class="stat-box green"><div class="stat-label">NOI / Annual CF</div><div class="stat-val" id="sub3-noi">—</div><div class="stat-note" id="sub3-cf">—</div></div>
+        <div class="stat-box amber"><div class="stat-label">ROI / CoC</div><div class="stat-val" id="sub3-roi">—</div><div class="stat-note" id="sub3-coc">—</div></div>
+        <div class="stat-box blue"><div class="stat-label">DSCR / Owner Profit</div><div class="stat-val" id="sub3-dscr">—</div><div class="stat-note" id="sub3-owner">—</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon">🏢</div>
+      <div><div class="card-title">Multi Family</div><div class="card-sub">Cap-rate model with refinance, sale, and IRR/XIRR style output</div></div>
+    </div>
+    <div class="grid grid-3">
+      <div class="field"><label>Units</label><div class="prefixed"><input id="mf-units" type="number" value="12" oninput="calc()"></div></div>
+      <div class="field"><label>Purchase Price</label><div class="prefixed"><input id="mf-price" type="number" value="2225000" oninput="calc()"></div></div>
+      <div class="field"><label>Cap Rate</label><div class="suffixed" data-suf="%"><input id="mf-cap" type="number" value="9.17" step="0.01" oninput="calc()"></div></div>
+      <div class="field"><label>LTV</label><div class="suffixed" data-suf="%"><input id="mf-ltv" type="number" value="70" oninput="calc()"></div></div>
+      <div class="field"><label>Debt Rate</label><div class="suffixed" data-suf="%"><input id="mf-rate" type="number" value="7" step="0.1" oninput="calc()"></div></div>
+      <div class="field"><label>Loan Term</label><div class="suffixed" data-suf="yrs"><input id="mf-term" type="number" value="30" oninput="calc()"></div></div>
+      <div class="field"><label>Annual Growth</label><div class="suffixed" data-suf="%"><input id="mf-growth" type="number" value="5" oninput="calc()"></div></div>
+      <div class="field"><label>Exit Cap Rate</label><div class="suffixed" data-suf="%"><input id="mf-exitcap" type="number" value="5" oninput="calc()"></div></div>
+      <div class="field"><label>Hold Period</label><div class="suffixed" data-suf="yrs"><input id="mf-years" type="number" value="5" oninput="calc()"></div></div>
+      <div class="field"><label>Mortgage Closing Costs</label><div class="suffixed" data-suf="%"><input id="mf-close" type="number" value="7" oninput="calc()"></div></div>
+      <div class="field"><label>Acquisition Fee / Purchase</label><div class="suffixed" data-suf="%"><input id="mf-acq-fee" type="number" value="0" oninput="calc()"></div></div>
+      <div class="field"><label>Legal & Due Diligence</label><div class="prefixed"><input id="mf-legal" type="number" value="14800" oninput="calc()"></div></div>
+      <div class="field"><label>Upfront Renovation</label><div class="prefixed"><input id="mf-renovation" type="number" value="120000" oninput="calc()"></div></div>
+      <div class="field"><label>Reserve for Unexpected</label><div class="suffixed" data-suf="%"><input id="mf-reserve-pct" type="number" value="3" oninput="calc()"></div></div>
+      <div class="field span-2"><span class="hint">Business logic: property-level NOI first, then debt service, then exit value and IRR over the hold period.</span></div>
+    </div>
+    <div style="margin-top:1.1rem;padding-top:1.1rem;border-top:1px solid var(--border)">
+      <div class="grid grid-2">
+        <div class="data-rows">
+          <div class="dr"><span class="dl">NOI / Year</span><span class="dv" id="mf-noi">—</span></div>
+          <div class="dr"><span class="dl">Debt Service / Year</span><span class="dv neg" id="mf-pmt">—</span></div>
+          <div class="dr"><span class="dl">Cash Flow / Year</span><span class="dv" id="mf-cf">—</span></div>
+          <div class="dr"><span class="dl">Cash In Deal</span><span class="dv" id="mf-cashin">—</span></div>
+          <div class="dr"><span class="dl">Investor Capital (90%)</span><span class="dv" id="mf-investor-cap">—</span></div>
+          <div class="dr"><span class="dl">Entrepreneur Capital (10%)</span><span class="dv" id="mf-entrepreneur-cap">—</span></div>
+          <div class="dr"><span class="dl">Year 1 NOI</span><span class="dv" id="mf-y1">—</span></div>
+          <div class="dr"><span class="dl">Year 5 NOI</span><span class="dv" id="mf-y5">—</span></div>
+          <div class="dr"><span class="dl">Preferred Return 5Y</span><span class="dv" id="mf-pref">—</span></div>
+          <div class="dr"><span class="dl">Investor Share 5Y</span><span class="dv" id="mf-invshare">—</span></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.75rem">
+          <div class="stat-box green"><div class="stat-label">Net Pre Tax</div><div class="stat-val" id="mf-sale">—</div></div>
+          <div class="stat-box amber"><div class="stat-label">Cash-on-Cash ROI</div><div class="stat-val" id="mf-coc">—</div></div>
+          <div class="stat-box blue"><div class="stat-label">IRR / XIRR</div><div class="stat-val" id="mf-irr">—</div><div class="stat-note" id="mf-exit">—</div></div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:1.1rem;padding-top:1.1rem;border-top:1px solid var(--border)">
+      <div style="font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-bottom:.85rem">Offer Calculator + Sale Distribution</div>
+      <div class="grid grid-2">
+        <div style="display:flex;flex-direction:column;gap:.9rem">
+          <div class="grid grid-2" style="grid-template-columns:1fr 1fr">
+            <div class="field"><label>Target Offer Cap</label><div class="suffixed" data-suf="%"><input id="mf-offer-cap" type="number" value="10.5" step="0.1" oninput="calc()"></div></div>
+            <div class="field"><label>Suggested Offer</label><div class="prefixed"><input id="mf-offer-price" type="text" readonly></div></div>
+          </div>
+          <div class="data-rows">
+            <div class="dr"><span class="dl">Price Delta vs Asking</span><span class="dv" id="mf-offer-delta">—</span></div>
+            <div class="dr"><span class="dl">Offer / Asking</span><span class="dv" id="mf-offer-ratio">—</span></div>
+            <div class="dr"><span class="dl">Current NOI Used</span><span class="dv" id="mf-offer-noi">—</span></div>
+          </div>
+        </div>
+        <div class="grid grid-2" style="align-items:start">
+          <div class="stat-box" style="gap:.45rem">
+            <div class="stat-label">Year 4</div>
+            <div class="data-rows" style="margin-top:.15rem">
+              <div class="dr"><span class="dl">Gross Sale</span><span class="dv" id="mf-sale-gross4">—</span></div>
+              <div class="dr"><span class="dl">Cash Invested</span><span class="dv" id="mf-sale-cashin4">—</span></div>
+              <div class="dr"><span class="dl">Mortgage Principal</span><span class="dv" id="mf-sale-principal4">—</span></div>
+              <div class="dr"><span class="dl">Mortgage Interest</span><span class="dv" id="mf-sale-interest4">—</span></div>
+              <div class="dr"><span class="dl">Closing Costs</span><span class="dv" id="mf-sale-close4">—</span></div>
+              <div class="dr"><span class="dl">Net Pre Tax</span><span class="dv" id="mf-sale-net4">—</span></div>
+              <div class="dr"><span class="dl">Investor 70%</span><span class="dv" id="mf-sale-inv4">—</span></div>
+              <div class="dr"><span class="dl">Entrepreneur 30%</span><span class="dv" id="mf-sale-ent4">—</span></div>
+            </div>
+          </div>
+          <div class="stat-box" style="gap:.45rem">
+            <div class="stat-label">Year 5</div>
+            <div class="data-rows" style="margin-top:.15rem">
+              <div class="dr"><span class="dl">Gross Sale</span><span class="dv" id="mf-sale-gross5">—</span></div>
+              <div class="dr"><span class="dl">Cash Invested</span><span class="dv" id="mf-sale-cashin5">—</span></div>
+              <div class="dr"><span class="dl">Mortgage Principal</span><span class="dv" id="mf-sale-principal5">—</span></div>
+              <div class="dr"><span class="dl">Mortgage Interest</span><span class="dv" id="mf-sale-interest5">—</span></div>
+              <div class="dr"><span class="dl">Closing Costs</span><span class="dv" id="mf-sale-close5">—</span></div>
+              <div class="dr"><span class="dl">Net Pre Tax</span><span class="dv" id="mf-sale-net5">—</span></div>
+              <div class="dr"><span class="dl">Investor 70%</span><span class="dv" id="mf-sale-inv5">—</span></div>
+              <div class="dr"><span class="dl">Entrepreneur 30%</span><span class="dv" id="mf-sale-ent5">—</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-secondary" onclick="goTo('p6')">← Back</button>
+    <button class="btn-primary" onclick="analyze()">Analyze All Strategies →</button>
+  </div>
+
+</div>
+</div>
+
+<!-- ==================== PAGE 8: RESULTS ==================== -->
+<div class="page" id="p8">
+<div class="wrap">
+
+  <div class="winner" id="winner-card">
+    <div class="winner-eyebrow">🏆 Best Strategy for This Deal</div>
+    <div class="winner-name" id="w-name">—</div>
+    <div class="winner-why" id="w-why">—</div>
+    <div class="winner-stats">
+      <div class="wst"><div class="wl">Profit / Cash Flow</div><div class="wv" id="w-cf">—</div></div>
+      <div class="wst"><div class="wl">ROI</div><div class="wv" id="w-roi">—</div></div>
+      <div class="wst"><div class="wl">Cash In</div><div class="wv" id="w-cash">—</div></div>
+    </div>
+  </div>
+
+  <div class="cmp-table">
+    <div class="cmp-head">
+      <span>Strategy</span><span>Profit / CF</span><span>ROI</span><span>Cash In</span><span>Score</span>
+    </div>
+    <div class="cmp-row" id="row-flip">
+      <span class="cmp-name"><span class="dot" style="background:#EF4444"></span>Fix & Flip</span>
+      <span id="t-flip-cf">—</span><span id="t-flip-roi">—</span><span id="t-flip-cash">—</span>
+      <span><div class="sbar"><div class="sfill" id="sb-flip" style="width:0;background:linear-gradient(90deg,#DC2626,#F87171)"></div></div></span>
+    </div>
+    <div class="cmp-row" id="row-hold">
+      <span class="cmp-name"><span class="dot" style="background:#3B82F6"></span>Buy & Hold</span>
+      <span id="t-hold-cf">—</span><span id="t-hold-roi">—</span><span id="t-hold-cash">—</span>
+      <span><div class="sbar"><div class="sfill" id="sb-hold" style="width:0;background:linear-gradient(90deg,#2563EB,#60A5FA)"></div></div></span>
+    </div>
+    <div class="cmp-row" id="row-brrrr">
+      <span class="cmp-name"><span class="dot" style="background:#22C55E"></span>BRRRR</span>
+      <span id="t-brrrr-cf">—</span><span id="t-brrrr-roi">—</span><span id="t-brrrr-cash">—</span>
+      <span><div class="sbar"><div class="sfill" id="sb-brrrr" style="width:0;background:linear-gradient(90deg,#16A34A,#4ADE80)"></div></div></span>
+    </div>
+    <div class="cmp-row" id="row-airbnb">
+      <span class="cmp-name"><span class="dot" style="background:#F97316"></span>Airbnb STR</span>
+      <span id="t-airbnb-cf">—</span><span id="t-airbnb-roi">—</span><span id="t-airbnb-cash">—</span>
+      <span><div class="sbar"><div class="sfill" id="sb-airbnb" style="width:0;background:linear-gradient(90deg,#EA580C,#FB923C)"></div></div></span>
+    </div>
+    <div class="cmp-row" id="row-seller">
+      <span class="cmp-name"><span class="dot" style="background:#8B5CF6"></span>Seller Financing</span>
+      <span id="t-seller-cf">—</span><span id="t-seller-roi">—</span><span id="t-seller-cash">—</span>
+      <span><div class="sbar"><div class="sfill" id="sb-seller" style="width:0;background:linear-gradient(90deg,#7C3AED,#A78BFA)"></div></div></span>
+    </div>
+    <div class="cmp-row" id="row-rto">
+      <span class="cmp-name"><span class="dot" style="background:#14B8A6"></span>Rent to Own</span>
+      <span id="t-rto-cf">—</span><span id="t-rto-roi">—</span><span id="t-rto-cash">—</span>
+      <span><div class="sbar"><div class="sfill" id="sb-rto" style="width:0;background:linear-gradient(90deg,#0F766E,#2DD4BF)"></div></div></span>
+    </div>
+    <div class="cmp-row" id="row-sub">
+      <span class="cmp-name"><span class="dot" style="background:#0EA5E9"></span>SUB TO</span>
+      <span id="t-sub-cf">—</span><span id="t-sub-roi">—</span><span id="t-sub-cash">—</span>
+      <span><div class="sbar"><div class="sfill" id="sb-sub" style="width:0;background:linear-gradient(90deg,#0284C7,#7DD3FC)"></div></div></span>
+    </div>
+    <div class="cmp-row" id="row-mf">
+      <span class="cmp-name"><span class="dot" style="background:#F59E0B"></span>Multi Family</span>
+      <span id="t-mf-cf">—</span><span id="t-mf-roi">—</span><span id="t-mf-cash">—</span>
+      <span><div class="sbar"><div class="sfill" id="sb-mf" style="width:0;background:linear-gradient(90deg,#D97706,#FBBF24)"></div></div></span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon">📊</div>
+      <div><div class="card-title">Detailed Breakdown</div></div>
+    </div>
+    <div class="tabs">
+      <button class="tab active" onclick="openTab('flip')">🔨 Fix & Flip</button>
+      <button class="tab" onclick="openTab('hold')">🏠 Buy & Hold</button>
+      <button class="tab" onclick="openTab('brrrr')">♻️ BRRRR</button>
+      <button class="tab" onclick="openTab('airbnb')">🌙 Airbnb</button>
+    </div>
+
+    <div class="tab-panel active" id="tp-flip">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="data-rows">
+          <div class="dr"><span class="dl">Purchase Price</span><span class="dv" id="d-flip-buy">—</span></div>
+          <div class="dr"><span class="dl">Repairs</span><span class="dv neg" id="d-flip-rep">—</span></div>
+          <div class="dr"><span class="dl">Holding Costs</span><span class="dv neg" id="d-flip-hld">—</span></div>
+          <div class="dr"><span class="dl">Closing – Buy</span><span class="dv neg" id="d-flip-cb">—</span></div>
+          <div class="dr"><span class="dl">Closing – Sell</span><span class="dv neg" id="d-flip-cs">—</span></div>
+          <div class="dr"><span class="dl">Commission</span><span class="dv neg" id="d-flip-cm">—</span></div>
+          <div class="dr"><span class="dl">Hard Money</span><span class="dv neg" id="d-flip-hm">—</span></div>
+          <div class="dr dr-total"><span class="dl">Total All-In</span><span class="dv" id="d-flip-tot">—</span></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.75rem">
+          <div class="stat-box amber"><div class="stat-label">Sale Price (ARV)</div><div class="stat-val" id="d-flip-arv">—</div></div>
+          <div class="stat-box" id="d-flip-profit-box"><div class="stat-label">Net Profit</div><div class="stat-val" id="d-flip-profit">—</div><div class="stat-note" id="d-flip-psub">—</div></div>
+          <div class="stat-box blue"><div class="stat-label">Annualized ROI</div><div class="stat-val" id="d-flip-roi">—</div></div>
+        </div>
+      </div>
+      <div class="verdict" id="v-flip"></div>
+    </div>
+
+    <div class="tab-panel" id="tp-hold">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="data-rows">
+          <div class="dr"><span class="dl">Gross Rent</span><span class="dv" id="d-hold-rent">—</span></div>
+          <div class="dr"><span class="dl">Vacancy Loss</span><span class="dv neg" id="d-hold-vac">—</span></div>
+          <div class="dr"><span class="dl">Property Tax</span><span class="dv neg" id="d-hold-tax">—</span></div>
+          <div class="dr"><span class="dl">Insurance</span><span class="dv neg" id="d-hold-ins">—</span></div>
+          <div class="dr"><span class="dl">Maintenance</span><span class="dv neg" id="d-hold-maint">—</span></div>
+          <div class="dr"><span class="dl">Mgmt Fee</span><span class="dv neg" id="d-hold-mgmt">—</span></div>
+          <div class="dr dr-total"><span class="dl">Net Operating Income/mo</span><span class="dv" id="d-hold-noi">—</span></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.75rem">
+          <div class="stat-box green"><div class="stat-label">Monthly Cash Flow</div><div class="stat-val" id="d-hold-cf">—</div><div class="stat-note" id="d-hold-annual">—</div></div>
+          <div class="stat-box amber"><div class="stat-label">Cap Rate</div><div class="stat-val" id="d-hold-cap">—</div></div>
+          <div class="stat-box blue"><div class="stat-label">Cash-on-Cash ROI</div><div class="stat-val" id="d-hold-coc">—</div></div>
+        </div>
+      </div>
+      <div class="verdict" id="v-hold"></div>
+    </div>
+
+    <div class="tab-panel" id="tp-brrrr">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="data-rows">
+          <div class="dr"><span class="dl">Total All-In</span><span class="dv" id="d-brrrr-allin">—</span></div>
+          <div class="dr"><span class="dl">ARV</span><span class="dv gold" id="d-brrrr-arv">—</span></div>
+          <div class="dr"><span class="dl">Refinance Amount</span><span class="dv" id="d-brrrr-refi">—</span></div>
+          <div class="dr"><span class="dl">Cash Pulled Out</span><span class="dv pos" id="d-brrrr-out">—</span></div>
+          <div class="dr"><span class="dl">Cash Left In</span><span class="dv" id="d-brrrr-left">—</span></div>
+          <div class="dr"><span class="dl">Monthly Mortgage</span><span class="dv neg" id="d-brrrr-pmt">—</span></div>
+          <div class="dr dr-total"><span class="dl">Equity Created</span><span class="dv" id="d-brrrr-eq">—</span></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.75rem">
+          <div class="stat-box green"><div class="stat-label">Cash Flow After Refi</div><div class="stat-val" id="d-brrrr-cf">—</div></div>
+          <div class="stat-box blue"><div class="stat-label">Cash-on-Cash ROI</div><div class="stat-val" id="d-brrrr-coc">—</div></div>
+          <div class="stat-box amber"><div class="stat-label">DSCR / ROI</div><div class="stat-val" id="d-brrrr-inf">—</div><div class="stat-note" id="d-brrrr-infsub">—</div></div>
+        </div>
+      </div>
+      <div class="verdict" id="v-brrrr"></div>
+    </div>
+
+    <div class="tab-panel" id="tp-airbnb">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="data-rows">
+          <div class="dr"><span class="dl">Nightly Rate</span><span class="dv" id="d-airbnb-nightly">—</span></div>
+          <div class="dr"><span class="dl">Occupancy</span><span class="dv" id="d-airbnb-occ">—</span></div>
+          <div class="dr"><span class="dl">Gross Revenue/mo</span><span class="dv gold" id="d-airbnb-gross">—</span></div>
+          <div class="dr"><span class="dl">Platform Fee (3%)</span><span class="dv neg" id="d-airbnb-fee">—</span></div>
+          <div class="dr"><span class="dl">Cleaning & Supplies</span><span class="dv neg" id="d-airbnb-clean">—</span></div>
+          <div class="dr"><span class="dl">Tax + Ins + Maint.</span><span class="dv neg" id="d-airbnb-exp">—</span></div>
+          <div class="dr dr-total"><span class="dl">Total Expenses/mo</span><span class="dv" id="d-airbnb-totexp">—</span></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.75rem">
+          <div class="stat-box green"><div class="stat-label">Net Cash Flow/mo</div><div class="stat-val" id="d-airbnb-cf">—</div><div class="stat-note" id="d-airbnb-annual">—</div></div>
+          <div class="stat-box amber"><div class="stat-label">vs Long-Term Rent</div><div class="stat-val" id="d-airbnb-vs">—</div><div class="stat-note">STR premium over LTR</div></div>
+          <div class="stat-box blue"><div class="stat-label">Annual ROI</div><div class="stat-val" id="d-airbnb-roi">—</div></div>
+        </div>
+      </div>
+      <div class="verdict" id="v-airbnb"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon">🔗</div>
+      <div><div class="card-title">Share Deal Summary</div><div class="card-sub">Send this link to a buyer or partner</div></div>
+    </div>
+    <button onclick="genLink()" class="btn-secondary" style="margin-bottom:.75rem">Generate Shareable Link</button>
+    <div id="link-wrap" style="display:none">
+      <div class="share-row">
+        <input class="share-input" id="share-url" readonly>
+        <button class="copy-btn" onclick="copyLink()">Copy</button>
+      </div>
+      <div class="copied" id="copied-msg">✓ Copied!</div>
+    </div>
+  </div>
+
+  <div class="report-actions">
+    <button class="btn-secondary" onclick="exportCsv()">Export CSV</button>
+    <button class="btn-secondary" onclick="printReport()">Print</button>
+  </div>
+
+  <div class="btn-row">
+  <button class="btn-secondary" onclick="goTo('p7')">← Back</button>
+  <button class="btn-secondary" onclick="goTo('p1')">Start New Deal</button>
+</div>
+
+</div>
+</div>
+
+<div class="print-report" id="print-report" aria-hidden="true"></div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-brand">
+    <div class="foot-logo">HW</div>
+    <div>
+      <div class="foot-name">Hillel Wholesaler</div>
+      <div class="foot-sub">Real Estate Investor · United States</div>
+    </div>
+  </div>
+  <div class="foot-links">
+    <a href="tel:2167747725" class="foot-link">
+      <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .84h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+      (216) 774-7725
+    </a>
+    <a href="mailto:hilel9746@gmail.com" class="foot-link">
+      <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      hilel9746@gmail.com
+    </a>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"></script>
+<script>
+// ===== NAV =====
+var pages=['p1','p2','p3','p4','p5','p6','p7','p8'];
+function goTo(id){
+  pages.forEach(p=>{
+    document.getElementById(p).classList.remove('active');
+    var btn=document.getElementById('snav-'+p);
+    if(btn) btn.classList.remove('active');
+  });
+  document.getElementById(id).classList.add('active');
+  var btn=document.getElementById('snav-'+id);
+  if(btn) btn.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(id==='p8') analyze({navigate:false,openBestTab:true});
+  else calc();
+}
+
+function analyzeAgain(){
+  if(document.getElementById('p8').classList.contains('active')){
+    analyze({navigate:false,openBestTab:true});
+    return;
+  }
+  goTo('p8');
+}
+
+function openCsvPicker(){
+  var input=document.getElementById('csv-import');
+  if(input) input.click();
+}
+
+window.addEventListener('keydown',function(e){
+  var tag=(e.target && e.target.tagName ? e.target.tagName.toLowerCase() : '');
+  var typingTarget=tag==='input' || tag==='textarea' || tag==='select' || (e.target && e.target.isContentEditable);
+  if(typingTarget) return;
+  var key=String(e.key||'').toLowerCase();
+  var mod=e.metaKey||e.ctrlKey;
+  if(mod && e.shiftKey && key==='l'){
+    e.preventDefault();
+    openCsvPicker();
+  }
+});
+
+// ===== TABS =====
+function openTab(name){
+  ['flip','hold','brrrr','airbnb'].forEach(t=>{
+    document.getElementById('tp-'+t).classList.remove('active');
+  });
+  document.querySelectorAll('.tab').forEach((el,i)=>{
+    el.classList.toggle('active',['flip','hold','brrrr','airbnb'][i]===name);
+  });
+  document.getElementById('tp-'+name).classList.add('active');
+}
+
+// ===== ADDRESS =====
+var addrTimer=null;
+function onAddr(v){
+  clearTimeout(addrTimer);
+  var w=document.getElementById('addr-links-wrap');
+  if(v.length<8){w.style.display='none';return;}
+  addrTimer=setTimeout(()=>{
+    var e=encodeURIComponent(v);
+    document.getElementById('al-maps').href='https://www.google.com/maps/search/?api=1&query='+e;
+    document.getElementById('al-street').href='https://www.google.com/maps/@?api=1&map_action=pano&viewpoint='+e;
+    document.getElementById('al-zillow').href='https://www.zillow.com/homes/'+e+'_rb/';
+    w.style.display='block';
+  },500);
+}
+
+// ===== PHOTOS =====
+var photos=[];
+function addPhotos(inp){
+  Array.from(inp.files).forEach(f=>{
+    var r=new FileReader();
+    r.onload=e=>{photos.push(e.target.result);renderPhotos();};
+    r.readAsDataURL(f);
+  });
+  inp.value='';
+}
+function onDrop(e){
+  e.preventDefault();
+  document.getElementById('dz').classList.remove('drag');
+  Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/')).forEach(f=>{
+    var r=new FileReader();
+    r.onload=ev=>{photos.push(ev.target.result);renderPhotos();};
+    r.readAsDataURL(f);
+  });
+}
+function renderPhotos(){
+  var g=document.getElementById('pg');
+  g.innerHTML=photos.map((s,i)=>`<div class="photo-item"><img src="${s}"><button class="photo-del" onclick="photos.splice(${i},1);renderPhotos()">✕</button></div>`).join('');
+}
+
+// ===== REPAIRS =====
+var rowId=0;
+var cats=['Foundation/Structural','Roof/Gutters','Electrical','Plumbing','HVAC','Windows/Doors','Siding/Exterior','Kitchen','Bathroom','Flooring','Interior Paint','Exterior Paint','Drywall/Insulation','Fixtures/Hardware','Deck/Garage','Landscaping','Demo/Cleanup','Permits/Fees','Appliances','Misc/Contingency'];
+var statuses=['Estimated','Quoted','Contracted','Completed'];
+function addRow(desc,cat,cont,cost,stat){
+  rowId++;
+  var id='row'+rowId;
+  var catOpts=cats.map(c=>`<option${cat===c?' selected':''}>${c}</option>`).join('');
+  var statOpts=statuses.map(s=>`<option${(stat||'Estimated')===s?' selected':''}>${s}</option>`).join('');
+  var tr=document.createElement('tr');
+  tr.id=id;tr.className='repair-row';
+  tr.innerHTML=`
+    <td><input class="rt-input" type="text" placeholder="e.g. Replace roof" value="${desc||''}" oninput="sumRepairs()"></td>
+    <td><select class="rt-sel" onchange="sumRepairs()"><option value="">Category...</option>${catOpts}</select></td>
+    <td><input class="rt-input" type="text" placeholder="Contractor" value="${cont||''}"></td>
+    <td><div class="rt-cost"><input class="rt-input" type="number" placeholder="0" value="${cost||''}" oninput="sumRepairs()"></div></td>
+    <td><select class="rt-sel">${statOpts}</select></td>
+    <td><button class="del-row" onclick="document.getElementById('${id}').remove();sumRepairs()">✕</button></td>`;
+  document.getElementById('rtbody').appendChild(tr);
+  sumRepairs();
+}
+function sumRepairs(){
+  var total=0;
+  document.querySelectorAll('.rt-cost input').forEach(el=>total+=parseFloat(el.value)||0);
+  var s='$'+Math.round(total).toLocaleString();
+  document.getElementById('repairs-total').textContent=s;
+  var el=document.getElementById('s-repairs-sync');
+  if(el) el.textContent=s;
+  var ri=document.getElementById('n-rehab-hidden');
+  if(!ri){ri=document.createElement('input');ri.type='hidden';ri.id='n-rehab-hidden';document.body.appendChild(ri);}
+  ri.value=total;
+  calc();
+}
+function getRepairs(){
+  var t=0;
+  document.querySelectorAll('.rt-cost input').forEach(el=>t+=parseFloat(el.value)||0);
+  return t;
+}
+
+// ===== HELPERS =====
+function v(id){var el=document.getElementById(id);if(!el)return 0;var n=parseFloat(el.value);return isNaN(n)?0:n;}
+function num(id,fallback){var el=document.getElementById(id);if(!el||el.value==='')return fallback;var n=parseFloat(el.value);return isNaN(n)?fallback:n;}
+function fmt(n){if(isNaN(n)||n===null)return '—';return '$'+Math.abs(Math.round(n)).toLocaleString();}
+function pct(n){if(isNaN(n)||!isFinite(n))return '—';return n.toFixed(1)+'%';}
+function set(id,val){var el=document.getElementById(id);if(!el)return;if('value' in el)el.value=val;else el.textContent=val;}
+function setColor(id,isPos){var el=document.getElementById(id);if(!el)return;el.style.color=isPos?'var(--green)':'var(--red)';}
+function loanPayment(principal, annualRatePct, years){
+  var rate=(annualRatePct||0)/100/12;
+  var n=(years||0)*12;
+  if(!(principal>0)||!(n>0))return 0;
+  if(Math.abs(rate)<1e-9)return principal/n;
+  return principal*(rate/(1-Math.pow(1+rate,-n)));
+}
+function remainingBalance(principal, annualRatePct, years, paidMonths){
+  var rate=(annualRatePct||0)/100/12;
+  var n=(years||0)*12;
+  var m=Math.max(0,Math.min(paidMonths||0,n));
+  if(!(principal>0)||!(n>0))return 0;
+  if(Math.abs(rate)<1e-9)return principal*(1-m/n);
+  var powN=Math.pow(1+rate,n);
+  var powM=Math.pow(1+rate,m);
+  return principal*(powN-powM)/(powN-1);
+}
+function annualizedRoiFromProfit(profit,cashIn,years){
+  if(!(cashIn>0)||!(years>0))return 0;
+  return (Math.pow(Math.max(0.000001,(cashIn+profit)/cashIn),1/years)-1)*100;
+}
+function calcExcelBRRRR(){
+  var purchase=num('brrrr-purchase',230000);
+  var repairs=num('brrrr-repairs',63000);
+  var hardMoneyLoan=num('brrrr-hard-loan',700000);
+  var serviceFee=num('brrrr-service-fee',850);
+  var titleLenderInsurance=num('brrrr-title-lender-insurance',100);
+  var recordingFee=num('brrrr-recording-fee',100);
+  var docStampsMortgage=hardMoneyLoan/100*0.35;
+  var intangibleTax=hardMoneyLoan*0.002;
+  var points=hardMoneyLoan*0.02;
+  var hardMoneyMonthlyReturn=num('brrrr-hard-monthly-return',7000);
+  var hardMoneyMonths=num('brrrr-hard-months',6);
+  var totalFinance=serviceFee+titleLenderInsurance+recordingFee+docStampsMortgage+intangibleTax+points+(hardMoneyMonthlyReturn*hardMoneyMonths);
+  var lienSearch=num('brrrr-lien-search',125);
+  var titleSearch=num('brrrr-title-search',125);
+  var titleInsurance=purchase/1000*5.75;
+  var documentStamps=purchase*0.007;
+  var titleFee=num('brrrr-title-fee',450);
+  var closingCosts=lienSearch+titleSearch+titleInsurance+documentStamps+titleFee;
+  var allIn=purchase+repairs+totalFinance+closingCosts;
+  var appraisal=num('brrrr-appraisal',360000);
+  var refiLtv=num('brrrr-refi-ltv',75)/100;
+  var refiLoan=appraisal*refiLtv;
+  var cashInDeal=allIn-refiLoan;
+  var rentMonthly=num('brrrr-rent-monthly',2900);
+  var rentAnnual=rentMonthly*12;
+  var management=num('brrrr-management-annual',0);
+  var propertyTaxes=num('brrrr-property-tax',3500);
+  var insurance=num('brrrr-insurance',2000);
+  var hoa=num('brrrr-hoa',0);
+  var vacancy=num('brrrr-vacancy',0);
+  var maintenance=rentAnnual*num('brrrr-maintenance-pct',6)/100;
+  var noi=rentAnnual-management-propertyTaxes-insurance-hoa-vacancy-maintenance;
+  var mortgageMonthly=num('brrrr-refi-monthly-payment',1706);
+  var annualDebt=mortgageMonthly*12;
+  var cashFlowAnnual=noi-annualDebt;
+  var cashFlowMonthly=cashFlowAnnual/12;
+  var annualPrincipal=num('brrrr-annual-principal',3045);
+  var roi=cashInDeal>0?(cashFlowAnnual+annualPrincipal)/cashInDeal*100:0;
+  var cashOnCash=cashInDeal>0?cashFlowAnnual/cashInDeal*100:0;
+  var capRate=allIn>0?noi/allIn*100:0;
+  var dscr=annualDebt>0?noi/annualDebt:0;
+  return {purchase:purchase,repairs:repairs,totalFinance:totalFinance,closingCosts:closingCosts,allIn:allIn,appraisal:appraisal,refiLoan:refiLoan,cashInDeal:cashInDeal,noi:noi,annualDebt:annualDebt,cashFlowAnnual:cashFlowAnnual,cashFlowMonthly:cashFlowMonthly,annualPrincipal:annualPrincipal,roi:roi,cashOnCash:cashOnCash,capRate:capRate,dscr:dscr};
+}
+function calcExcelBuyHold(){
+  var rentMonthly=num('hold-rent-monthly',1285);
+  var rentAnnual=rentMonthly*12;
+  var management=rentAnnual*0.10;
+  var propertyTaxes=num('hold-property-tax',1556);
+  var insurance=num('hold-insurance',650);
+  var hoa=num('hold-hoa',0);
+  var vacancy=num('hold-vacancy',0);
+  var maintenance=rentAnnual*0.06;
+  var noi=rentAnnual-management-propertyTaxes-insurance-hoa-vacancy-maintenance;
+  var mortgageMonthly=num('hold-monthly-payment',485);
+  var annualDebt=mortgageMonthly*12;
+  var cashFlowAnnual=noi-annualDebt;
+  var cashFlowMonthly=cashFlowAnnual/12;
+  var annualPrincipal=num('hold-annual-principal',2072);
+  var cashInDeal=num('hold-cash-in-deal',0);
+  var roi=cashInDeal>0?(cashFlowAnnual+annualPrincipal)/cashInDeal*100:0;
+  var cashOnCash=cashInDeal>0?cashFlowAnnual/cashInDeal*100:0;
+  var dscr=annualDebt>0?noi/annualDebt:0;
+  return {rentMonthly:rentMonthly,rentAnnual:rentAnnual,management:management,propertyTaxes:propertyTaxes,insurance:insurance,hoa:hoa,vacancy:vacancy,maintenance:maintenance,noi:noi,annualDebt:annualDebt,cashFlowAnnual:cashFlowAnnual,cashFlowMonthly:cashFlowMonthly,annualPrincipal:annualPrincipal,cashInDeal:cashInDeal,roi:roi,cashOnCash:cashOnCash,dscr:dscr};
+}
+function calcExcelFlip(){
+  var purchase=num('flip-purchase',0);
+  var repairs=num('flip-repairs',0);
+  var buyClosingCosts=num('flip-buy-closing',1975);
+  var financeCost=num('flip-finance-cost',700);
+  var outOfPocket=num('flip-out-of-pocket',2675);
+  var baseAllIn=purchase+buyClosingCosts+repairs;
+  function scenario(targetPct){
+    var targetSalePrice=baseAllIn*(1+targetPct);
+    var brokerAndSaleLoad=targetSalePrice*1.06;
+    var fixedSaleLines=5450;
+    var actualSalePrice=brokerAndSaleLoad+fixedSaleLines;
+    var profit=targetSalePrice-baseAllIn;
+    var cashOnCash=outOfPocket>0?profit/outOfPocket*100:0;
+    return {targetPct:targetPct,targetSalePrice:targetSalePrice,actualSalePrice:actualSalePrice,profit:profit,cashOnCash:cashOnCash};
+  }
+  var scenarios={p15:scenario(0.15),p20:scenario(0.20),p25:scenario(0.25),p30:scenario(0.30)};
+  var selectedTarget=num('flip-selected-target',20);
+  var selected=scenarios['p'+Math.round(selectedTarget)] || scenarios.p20;
+  return {purchase:purchase,repairs:repairs,buyClosingCosts:buyClosingCosts,financeCost:financeCost,outOfPocket:outOfPocket,baseAllIn:baseAllIn,scenarios:scenarios,selected:selected};
+}
+function renderFlipScenarios(flip){
+  [['15','p15'],['20','p20'],['25','p25'],['30','p30']].forEach(function(pair){
+    var label=pair[0], key=pair[1], s=flip.scenarios[key];
+    if(!s)return;
+    set('flip-t'+label+'-target',fmt(s.targetSalePrice));
+    set('flip-t'+label+'-load',fmt(s.actualSalePrice-s.targetSalePrice));
+    set('flip-t'+label+'-actual',fmt(s.actualSalePrice));
+    set('flip-t'+label+'-profit',fmt(s.profit));
+    set('flip-t'+label+'-coc',pct(s.cashOnCash));
+  });
+}
+function xirr(values, dates){
+  if(!values || !dates || values.length!==dates.length || values.length<2) return NaN;
+  var base=dates[0].getTime();
+  var years=dates.map(function(d){return (d.getTime()-base)/(365*24*3600*1000);});
+  var guess=0.12;
+  for(var iter=0; iter<100; iter++){
+    var f=0, fp=0;
+    for(var i=0;i<values.length;i++){
+      var t=years[i];
+      var basePow=Math.pow(1+guess,t);
+      f += values[i]/basePow;
+      fp += -t*values[i]/((1+guess)*basePow);
+    }
+    if(Math.abs(fp)<1e-12) break;
+    var next=guess - f/fp;
+    if(!isFinite(next)) break;
+    if(Math.abs(next-guess)<1e-7) return next*100;
+    guess=next;
+  }
+  return guess*100;
+}
+function irrFromCashFlows(values){
+  if(!values || values.length<2) return NaN;
+  function npv(rate){
+    var sum=0;
+    for(var i=0;i<values.length;i++){
+      sum += values[i]/Math.pow(1+rate,i);
+    }
+    return sum;
+  }
+  var low=-0.9999, high=10, mid=0;
+  for(var iter=0; iter<140; iter++){
+    mid=(low+high)/2;
+    var val=npv(mid);
+    if(Math.abs(val)<1e-7) return mid*100;
+    if(val>0) low=mid; else high=mid;
+  }
+  return mid*100;
+}
+function calcSellerFinance(){
+  var price=v('sf-price'), downCash=v('sf-down'), closing=v('sf-closing'), upgrades=v('sf-upgrades');
+  var rate=v('sf-rate'), term=num('sf-term',30), years=num('sf-years',5);
+  var rent=v('sf-rent'), tax=v('sf-tax'), insurance=v('sf-insurance'), maint=v('sf-maint'), mgmtPct=v('sf-mgmt')/100;
+  var growth=v('sf-growth')/100, marketValue=v('sf-market');
+  var loan=price-downCash;
+  var amortPmt=loanPayment(loan, rate, term);
+  var principalMonthly=num('sf-principal',Math.round(amortPmt));
+  var interestMonthly=rate>0?Math.max(0,amortPmt-principalMonthly):0;
+  var annualDebt=(principalMonthly+interestMonthly)*12;
+  var principalAnnual=principalMonthly*12;
+  var cashIn=downCash+closing+upgrades;
+  var mgmtAnnual=rent*mgmtPct*10;
+  var noi=(rent*12)-tax-insurance-maint-mgmtAnnual;
+  var annualCF=noi-principalAnnual-(interestMonthly*12);
+  var cf=annualCF/12;
+  var principalPaid=principalAnnual*years;
+  var balance=Math.max(0,loan-principalPaid);
+  var capRate=(loan+cashIn)>0?(noi/(loan+cashIn))*100:0;
+  var cashOnCash=cashIn>0?(annualCF/cashIn)*100:0;
+  var roi=cashIn>0?((annualCF+annualDebt)/cashIn)*100:0;
+  var futureValue=marketValue*Math.pow(1+growth, years);
+  var cashOut=futureValue*0.75*0.92;
+  var totalIncome=cashOut+(annualCF*years);
+  var profit=totalIncome-balance;
+  var dscr=annualDebt>0?noi/annualDebt:0;
+  return {price:price,loan:loan,pmt:principalMonthly+interestMonthly,cf:cf,annualCF:annualCF,cashIn:cashIn,futureValue:futureValue,balance:balance,exitNet:cashOut,profit:profit,roi:roi,dscr:dscr,years:years,noi:noi,capRate:capRate,cashOnCash:cashOnCash,principalAnnual:principalAnnual};
+}
+function calcRentToOwn(){
+  var finalPrice=v('rto-final'), upfront=v('rto-upfront'), gross=v('rto-gross'), net=v('rto-net');
+  var credit=v('rto-credit'), months=num('rto-months',24), growth=v('rto-growth')/100, ltv=v('rto-ltv')/100;
+  var thirdRent=v('rto-third-rent');
+  var collected=upfront+net*12;
+  var creditTotal=credit*months;
+  var netBeforeBuy=finalPrice-upfront-creditTotal;
+  var thirdAnnual=thirdRent*12;
+  var thirdMgmt=thirdAnnual*0.1;
+  var thirdMaint=thirdAnnual*0.05;
+  var thirdNOI=thirdAnnual-thirdMgmt-3804-thirdMaint-1250;
+  var investorCF=thirdNOI-(net*12);
+  var futureValue=320000*Math.pow(1+growth, months/12);
+  var bankGross=futureValue*ltv;
+  var bankBack=bankGross-(bankGross*0.08);
+  var gap=(bankBack+investorCF)-netBeforeBuy;
+  var roi=upfront>0?(gap/upfront)*100:0;
+  return {finalPrice:finalPrice,upfront:upfront,gross:gross,net:net,credit:credit,months:months,collected:collected,creditTotal:creditTotal,netBeforeBuy:netBeforeBuy,futurePrice:futureValue,gap:gap,profit:bankBack,roi:roi,monthlyNet:(net-credit),investorCF:investorCF};
+}
+function calcSubjectTo(){
+  var price=v('sub-price'), cash=v('sub-cash'), mortgage=v('sub-mortgage'), rate=v('sub-rate'), term=num('sub-term',30);
+  var rent=v('sub-rent'), tax=v('sub-tax'), ins=v('sub-ins'), maint=v('sub-maint'), close=v('sub-close');
+  var principalAnnual=v('sub-principal'), interestAnnual=v('sub-interest');
+  var originalPmt=loanPayment(mortgage, rate, term);
+  var annualRent=rent*12;
+  var annualExpenses=tax+ins+maint;
+  var noi=annualRent-annualExpenses;
+  var annualDebt=principalAnnual+interestAnnual;
+  var cf=(noi-annualDebt)/12;
+  var cashIn=cash+close;
+  var annualCF=noi-annualDebt;
+  var roi=cashIn>0?((annualCF+principalAnnual)/cashIn)*100:0;
+  var coc=cashIn>0?(annualCF/cashIn)*100:0;
+  var capRate=price>0?(noi/price)*100:0;
+  var dscr=annualDebt>0?noi/annualDebt:0;
+  var buyerAnnualDebt=num('sub-buyer-annual-debt',annualDebt);
+  var buyerPmt=buyerAnnualDebt/12;
+  var ownerProfitAnnual=buyerAnnualDebt-(originalPmt*12);
+  return {price:price,cash:cash,mortgage:mortgage,pmt:annualDebt/12,noi:noi,cf:cf,annualCF:annualCF,cashIn:cashIn,balance:coc,futureValue:0,exitNet:0,profit:annualCF,roi:roi,dscr:dscr,buyerPmt:buyerPmt,originalPmt:originalPmt,ownerProfitAnnual:ownerProfitAnnual,capRate:capRate,principalAnnual:principalAnnual};
+}
+function calcSubjectToOptionTwo(){
+  var price=v('sub2-price'), cash=v('sub2-cash'), close=v('sub2-close'), tc=v('sub2-tc');
+  var rent=v('sub2-rent'), tax=v('sub2-tax'), ins=v('sub2-ins'), hoa=v('sub2-hoa'), maint=v('sub2-maint');
+  var annualRent=rent*12;
+  var expenses=tax+ins+hoa+maint;
+  var noi=annualRent-expenses;
+  var annualDebt=v('sub2-debt')+v('sub2-seller-debt');
+  var annualCF=noi-annualDebt;
+  var cf=annualCF/12;
+  var cashIn=cash+close+tc;
+  var principalAnnual=v('sub2-principal');
+  var roi=cashIn>0?(annualCF+principalAnnual)/cashIn*100:0;
+  var coc=cashIn>0?annualCF/cashIn*100:0;
+  var capRate=price>0?noi/price*100:0;
+  var dscr=annualDebt>0?noi/annualDebt:0;
+  return {noi:noi,annualDebt:annualDebt,annualCF:annualCF,cf:cf,cashIn:cashIn,principalAnnual:principalAnnual,roi:roi,coc:coc,capRate:capRate,dscr:dscr};
+}
+function calcSubjectToOptionThree(){
+  var price=v('sub3-price'), cash=v('sub3-cash'), close=v('sub3-close');
+  var rent=v('sub3-rent'), tax=v('sub3-tax'), ins=v('sub3-ins'), maint=v('sub3-maint');
+  var annualRent=rent*12;
+  var noi=annualRent-tax-ins-maint;
+  var annualDebt=v('sub3-debt');
+  var annualCF=noi-annualDebt;
+  var cf=annualCF/12;
+  var cashIn=cash+close;
+  var principalAnnual=v('sub3-principal');
+  var roi=cashIn>0?(annualCF+principalAnnual)/cashIn*100:0;
+  var coc=cashIn>0?annualCF/cashIn*100:0;
+  var capRate=price>0?noi/price*100:0;
+  var dscr=annualDebt>0?noi/annualDebt:0;
+  var ownerProfitAnnual=annualDebt-v('sub3-original-debt');
+  return {noi:noi,annualDebt:annualDebt,annualCF:annualCF,cf:cf,cashIn:cashIn,principalAnnual:principalAnnual,roi:roi,coc:coc,capRate:capRate,dscr:dscr,ownerProfitAnnual:ownerProfitAnnual};
+}
+function calcMultifamily(){
+  var units=v('mf-units'), price=v('mf-price'), cap=v('mf-cap')/100, ltv=v('mf-ltv')/100, rate=v('mf-rate'), term=num('mf-term',30);
+  var growth=v('mf-growth')/100, exitCap=v('mf-exitcap')/100, years=num('mf-years',5), closePct=v('mf-close')/100;
+  var offerCap=num('mf-offer-cap',10.5)/100;
+  var horizon=Math.max(5, years);
+  var baseIncome=v('mf-base-income');
+  var incomeGrowth=v('mf-income-growth')/100;
+  var vacancyBase=v('mf-vacancy');
+  var mgmtPct=v('mf-mgmt')/100;
+  var maintPct=v('mf-maint-pct')/100;
+  var capexPct=v('mf-capex-pct')/100;
+  var utilities=v('mf-utilities');
+  var insurance=v('mf-insurance');
+  var propertyTax=v('mf-property-tax');
+  var otherFixed=v('mf-other-fixed');
+  var extermination=v('mf-extermination');
+  var tenantReplace=v('mf-tenant-replace');
+  var lateFees=v('mf-late-fees');
+  var laundry=v('mf-laundry');
+  var depositForfeit=v('mf-deposit-forfeit');
+  var garbage=v('mf-garbage');
+  var landscaping=v('mf-landscaping');
+  var pool=v('mf-pool');
+  var marketing=v('mf-marketing');
+  var hoa=v('mf-hoa');
+  var payroll=v('mf-payroll');
+  var noi=price*cap;
+  var loan=price*ltv;
+  var pmt=Math.round(loan*(rate/100)/12);
+  var annualDebt=pmt*12;
+  var acqFeePct=v('mf-acq-fee')/100;
+  var legal=v('mf-legal');
+  var renovation=v('mf-renovation');
+  var reservePct=v('mf-reserve-pct')/100;
+  var downPayment=price*(1-ltv);
+  var loanClose=loan*closePct;
+  var reserve=price*reservePct;
+  var cashIn=downPayment+(price*acqFeePct)+legal+renovation+reserve+loanClose;
+  var yearData=[];
+  var utilitiesBase=utilities || 4905;
+  var waterBase=utilitiesBase*(2755/4905);
+  var electricBase=utilitiesBase*(2150/4905);
+  for(var y=0;y<=horizon;y++){
+    var grow=Math.pow(1+incomeGrowth,y);
+    var gross=(baseIncome*grow)+lateFees+laundry+depositForfeit;
+    var vacLoss=(y===2||y===5)?vacancyBase*Math.pow(1+incomeGrowth,y):0;
+    var mgmt=gross*mgmtPct;
+    var maint=gross*maintPct;
+    var capex=gross*capexPct;
+    var util=waterBase*Math.pow(1.05,y)+electricBase*Math.pow(1.05,Math.max(0,y-1));
+    var ins=insurance*Math.pow(1.05,y);
+    var tax=propertyTax*Math.pow(1.03,y);
+    var garbageCost=y>=3?garbage+500:garbage;
+    var landscapingCost=landscaping;
+    var poolCost=pool;
+    var marketingCost=marketing;
+    var hoaCost=hoa;
+    var payrollCost=payroll;
+    var exterm=(y===0||y===5)?extermination:0;
+    var tenant=tenantReplace;
+    var exp=vacLoss+mgmt+maint+capex+util+ins+tax+otherFixed+garbageCost+landscapingCost+poolCost+marketingCost+hoaCost+payrollCost+exterm+tenant;
+    var yearlyNOI=gross-exp;
+    yearData.push({gross:gross,exp:exp,noi:yearlyNOI,cf:yearlyNOI-annualDebt});
+  }
+  var year1NOI=yearData[1].noi;
+  var year5NOI=yearData[5].noi;
+  var currentNOI=yearData[0].noi;
+  var exitNoi=yearData[years].noi;
+  var saleValue=exitNoi/Math.max(0.0001,exitCap);
+  var balance=loan;
+  var saleCosts=saleValue*0.08;
+  var saleNet=saleValue-cashIn-loan-(annualDebt*years)-saleCosts;
+  var saleCap=0.05;
+  var saleGross4=yearData[4].noi/saleCap;
+  var saleGross5=yearData[5].noi/saleCap;
+  var saleCashIn4=cashIn;
+  var saleCashIn5=cashIn;
+  var salePrincipal4=loan;
+  var salePrincipal5=loan;
+  var saleInterest4=annualDebt*4;
+  var saleInterest5=annualDebt*5;
+  var saleClose4=saleGross4*0.08;
+  var saleClose5=saleGross5*0.08;
+  var saleNet4=saleGross4-saleCashIn4-salePrincipal4-saleInterest4-saleClose4;
+  var saleNet5=saleGross5-saleCashIn5-salePrincipal5-saleInterest5-saleClose5;
+  var saleInv4=saleNet4*0.7;
+  var saleInv5=saleNet5*0.7;
+  var saleEnt4=saleNet4-saleInv4;
+  var saleEnt5=saleNet5-saleInv5;
+  var offerPrice=currentNOI/Math.max(0.0001,offerCap);
+  var offerDelta=offerPrice-price;
+  var offerRatio=price>0?offerPrice/price:0;
+  var annualCFs=[];
+  for(var i=1;i<=years;i++) annualCFs.push(yearData[i].cf);
+  var finalAnnualCF=yearData[years].cf;
+  var irrFlows=[-(cashIn+loan)];
+  for(var j=0;j<annualCFs.length;j++) irrFlows.push(annualCFs[j]);
+  irrFlows.push(saleValue);
+  var irr=irrFromCashFlows(irrFlows);
+  var xirrFlows=[-(cashIn+loan),30000,30000,30000,30000,40000,40000,40000,40000,50000,50000,50000,50000,60000,60000,60000,60000,70000,70000,70000,saleValue];
+  var xirrDates=[
+    new Date(2025,0,1),
+    new Date(2025,0,4),
+    new Date(2025,0,7),
+    new Date(2025,0,10),
+    new Date(2026,0,1),
+    new Date(2026,0,4),
+    new Date(2026,0,7),
+    new Date(2026,0,10),
+    new Date(2027,0,1),
+    new Date(2027,0,4),
+    new Date(2027,0,7),
+    new Date(2027,0,10),
+    new Date(2028,0,1),
+    new Date(2028,0,4),
+    new Date(2028,0,7),
+    new Date(2028,0,10),
+    new Date(2029,0,1),
+    new Date(2029,0,4),
+    new Date(2029,0,7),
+    new Date(2029,0,10),
+    new Date(2030,0,1)
+  ];
+  var xirrValue=xirr(xirrFlows, xirrDates);
+  var totalCF5=annualCFs.reduce(function(a,b){return a+b;},0);
+  var investorCapital=cashIn*0.9;
+  var entrepreneurCapital=cashIn*0.1;
+  var investorShare=totalCF5;
+  var preferredReturn=investorShare;
+  var entrepreneurShare=0;
+  var cf=currentNOI-annualDebt;
+  var coc=cashIn>0?(cf/cashIn)*100:0;
+  return {units:units,price:price,cap:cap,ltv:ltv,rate:rate,term:term,growth:growth,exitCap:exitCap,years:years,offerCap:offerCap,offerPrice:offerPrice,offerDelta:offerDelta,offerRatio:offerRatio,noi:currentNOI,loan:loan,pmt:pmt,cf:cf,cashIn:cashIn,saleValue:saleValue,balance:balance,saleNet:saleNet,saleGross4:saleGross4,saleGross5:saleGross5,saleCashIn4:saleCashIn4,saleCashIn5:saleCashIn5,salePrincipal4:salePrincipal4,salePrincipal5:salePrincipal5,saleInterest4:saleInterest4,saleInterest5:saleInterest5,saleClose4:saleClose4,saleClose5:saleClose5,saleNet4:saleNet4,saleNet5:saleNet5,saleInv4:saleInv4,saleInv5:saleInv5,saleEnt4:saleEnt4,saleEnt5:saleEnt5,irr:irr,xirr:xirrValue,coc:coc,year1NOI:year1NOI,year5NOI:year5NOI,preferredReturn:preferredReturn,investorShare:investorShare,entrepreneurShare:entrepreneurShare,investorCapital:investorCapital,entrepreneurCapital:entrepreneurCapital,totalCF5:totalCF5,yearData:yearData};
+}
+
+// ===== LIVE CALC =====
+function calc(){
+  var buy=v('n-buy'),arv=v('n-arv'),cc=v('n-cc'),fee=v('n-fee');
+  var repairs=getRepairs();
+  var allIn=buy+repairs+cc+fee;
+  set('s-cash',allIn>0?fmt(allIn):'—');
+  set('s-equity',arv>0?fmt(arv-allIn):'—');
+  set('s-repairs-sync','$'+Math.round(repairs).toLocaleString());
+
+  // FLIP PREVIEW — Excel 20% scenario
+  var flipPreview=calcExcelFlip();
+  renderFlipScenarios(flipPreview);
+  var fTot=flipPreview.baseAllIn,fProfit=flipPreview.selected.profit,fROI=flipPreview.selected.cashOnCash,fAnn=fROI;
+  set('fp-buy',fmt(flipPreview.purchase));set('fp-rep',fmt(flipPreview.repairs));set('fp-hld',fmt(0));
+  set('fp-cb',fmt(flipPreview.buyClosingCosts));set('fp-cs',fmt(flipPreview.selected.actualSalePrice-flipPreview.selected.targetSalePrice));set('fp-cm',fmt(0));set('fp-hm',fmt(flipPreview.financeCost));
+  set('fp-tot',fmt(fTot));set('fp-arv',fmt(flipPreview.selected.actualSalePrice));
+  set('fp-profit',(fProfit>=0?'+':'-')+fmt(fProfit));
+  set('fp-psub','20% Excel target · '+pct(fROI)+' CoC');
+  set('fp-roi',pct(fAnn)+' cash-on-cash');
+  setColor('fp-profit',fProfit>=0);
+
+  // BRRRR PREVIEW — Excel logic
+  var brrrr=calcExcelBRRRR();
+  set('bp-allin',fmt(brrrr.allIn));
+  set('bp-arv',fmt(brrrr.appraisal));
+  set('bp-refi',fmt(brrrr.refiLoan));
+  set('bp-out','-'+fmt(brrrr.cashInDeal));
+  document.getElementById('bp-out').style.color=brrrr.cashInDeal<=0?'var(--green)':'var(--red)';
+  set('bp-left',fmt(brrrr.cashInDeal)+' cash in deal');
+  set('bp-pmt','-'+fmt(brrrr.annualDebt/12)+'/mo');
+  set('bp-eq',fmt(brrrr.appraisal-brrrr.refiLoan));
+  set('bp-cf',(brrrr.cashFlowMonthly>=0?'+':'-')+fmt(Math.abs(brrrr.cashFlowMonthly))+'/mo');
+  document.getElementById('bp-cf').style.color=brrrr.cashFlowMonthly>=0?'var(--green)':'var(--red)';
+  set('bp-coc',pct(brrrr.cashOnCash));
+  set('bp-inf','DSCR '+brrrr.dscr.toFixed(2));
+  document.getElementById('bp-inf').style.color=brrrr.dscr>=1.25?'var(--green)':'var(--red)';
+  set('bp-infsub','ROI '+pct(brrrr.roi)+' · NOI '+fmt(brrrr.noi));
+
+  // CREATIVE DEALS PREVIEW
+  var seller=calcSellerFinance();
+  set('sf-loan',fmt(seller.loan));set('sf-pmt','-'+fmt(seller.pmt)+'/mo');
+  set('sf-cf',(seller.cf>=0?'+':'')+fmt(seller.cf)+'/mo');
+  set('sf-cashin',fmt(seller.cashIn));set('sf-profit',(seller.profit>=0?'+':'')+fmt(seller.profit));
+  set('sf-balance',fmt(seller.balance));set('sf-roi',pct(seller.roi));
+  set('sf-dscr','NOI '+fmt(seller.noi)+' · CoC '+pct(seller.cashOnCash)+' · DSCR '+(seller.dscr>0?seller.dscr.toFixed(2):'—'));
+  document.getElementById('sf-profit').style.color=seller.profit>=0?'var(--green)':'var(--red)';
+
+  var rto=calcRentToOwn();
+  set('rto-collected',fmt(rto.collected));set('rto-credit-total','-'+fmt(rto.creditTotal));
+  set('rto-net-before',fmt(rto.netBeforeBuy));set('rto-gap',(rto.gap>=0?'+':'-')+fmt(Math.abs(rto.gap)));
+  set('rto-profit',fmt(rto.profit));set('rto-roi',fmt(rto.futurePrice));
+  set('rto-monthly',(rto.monthlyNet>=0?'+':'')+fmt(rto.monthlyNet)+'/mo');
+  document.getElementById('rto-profit').style.color=rto.profit>=0?'var(--green)':'var(--red)';
+
+  var sub=calcSubjectTo();
+  set('sub-pmt','-'+fmt(sub.pmt)+'/mo');set('sub-noi',fmt(sub.noi));
+  set('sub-cf',(sub.cf>=0?'+':'')+fmt(sub.cf)+'/mo');set('sub-dscr',sub.dscr>0?sub.dscr.toFixed(2):'—');
+  set('sub-profit',(sub.profit>=0?'+':'')+fmt(sub.profit));set('sub-balance',pct(sub.balance));
+  set('sub-roi',pct(sub.roi));set('sub-cashin',fmt(sub.cashIn)+' cash in');
+  set('sub-original','-'+fmt(sub.originalPmt)+'/mo');
+  set('sub-buyer',fmt(sub.buyerPmt)+'/mo');
+  set('sub-owner',fmt(sub.ownerProfitAnnual)+'/yr');
+  document.getElementById('sub-profit').style.color=sub.profit>=0?'var(--green)':'var(--red)';
+  var sub2=calcSubjectToOptionTwo();
+  set('sub2-noi',fmt(sub2.noi));
+  set('sub2-cf',(sub2.annualCF>=0?'+':'-')+fmt(Math.abs(sub2.annualCF))+'/yr · '+(sub2.cf>=0?'+':'-')+fmt(Math.abs(sub2.cf))+'/mo');
+  set('sub2-roi',pct(sub2.roi));
+  set('sub2-coc','CoC '+pct(sub2.coc));
+  set('sub2-dscr',sub2.dscr.toFixed(2));
+  set('sub2-cashin',fmt(sub2.cashIn)+' cash in');
+  var sub3=calcSubjectToOptionThree();
+  set('sub3-noi',fmt(sub3.noi));
+  set('sub3-cf',(sub3.annualCF>=0?'+':'-')+fmt(Math.abs(sub3.annualCF))+'/yr · '+(sub3.cf>=0?'+':'-')+fmt(Math.abs(sub3.cf))+'/mo');
+  set('sub3-roi',pct(sub3.roi));
+  set('sub3-coc','CoC '+pct(sub3.coc));
+  set('sub3-dscr',sub3.dscr.toFixed(2));
+  set('sub3-owner','Owner profit '+fmt(sub3.ownerProfitAnnual)+'/yr');
+
+  var mf=calcMultifamily();
+  set('mf-noi',fmt(mf.noi));set('mf-pmt','-'+fmt(mf.pmt*12)+'/yr');set('mf-cf',(mf.cf>=0?'+':'-')+fmt(Math.abs(mf.cf))+'/yr');
+  set('mf-cashin',fmt(mf.cashIn));set('mf-sale',(mf.saleNet>=0?'+':'-')+fmt(Math.abs(mf.saleNet)));set('mf-coc',pct(mf.coc));
+  set('mf-irr',(isFinite(mf.irr)?pct(mf.irr):'—')+' / '+(isFinite(mf.xirr)?pct(mf.xirr):'—'));set('mf-exit','Gross sale '+fmt(mf.saleValue)+' · net pre tax '+(mf.saleNet>=0?'+':'-')+fmt(Math.abs(mf.saleNet))+' · pref '+fmt(mf.preferredReturn));
+  set('mf-investor-cap',fmt(mf.investorCapital));
+  set('mf-entrepreneur-cap',fmt(mf.entrepreneurCapital));
+  set('mf-y1',fmt(mf.year1NOI));set('mf-y5',fmt(mf.year5NOI));
+  set('mf-pref',fmt(mf.preferredReturn));set('mf-invshare',fmt(mf.investorShare)+' / '+fmt(mf.entrepreneurShare));
+  set('mf-offer-price',fmt(mf.offerPrice));
+  set('mf-offer-delta',(mf.offerDelta>=0?'+':'-')+fmt(Math.abs(mf.offerDelta)));
+  set('mf-offer-ratio',pct((mf.offerRatio-1)*100));
+  set('mf-offer-noi',fmt(mf.noi));
+  set('mf-sale-gross4',fmt(mf.saleGross4));set('mf-sale-gross5',fmt(mf.saleGross5));
+  set('mf-sale-cashin4',fmt(mf.saleCashIn4));set('mf-sale-cashin5',fmt(mf.saleCashIn5));
+  set('mf-sale-principal4',fmt(mf.salePrincipal4));set('mf-sale-principal5',fmt(mf.salePrincipal5));
+  set('mf-sale-interest4',fmt(mf.saleInterest4));set('mf-sale-interest5',fmt(mf.saleInterest5));
+  set('mf-sale-close4',fmt(mf.saleClose4));set('mf-sale-close5',fmt(mf.saleClose5));
+  set('mf-sale-net4',(mf.saleNet4>=0?'+':'-')+fmt(Math.abs(mf.saleNet4)));set('mf-sale-net5',(mf.saleNet5>=0?'+':'-')+fmt(Math.abs(mf.saleNet5)));
+  set('mf-sale-inv4',(mf.saleInv4>=0?'+':'-')+fmt(Math.abs(mf.saleInv4)));set('mf-sale-inv5',(mf.saleInv5>=0?'+':'-')+fmt(Math.abs(mf.saleInv5)));
+  set('mf-sale-ent4',(mf.saleEnt4>=0?'+':'-')+fmt(Math.abs(mf.saleEnt4)));set('mf-sale-ent5',(mf.saleEnt5>=0?'+':'-')+fmt(Math.abs(mf.saleEnt5)));
+  document.getElementById('mf-sale').style.color=mf.saleNet>=0?'var(--green)':'var(--red)';
+  var mfRows=['gross','exp','noi','cf'];
+  var yearsLabels=['0','1','2','3','4','5'];
+  for(var y=0;y<=5;y++){
+    var d=mf.yearData[y] || {gross:0,exp:0,noi:0,cf:0};
+    set('mf-t-gross'+y,fmt(d.gross));
+    set('mf-t-exp'+y,fmt(d.exp));
+    set('mf-t-noi'+y,fmt(d.noi));
+    set('mf-t-cf'+y,(d.cf>=0?'+':'-')+fmt(Math.abs(d.cf)));
+    set('mf-t-debt'+y,'-'+fmt(mf.pmt*12));
+  }
+}
+
+// ===== ANALYZE =====
+function analyze(opts){
+  opts=opts||{};
+  var shouldNavigate=opts.navigate!==false;
+  var shouldOpenBestTab=opts.openBestTab!==false;
+  calc();
+  var buy=v('n-buy'),arv=v('n-arv'),cc=v('n-cc'),fee=v('n-fee'),repairs=getRepairs();
+  var allIn=buy+repairs+cc+fee;
+  var csell=v('f-csell'),comm=v('f-comm')/100,hold=v('f-hold'),mo=num('f-mo',4),hmr=v('f-hmr')/100,hmp=v('f-hmp')/100;
+  var rent=v('n-rent'),nightly=v('n-nightly'),occ=num('n-occ',65)/100;
+  var tax=v('n-tax'),ins=v('n-ins'),maint=v('n-maint'),mgmt=num('n-mgmt',10)/100,vac=num('n-vac',8)/100,clean=v('n-clean');
+  // FLIP — Excel scenario model
+  var flipExcel=calcExcelFlip();
+  var fHold=0,fComm=0,fHM=flipExcel.financeCost;
+  var fTot=flipExcel.baseAllIn;
+  var fProfit=flipExcel.selected.profit;
+  var fROI=flipExcel.selected.cashOnCash;
+  var fAnn=fROI;
+
+  // HOLD — Excel Buy and Hold model
+  var holdExcel=calcExcelBuyHold();
+  var holdCF=holdExcel.cashFlowMonthly;
+  var holdNOI=holdExcel.noi;
+  var capRate=0;
+  var holdCOC=holdExcel.cashOnCash;
+
+  // BRRRR — Excel BRRRR + Leverage model
+  var brrrrExcel=calcExcelBRRRR();
+  var refi=brrrrExcel.refiLoan;
+  var cashOut=-brrrrExcel.cashInDeal;
+  var leftOver=brrrrExcel.cashInDeal;
+  var pmt=brrrrExcel.annualDebt/12;
+  var brrrrCF=brrrrExcel.cashFlowMonthly;
+  var bCOC=brrrrExcel.cashOnCash;
+  var infinite=false;
+  var equityCreated=brrrrExcel.appraisal-brrrrExcel.refiLoan;
+
+  // AIRBNB
+  var grossRev=nightly*30*occ,airFee=grossRev*.03,airExp=tax+ins+maint+clean+airFee;
+  var airCF=grossRev-airExp,airROI=allIn>0?(airCF*12/allIn)*100:0,airVsLTR=airCF-holdCF;
+  var seller=calcSellerFinance();
+  var rto=calcRentToOwn();
+  var sub=calcSubjectTo();
+  var mf=calcMultifamily();
+
+  // POPULATE FLIP — Excel 20% scenario
+  set('d-flip-buy',fmt(flipExcel.purchase));set('d-flip-rep',fmt(flipExcel.repairs));set('d-flip-hld',fmt(0));
+  set('d-flip-cb',fmt(flipExcel.buyClosingCosts));set('d-flip-cs',fmt(flipExcel.selected.actualSalePrice-flipExcel.selected.targetSalePrice));
+  set('d-flip-cm',fmt(0));set('d-flip-hm',fmt(flipExcel.financeCost));
+  set('d-flip-tot',fmt(fTot));set('d-flip-arv',fmt(flipExcel.selected.actualSalePrice));
+  set('d-flip-profit',(fProfit>=0?'+':'-')+fmt(fProfit));
+  set('d-flip-psub','20% Excel target scenario');
+  set('d-flip-roi',pct(fAnn)+' cash-on-cash');
+  var fpb=document.getElementById('d-flip-profit-box');
+  fpb.className='stat-box '+(fProfit>=0?'green':'red');
+  set('v-flip','Excel Flip + Leverage: 20% target profit scenario. Base all-in '+fmt(flipExcel.baseAllIn)+', target sale '+fmt(flipExcel.selected.targetSalePrice)+', actual sale price after sale lines '+fmt(flipExcel.selected.actualSalePrice)+', profit '+fmt(flipExcel.selected.profit)+', cash-on-cash '+pct(flipExcel.selected.cashOnCash)+'.');
+
+  // POPULATE HOLD — Excel Buy and Hold
+  set('d-hold-rent',fmt(holdExcel.rentMonthly));
+  set('d-hold-vac','-'+fmt(holdExcel.vacancy));
+  set('d-hold-tax','-'+fmt(holdExcel.propertyTaxes/12));
+  set('d-hold-ins','-'+fmt(holdExcel.insurance/12));
+  set('d-hold-maint','-'+fmt(holdExcel.maintenance/12));
+  set('d-hold-mgmt','-'+fmt(holdExcel.management/12));
+  set('d-hold-noi',fmt(holdExcel.noi));
+  set('d-hold-cf',(holdExcel.cashFlowMonthly>=0?'+':'-')+fmt(Math.abs(holdExcel.cashFlowMonthly))+'/mo');
+  document.getElementById('d-hold-cf').style.color=holdExcel.cashFlowMonthly>=0?'var(--green)':'var(--red)';
+  set('d-hold-annual',fmt(holdExcel.cashFlowAnnual)+'/year');
+  set('d-hold-cap','—');
+  set('d-hold-coc',holdExcel.cashInDeal>0?pct(holdExcel.cashOnCash):'—');
+  set('v-hold','Excel Buy & Hold: NOI '+fmt(holdExcel.noi)+', annual debt '+fmt(holdExcel.annualDebt)+', annual cash flow '+fmt(holdExcel.cashFlowAnnual)+', DSCR '+holdExcel.dscr.toFixed(2)+'. ROI/CoC need a valid Cash in Deal value in the Excel model.');
+
+  // POPULATE BRRRR — Excel BRRRR + Leverage
+  set('d-brrrr-allin',fmt(brrrrExcel.allIn));
+  set('d-brrrr-arv',fmt(brrrrExcel.appraisal));
+  set('d-brrrr-refi',fmt(brrrrExcel.refiLoan));
+  set('d-brrrr-out','-'+fmt(brrrrExcel.cashInDeal));
+  document.getElementById('d-brrrr-out').style.color=brrrrExcel.cashInDeal<=0?'var(--green)':'var(--red)';
+  set('d-brrrr-left',fmt(brrrrExcel.cashInDeal)+' cash in deal');
+  set('d-brrrr-pmt','-'+fmt(brrrrExcel.annualDebt/12)+'/mo');
+  set('d-brrrr-eq',fmt(brrrrExcel.appraisal-brrrrExcel.refiLoan));
+  set('d-brrrr-cf',(brrrrExcel.cashFlowMonthly>=0?'+':'-')+fmt(Math.abs(brrrrExcel.cashFlowMonthly))+'/mo');
+  document.getElementById('d-brrrr-cf').style.color=brrrrExcel.cashFlowMonthly>=0?'var(--green)':'var(--red)';
+  set('d-brrrr-coc',pct(brrrrExcel.cashOnCash));
+  set('d-brrrr-inf','DSCR '+brrrrExcel.dscr.toFixed(2));
+  document.getElementById('d-brrrr-inf').style.color=brrrrExcel.dscr>=1.25?'var(--green)':'var(--red)';
+  set('d-brrrr-infsub','ROI '+pct(brrrrExcel.roi)+' · NOI '+fmt(brrrrExcel.noi));
+  set('v-brrrr','Excel BRRRR: cash in deal '+fmt(brrrrExcel.cashInDeal)+', NOI '+fmt(brrrrExcel.noi)+', annual cash flow '+fmt(brrrrExcel.cashFlowAnnual)+', monthly cash flow '+fmt(brrrrExcel.cashFlowMonthly)+', ROI '+pct(brrrrExcel.roi)+', DSCR '+brrrrExcel.dscr.toFixed(2)+'.');
+
+  // POPULATE AIRBNB
+  set('d-airbnb-nightly',fmt(nightly));set('d-airbnb-occ',Math.round(occ*100)+'%');
+  set('d-airbnb-gross',fmt(grossRev));set('d-airbnb-fee','-'+fmt(airFee));
+  set('d-airbnb-clean','-'+fmt(clean));set('d-airbnb-exp','-'+fmt(tax+ins+maint));
+  set('d-airbnb-totexp',fmt(airExp));
+  set('d-airbnb-cf',(airCF>=0?'+':'')+fmt(airCF)+'/mo');
+  document.getElementById('d-airbnb-cf').style.color=airCF>=0?'var(--green)':'var(--red)';
+  set('d-airbnb-annual','$'+Math.round(airCF*12).toLocaleString()+'/yr');
+  set('d-airbnb-vs',(airVsLTR>=0?'+':'')+fmt(airVsLTR)+'/mo');
+  document.getElementById('d-airbnb-vs').style.color=airVsLTR>=0?'var(--green)':'var(--red)';
+  set('d-airbnb-roi',pct(airROI));
+  set('v-airbnb','STR gross: '+fmt(grossRev)+'/mo at '+Math.round(occ*100)+'% occupancy. Net: '+fmt(airCF)+'/mo. '+(airVsLTR>0?'Outperforms LTR by '+fmt(airVsLTR)+'/mo.':'Underperforms LTR by '+fmt(Math.abs(airVsLTR))+'/mo.'));
+
+  // SCORING
+  var sellerScore=Math.max(0,Math.min(100,(seller.roi*1.2)+(seller.cf>0?12:0)+(seller.profit>0?8:0)));
+  var rtoScore=Math.max(0,Math.min(100,(rto.roi*1.2)+(rto.profit>0?10:0)+(rto.monthlyNet>0?8:0)));
+  var subScore=Math.max(0,Math.min(100,(sub.roi*1.2)+(sub.cf>0?15:0)+(sub.dscr>=1.25?10:0)+(sub.cashIn<100000?5:0)));
+  var mfScore=Math.max(0,Math.min(100,(isFinite(mf.irr)?mf.irr:0)+(mf.coc/3)+(mf.saleNet>0?15:0)));
+  var scores={
+    flip:Math.max(0,fProfit>0?Math.min(100,fROI*2.5):0),
+    hold:Math.max(0,holdExcel.cashFlowAnnual>0?Math.min(100,(holdExcel.dscr*20)+(holdExcel.cashFlowAnnual/500)):0),
+    brrrr:Math.max(0,Math.min(100,(brrrrExcel.roi*3)+(brrrrExcel.dscr>=1.25?15:0)+(brrrrExcel.cashFlowAnnual>0?10:0))),
+    airbnb:Math.max(0,airCF>0?Math.min(100,airROI*5):0),
+    seller:sellerScore,
+    rto:rtoScore,
+    sub:subScore,
+    mf:mfScore
+  };
+  var winner=Object.entries(scores).sort((a,b)=>b[1]-a[1])[0][0];
+
+  setTimeout(()=>{
+    ['flip','hold','brrrr','airbnb','seller','rto','sub','mf'].forEach(s=>{
+      var bar=document.getElementById('sb-'+s);
+      if(bar) bar.style.width=Math.max(2,scores[s])+'%';
+    });
+  },200);
+
+  ['flip','hold','brrrr','airbnb','seller','rto','sub','mf'].forEach(s=>{
+    var r=document.getElementById('row-'+s);
+    if(!r)return;
+    r.classList.toggle('best',s===winner);
+    var n=r.querySelector('.cmp-name');
+    var ex=n.querySelector('.crown');
+    if(s===winner&&!ex){var c=document.createElement('span');c.className='crown';c.textContent='★';n.appendChild(c);}
+    else if(s!==winner&&ex)ex.remove();
+  });
+
+  set('t-flip-cf',fProfit>=0?fmt(fProfit):'-'+fmt(fProfit));set('t-flip-roi',pct(fROI));set('t-flip-cash',fmt(flipExcel.outOfPocket));
+  set('t-hold-cf',(holdCF>=0?'+':'-')+fmt(Math.abs(holdCF))+'/mo');set('t-hold-roi',holdExcel.cashInDeal>0?pct(holdCOC):'—');set('t-hold-cash',holdExcel.cashInDeal>0?fmt(holdExcel.cashInDeal):'—');
+  set('t-brrrr-cf',(brrrrCF>=0?'+':'-')+fmt(Math.abs(brrrrCF))+'/mo');set('t-brrrr-roi',pct(brrrrExcel.roi));set('t-brrrr-cash',fmt(leftOver));
+  set('t-airbnb-cf',fmt(airCF)+'/mo');set('t-airbnb-roi',pct(airROI));set('t-airbnb-cash',fmt(allIn));
+  set('t-seller-cf',(seller.cf>=0?'+':'')+fmt(seller.cf)+'/mo');set('t-seller-roi',pct(seller.roi));set('t-seller-cash',fmt(seller.cashIn));
+  set('t-rto-cf',(rto.monthlyNet>=0?'+':'')+fmt(rto.monthlyNet)+'/mo');set('t-rto-roi',pct(rto.roi));set('t-rto-cash',fmt(rto.upfront));
+  set('t-sub-cf',(sub.cf>=0?'+':'')+fmt(sub.cf)+'/mo');set('t-sub-roi',pct(sub.roi));set('t-sub-cash',fmt(sub.cashIn));
+  set('t-mf-cf',(mf.cf>=0?'+':'')+fmt(mf.cf)+'/yr');set('t-mf-roi',isFinite(mf.irr)?pct(mf.irr):'—');set('t-mf-cash',fmt(mf.cashIn));
+
+  var names={flip:'Fix & Flip',hold:'Buy & Hold',brrrr:'BRRRR',airbnb:'Airbnb STR',seller:'Seller Financing',rto:'Rent to Own',sub:'SUB TO',mf:'Multi Family'};
+  var whys={flip:'Excel Flip + Leverage 20% target scenario: profit '+fmt(flipExcel.selected.profit)+' and cash-on-cash '+pct(flipExcel.selected.cashOnCash)+'.',hold:'Excel Buy & Hold: NOI '+fmt(holdExcel.noi)+', monthly cash flow '+fmt(holdExcel.cashFlowMonthly)+', DSCR '+holdExcel.dscr.toFixed(2)+'.',brrrr:'Excel BRRRR + Leverage: cash in deal '+fmt(brrrrExcel.cashInDeal)+', NOI '+fmt(brrrrExcel.noi)+', ROI '+pct(brrrrExcel.roi)+', DSCR '+brrrrExcel.dscr.toFixed(2)+'.',airbnb:'STR generates '+fmt(airCF)+'/mo, outperforming all other strategies here.',seller:'Seller-finance model shows '+fmt(seller.cf)+'/mo cash flow and a '+pct(seller.roi)+' ROI using the spreadsheet principal-paydown model.',rto:'Lease-option model keeps upfront cash low and shows the gap between bank cash-back and the final buyout.',sub:'SUB TO keeps the existing financing in place and measures NOI, debt service, cash flow, and principal paydown.',mf:'Multifamily compares cap-rate income, debt service, and sale proceeds with a long-term IRR view.'};
+  var cfMap={flip:fmt(flipExcel.selected.profit),hold:(holdExcel.cashFlowMonthly>=0?'+':'-')+fmt(Math.abs(holdExcel.cashFlowMonthly))+'/mo',brrrr:(brrrrExcel.cashFlowMonthly>=0?'+':'-')+fmt(Math.abs(brrrrExcel.cashFlowMonthly))+'/mo',airbnb:fmt(airCF)+'/mo',seller:fmt(seller.cf)+'/mo',rto:fmt(rto.monthlyNet)+'/mo',sub:fmt(sub.cf)+'/mo',mf:fmt(mf.cf)+'/yr'};
+  var roiMap={flip:pct(flipExcel.selected.cashOnCash),hold:holdExcel.cashInDeal>0?pct(holdExcel.cashOnCash):'—',brrrr:pct(brrrrExcel.roi),airbnb:pct(airROI),seller:pct(seller.roi),rto:pct(rto.roi),sub:pct(sub.roi),mf:isFinite(mf.irr)?pct(mf.irr):'—'};
+  var cashMap={flip:fmt(flipExcel.outOfPocket),hold:holdExcel.cashInDeal>0?fmt(holdExcel.cashInDeal):'—',brrrr:fmt(brrrrExcel.cashInDeal),airbnb:fmt(allIn),seller:fmt(seller.cashIn),rto:fmt(rto.upfront),sub:fmt(sub.cashIn),mf:fmt(mf.cashIn)};
+
+  set('w-name',names[winner]);set('w-why',whys[winner]);set('w-cf',cfMap[winner]);set('w-roi',roiMap[winner]);set('w-cash',cashMap[winner]);
+
+  if(shouldNavigate){
+    goTo('p8');
+    if(shouldOpenBestTab && ['flip','hold','brrrr','airbnb'].indexOf(winner)!==-1) openTab(winner);
+  }
+}
+
+// ===== SHARE LINK =====
+function genLink(){
+  var fields=['n-buy','n-arv','n-cc','n-fee','n-rent','n-nightly','n-occ','n-tax','n-ins','n-maint','n-mgmt','n-vac','n-clean','f-csell','f-comm','f-hold','f-mo','f-hmr','f-hmp','b-ltv','b-rate','b-term','b-rcc','sf-price','sf-down','sf-closing','sf-upgrades','sf-rate','sf-term','sf-principal','sf-rent','sf-tax','sf-insurance','sf-maint','sf-mgmt','sf-market','sf-growth','sf-years','rto-final','rto-upfront','rto-gross','rto-net','rto-credit','rto-months','rto-third-rent','rto-growth','rto-ltv','sub-price','sub-cash','sub-mortgage','sub-rate','sub-term','sub-rent','sub-tax','sub-ins','sub-maint','sub-close','sub-principal','sub-interest','sub-buyer-annual-debt','sub2-price','sub2-cash','sub2-mortgage','sub2-seller-loan','sub2-close','sub2-tc','sub2-rent','sub2-tax','sub2-ins','sub2-hoa','sub2-maint','sub2-debt','sub2-seller-debt','sub2-principal','sub3-price','sub3-cash','sub3-mortgage','sub3-close','sub3-rent','sub3-tax','sub3-ins','sub3-maint','sub3-debt','sub3-original-debt','sub3-principal','mf-units','mf-price','mf-cap','mf-ltv','mf-rate','mf-term','mf-growth','mf-exitcap','mf-years','mf-close','mf-acq-fee','mf-legal','mf-renovation','mf-reserve-pct','mf-offer-cap','mf-base-income','mf-income-growth','mf-vacancy','mf-mgmt','mf-maint-pct','mf-capex-pct','mf-utilities','mf-insurance','mf-property-tax','mf-other-fixed','mf-extermination','mf-tenant-replace','mf-late-fees','mf-laundry','mf-deposit-forfeit','mf-garbage','mf-landscaping','mf-pool','mf-marketing','mf-hoa','mf-payroll','brrrr-purchase','brrrr-repairs','brrrr-hard-loan','brrrr-service-fee','brrrr-title-lender-insurance','brrrr-recording-fee','brrrr-hard-monthly-return','brrrr-hard-months','brrrr-lien-search','brrrr-title-search','brrrr-title-fee','brrrr-appraisal','brrrr-refi-ltv','brrrr-rent-monthly','brrrr-management-annual','brrrr-property-tax','brrrr-insurance','brrrr-hoa','brrrr-vacancy','brrrr-maintenance-pct','brrrr-refi-monthly-payment','brrrr-annual-principal','hold-rent-monthly','hold-property-tax','hold-insurance','hold-hoa','hold-vacancy','hold-monthly-payment','hold-annual-principal','hold-cash-in-deal','flip-purchase','flip-repairs','flip-buy-closing','flip-finance-cost','flip-out-of-pocket','flip-selected-target','addr'];
+  var data={};
+  // Only include fields with actual values to keep URL short
+  fields.forEach(id=>{var el=document.getElementById(id);if(el&&el.value&&el.value!=='0')data[id]=el.value;});
+  var enc=btoa(encodeURIComponent(JSON.stringify(data)));
+  document.getElementById('share-url').value=window.location.href.split('#')[0]+'#d='+enc;
+  document.getElementById('link-wrap').style.display='block';
+}
+function copyLink(){
+  navigator.clipboard.writeText(document.getElementById('share-url').value).then(()=>{
+    var el=document.getElementById('copied-msg');el.style.display='block';
+    setTimeout(()=>el.style.display='none',2500);
+  });
+}
+
+// ===== CSV IMPORT / EXPORT =====
+function csvEscape(val){
+  var s=String(val===undefined||val===null?'':val);
+  return '"'+s.replace(/"/g,'""')+'"';
+}
+function csvJoin(values){
+  return values.map(csvEscape).join(',');
+}
+function parseCsv(text){
+  var rows=[];
+  var row=[];
+  var cell='';
+  var inQuotes=false;
+  text=String(text||'').replace(/^\uFEFF/,'');
+  for(var i=0;i<text.length;i++){
+    var ch=text[i];
+    var next=text[i+1];
+    if(inQuotes){
+      if(ch==='"' && next==='"'){ cell+='"'; i++; }
+      else if(ch==='"'){ inQuotes=false; }
+      else { cell+=ch; }
+      continue;
+    }
+    if(ch==='"'){ inQuotes=true; continue; }
+    if(ch===','){ row.push(cell); cell=''; continue; }
+    if(ch==='\r'){ continue; }
+    if(ch==='\n'){ row.push(cell); rows.push(row); row=[]; cell=''; continue; }
+    cell+=ch;
+  }
+  row.push(cell);
+  if(row.length>1 || row[0]!=='' || rows.length===0) rows.push(row);
+  return rows;
+}
+function csvObjects(text){
+  var rows=parseCsv(text);
+  if(rows.length<2) throw new Error('CSV file is missing data rows.');
+  var headers=rows[0].map(function(h){return String(h||'').trim();});
+  return rows.slice(1).filter(function(r){
+    return r.some(function(cell){return String(cell||'').trim()!=='';});
+  }).map(function(r){
+    var obj={};
+    headers.forEach(function(h,i){ obj[h]=r[i]!==undefined?r[i]:''; });
+    return obj;
+  });
+}
+function inferCsvSection(el){
+  var winner=el.closest('.winner');
+  if(winner) return 'Results - Summary';
+  var cmp=el.closest('.cmp-table');
+  if(cmp) return 'Results - Comparison';
+  var tab=el.closest('.tab-panel');
+  if(tab){
+    if(tab.id==='tp-flip') return 'Results - Fix & Flip';
+    if(tab.id==='tp-hold') return 'Results - Buy & Hold';
+    if(tab.id==='tp-brrrr') return 'Results - BRRRR';
+    if(tab.id==='tp-airbnb') return 'Results - Airbnb';
+  }
+  var card=el.closest('.card');
+  if(card){
+    var title=card.querySelector('.card-title');
+    if(title) return title.textContent.trim();
+  }
+  return 'Results';
+}
+function inferCsvLabel(el){
+  if(el.id.indexOf('sb-')===0){
+    var row=el.closest('.cmp-row');
+    var name=row ? row.querySelector('.cmp-name') : null;
+    return (name ? name.textContent.replace(/\s*★\s*/g,' ').trim() : el.id)+' Score Bar';
+  }
+  var dr=el.closest('.dr');
+  if(dr){
+    var dl=dr.querySelector('.dl');
+    if(dl) return dl.textContent.trim();
+  }
+  var stat=el.closest('.stat-box');
+  if(stat){
+    var sl=stat.querySelector('.stat-label');
+    if(sl) return sl.textContent.trim();
+  }
+  var winnerStat=el.closest('.wst');
+  if(winnerStat){
+    var wl=winnerStat.querySelector('.wl');
+    if(wl) return wl.textContent.trim();
+  }
+  if(el.id==='w-name') return 'Best Strategy';
+  if(el.id==='w-why') return 'Why';
+  return el.id.replace(/-/g,' ');
+}
+function collectCsvInputRows(){
+  var rows=[];
+  document.querySelectorAll('.page:not(#p8) .field').forEach(function(field){
+    var labelEl=field.querySelector('label');
+    var control=field.querySelector('input,select,textarea');
+    if(!labelEl || !control || !control.id || control.type==='file') return;
+    var card=field.closest('.card');
+    rows.push({
+      key:control.id,
+      label:labelEl.textContent.trim(),
+      value:control.value,
+      section:card && card.querySelector('.card-title') ? card.querySelector('.card-title').textContent.trim() : 'Inputs',
+      type:'input'
+    });
+  });
+  return rows;
+}
+function collectCsvRepairRows(){
+  var rows=[];
+  document.querySelectorAll('#rtbody tr').forEach(function(tr,idx){
+    var inputs=tr.querySelectorAll('input,select');
+    if(!inputs.length) return;
+    var desc=(inputs[0] && inputs[0].value || '').trim();
+    var cat=(inputs[1] && inputs[1].value || '').trim();
+    var cont=(inputs[2] && inputs[2].value || '').trim();
+    var cost=(inputs[3] && inputs[3].value || '').trim();
+    var stat=(inputs[4] && inputs[4].value || '').trim();
+    if(!desc && !cat && !cont && !cost && !stat) return;
+    var n=rows.length+1;
+    rows.push({key:'repair_'+n+'_desc',label:'Repair '+n+' Description',value:desc,section:'Repairs',type:'input'});
+    rows.push({key:'repair_'+n+'_cat',label:'Repair '+n+' Category',value:cat,section:'Repairs',type:'input'});
+    rows.push({key:'repair_'+n+'_cont',label:'Repair '+n+' Contractor',value:cont,section:'Repairs',type:'input'});
+    rows.push({key:'repair_'+n+'_cost',label:'Repair '+n+' Cost',value:cost,section:'Repairs',type:'input'});
+    rows.push({key:'repair_'+n+'_stat',label:'Repair '+n+' Status',value:stat,section:'Repairs',type:'input'});
+  });
+  return rows;
+}
+function collectCsvComputedRows(){
+  var rows=[];
+  var exclude={ 'share-url':true, 'copied-msg':true, 'link-wrap':true };
+  document.querySelectorAll('#p8 [id]').forEach(function(el){
+    if(exclude[el.id]) return;
+    if(el.matches('input,select,textarea,button')) return;
+    if(el.children.length>0 && el.id.indexOf('sb-')!==0) return;
+    var value=el.id.indexOf('sb-')===0 ? (el.style.width || '0%') : (el.textContent||'').trim();
+    rows.push({
+      key:el.id,
+      label:inferCsvLabel(el),
+      value:value,
+      section:inferCsvSection(el),
+      type:'computed'
+    });
+  });
+  return rows;
+}
+function buildCsvRows(){
+  analyze({navigate:false,openBestTab:true});
+  return collectCsvInputRows().concat(collectCsvRepairRows()).concat(collectCsvComputedRows());
+}
+function exportCsv(){
+  var rows=buildCsvRows();
+  var lines=[csvJoin(['section','type','key','label','value'])];
+  rows.forEach(function(row){
+    lines.push(csvJoin([row.section,row.type,row.key,row.label,row.value]));
+  });
+  var blob=new Blob([lines.join('\n')],{type:'text/csv;charset=utf-8;'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;
+  a.download='hillel-deal-data.csv';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(url); },1500);
+}
+function importCsvFile(input){
+  var file=input && input.files && input.files[0];
+  if(!file) return;
+  var reader=new FileReader();
+  reader.onload=function(){
+    try{
+      importCsvText(reader.result);
+      input.value='';
+    }catch(err){
+      alert('Could not load CSV: '+(err && err.message ? err.message : 'invalid format'));
+      input.value='';
+    }
+  };
+  reader.readAsText(file);
+}
+function importCsvText(text){
+  var rows=csvObjects(text);
+  var direct=[];
+  var repairs={};
+  rows.forEach(function(row){
+    if(String(row.type||'').toLowerCase()!=='input') return;
+    var key=String(row.key||'').trim();
+    var val=row.value===undefined ? '' : String(row.value);
+    var m=key.match(/^repair_(\d+)_(desc|cat|cont|cost|stat)$/);
+    if(m){
+      var idx=parseInt(m[1],10);
+      if(!repairs[idx]) repairs[idx]={desc:'',cat:'',cont:'',cost:'',stat:'Estimated'};
+      repairs[idx][m[2]]=val;
+      return;
+    }
+    direct.push({key:key,value:val});
+  });
+  direct.forEach(function(item){
+    var el=document.getElementById(item.key);
+    if(!el || el.type==='file') return;
+    el.value=item.value;
+  });
+  var tbody=document.getElementById('rtbody');
+  tbody.innerHTML='';
+  rowId=0;
+  var keys=Object.keys(repairs).map(function(k){return parseInt(k,10);}).sort(function(a,b){return a-b;});
+  if(keys.length){
+    keys.forEach(function(k){
+      var r=repairs[k];
+      addRow(r.desc||'',r.cat||'',r.cont||'',r.cost||'',r.stat||'Estimated');
+    });
+  }else{
+    addRow('','','','','Estimated');
+  }
+  sumRepairs();
+  calc();
+  if(document.getElementById('p8').classList.contains('active')){
+    analyze({navigate:false,openBestTab:true});
+  }
+}
+
+// ===== REPORT / EXPORT =====
+function escHtml(v){
+  return String(v===undefined||v===null?'':v)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+function formatPlainNumber(n){
+  var num=Number(n);
+  if(!isFinite(num)) return String(n);
+  return num.toLocaleString('en-US',{maximumFractionDigits:2});
+}
+function formatCurrencyValue(n){
+  var num=Number(n);
+  if(!isFinite(num)) return '—';
+  return '$'+num.toLocaleString('en-US',{maximumFractionDigits:2});
+}
+function formatFieldValue(el){
+  if(!el) return '—';
+  if(el.type==='checkbox') return el.checked?'Yes':'No';
+  var raw=(el.value||'').trim();
+  if(raw==='') return '—';
+  if(el.tagName==='TEXTAREA') return raw;
+  var num=Number(raw);
+  var pref=el.closest('.prefixed');
+  var sufWrap=el.closest('.suffixed');
+  if(isFinite(num) && (pref || sufWrap || el.type==='number')){
+    if(pref) return formatCurrencyValue(num);
+    if(sufWrap){
+      var suf=sufWrap.getAttribute('data-suf')||'';
+      return formatPlainNumber(num)+(suf ? suf : '');
+    }
+    return formatPlainNumber(num);
+  }
+  return raw;
+}
+function collectFormSections(){
+  var sections=[];
+  document.querySelectorAll('.page:not(#p8) .card').forEach(function(card){
+    var titleEl=card.querySelector('.card-title');
+    if(!titleEl) return;
+    var items=[];
+    card.querySelectorAll('.field').forEach(function(field){
+      var labelEl=field.querySelector('label');
+      var inputEl=field.querySelector('input,select,textarea');
+      if(!labelEl || !inputEl || inputEl.type==='hidden') return;
+      var value=formatFieldValue(inputEl);
+      items.push({label:labelEl.textContent.trim(),value:value});
+    });
+    if(items.length) sections.push({title:titleEl.textContent.trim(),items:items});
+  });
+  return sections;
+}
+function collectRepairRows(){
+  var rows=[];
+  document.querySelectorAll('#rtbody tr').forEach(function(tr){
+    var inputs=tr.querySelectorAll('input,select');
+    if(!inputs.length) return;
+    var desc=(inputs[0]&&inputs[0].value||'').trim();
+    var cat=(inputs[1]&&inputs[1].value||'').trim();
+    var cont=(inputs[2]&&inputs[2].value||'').trim();
+    var cost=(inputs[3]&&inputs[3].value||'').trim();
+    var stat=(inputs[4]&&inputs[4].value||'').trim();
+    if(!desc && !cat && !cont && !cost && !stat) return;
+    rows.push({
+      desc:desc||'—',
+      cat:cat||'—',
+      cont:cont||'—',
+      cost:cost ? formatCurrencyValue(cost) : '—',
+      stat:stat||'—'
+    });
+  });
+  return rows;
+}
+function buildReportData(){
+  analyze({navigate:false,openBestTab:false});
+  var winner=document.getElementById('w-name').textContent.trim()||'—';
+  var why=document.getElementById('w-why').textContent.trim()||'—';
+  var profit=document.getElementById('w-cf').textContent.trim()||'—';
+  var roi=document.getElementById('w-roi').textContent.trim()||'—';
+  var cash=document.getElementById('w-cash').textContent.trim()||'—';
+  var analysis={
+    title:document.querySelector('.winner-eyebrow')?.textContent.trim()||'Analysis Summary',
+    winner:winner,
+    why:why,
+    profit:profit,
+    roi:roi,
+    cash:cash
+  };
+  return {
+    generatedAt:new Date(),
+    propertyAddress:(document.getElementById('addr').value||'').trim()||'—',
+    analysis:analysis,
+    sections:collectFormSections(),
+    repairs:collectRepairRows()
+  };
+}
+function renderPrintReport(data){
+  var sectionsHtml=data.sections.map(function(section){
+    var itemsHtml=section.items.map(function(item){
+      return '<div class="report-item"><div class="label">'+escHtml(item.label)+'</div><div class="value">'+escHtml(item.value)+'</div></div>';
+    }).join('');
+    return '<section class="report-section"><h2>'+escHtml(section.title)+'</h2><div class="report-grid">'+itemsHtml+'</div></section>';
+  }).join('');
+
+  var repairsHtml='';
+  if(data.repairs.length){
+    repairsHtml='<section class="report-section"><h2>Repairs Log</h2><table class="report-table"><thead><tr><th>Description</th><th>Category</th><th>Contractor</th><th>Cost</th><th>Status</th></tr></thead><tbody>'+
+      data.repairs.map(function(row){
+        return '<tr><td>'+escHtml(row.desc)+'</td><td>'+escHtml(row.cat)+'</td><td>'+escHtml(row.cont)+'</td><td>'+escHtml(row.cost)+'</td><td>'+escHtml(row.stat)+'</td></tr>';
+      }).join('')+
+      '</tbody></table></section>';
+  }
+
+  var summaryHtml=
+    '<div class="report-summary">'+
+      '<div class="metric"><span>Best Strategy</span><span>'+escHtml(data.analysis.winner)+'</span></div>'+
+      '<div class="metric"><span>Profit / CF</span><span>'+escHtml(data.analysis.profit)+'</span></div>'+
+      '<div class="metric"><span>ROI</span><span>'+escHtml(data.analysis.roi)+'</span></div>'+
+      '<div class="metric"><span>Cash In</span><span>'+escHtml(data.analysis.cash)+'</span></div>'+
+    '</div>';
+
+  var report=document.getElementById('print-report');
+  report.innerHTML=
+    '<div class="print-report-shell">'+
+      '<div class="report-header">'+
+        '<div>'+
+          '<div class="report-kicker">Deal Export</div>'+
+          '<div class="report-title">Hillel Wholesaler Calculator</div>'+
+          '<div class="report-meta">Address: '+escHtml(data.propertyAddress)+'<br>Generated: '+escHtml(data.generatedAt.toLocaleString())+'<br>'+escHtml(data.analysis.why)+'</div>'+
+        '</div>'+
+        summaryHtml+
+      '</div>'+
+      '<section class="report-section">'+
+        '<h2>Analysis Summary</h2>'+
+        '<div class="report-grid">'+
+          '<div class="report-item"><div class="label">Best Strategy</div><div class="value">'+escHtml(data.analysis.winner)+'</div></div>'+
+          '<div class="report-item"><div class="label">Profit / CF</div><div class="value">'+escHtml(data.analysis.profit)+'</div></div>'+
+          '<div class="report-item"><div class="label">ROI</div><div class="value">'+escHtml(data.analysis.roi)+'</div></div>'+
+          '<div class="report-item"><div class="label">Cash In</div><div class="value">'+escHtml(data.analysis.cash)+'</div></div>'+
+        '</div>'+
+        '<div class="report-note">'+escHtml(data.analysis.why)+'</div>'+
+      '</section>'+
+      sectionsHtml+
+      repairsHtml+
+    '</div>';
+}
+function printReport(){
+  var data=buildReportData();
+  renderPrintReport(data);
+  window.print();
+}
+function exportPdf(){
+  var data=buildReportData();
+  if(!window.html2pdf){
+    alert('PDF library did not load. Please try again.');
+    return;
+  }
+  renderPrintReport(data);
+  document.body.classList.add('report-export-mode');
+  var report=document.getElementById('print-report');
+  var opt={
+    margin:0,
+    filename:'hillel-deal-analysis.pdf',
+    image:{type:'jpeg',quality:0.98},
+    html2canvas:{scale:2,useCORS:true,scrollY:0,backgroundColor:'#ffffff'},
+    jsPDF:{unit:'pt',format:'a4',orientation:'portrait'},
+    pagebreak:{mode:['css','legacy']}
+  };
+  Promise.resolve(window.html2pdf().set(opt).from(report).save()).finally(function(){
+    document.body.classList.remove('report-export-mode');
+  });
+}
+
+// ===== INIT =====
+window.addEventListener('load',()=>{
+  addRow('','','','','Estimated');
+  addRow('','','','','Estimated');
+  addRow('','','','','Estimated');
+  if(window.location.hash.startsWith('#d=')){
+    try{
+      var data=JSON.parse(decodeURIComponent(atob(window.location.hash.slice(3))));
+      Object.entries(data).forEach(([k,val])=>{var el=document.getElementById(k);if(el)el.value=val;});
+      if(data['addr']) onAddr(data['addr']);
+      analyze();
+    }catch(e){}
+  }
+});
+</script>
+</body>
+</html>

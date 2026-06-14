@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us - Hilel 1 LLC</title>
+  <meta name="description" content="Discover our company's story, mission, and values. Learn more about who we are and what drives our team.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400..800;1,400..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" style="display:block;">
+      <img src="assets/images/hillel_home_logo.png?v=home-yellow-2" alt="Home logo" class="nav-logo-img">
+    </a>
+    <div class="nav-links" id="nav-links">
+      <a href="index.html" class="hide-mob">Home</a>
+      <a href="about.html" class="hide-mob">About</a>
+      <a href="contact.html" class="hide-mob">Contact</a>
+      <a href="Calculator.html" class="hide-mob">Calculator</a>
+      <a href="appointment.html" class="nav-cta">Book a Call</a>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ══ PAGE HEADER ══ -->
+<header class="page-header">
+  <div class="section-label">About Us</div>
+  <h1 class="page-header-title">About Hilel 1 LLC</h1>
+  <p class="page-header-desc">
+    Building Wealth Through Smart Real Estate Deals. We are dedicated to helping homeowners sell fast and helping investors find great deals through transparent, efficient real estate wholesaling.
+  </p>
+</header>
+
+<!-- ══ CONTENT ══ -->
+<main class="content-block">
+  <div class="content-inner">
+    <h2>Who we are</h2>
+    <div class="about-split">
+      <img src="assets/images/hero-owner-professional.png" alt="Hilel 1 LLC representative" class="about-intro-photo">
+      <div class="about-split-copy">
+        <div class="about-intro-copy">
+          <p>
+            We are a real estate wholesaling company committed to creating win-win solutions for sellers and investors. We help homeowners sell their properties quickly without the hassle of traditional listings, while providing investors with exclusive off-market deals. Our team is built on integrity, speed, and results.
+          </p>
+        </div>
+
+        <div class="about-glance">
+          <h2>At a glance</h2>
+          <ul>
+            <li><strong>Seller-Focused Service</strong> – We work directly with homeowners to provide fast, fair cash offers with zero fees or commissions.</li>
+            <li><strong>Fast &amp; Reliable Closings</strong> – We close deals in as little as 7–14 days, giving sellers the speed and certainty they need.</li>
+            <li><strong>Investor Network Access</strong> – We connect qualified investors with exclusive off-market properties at below-market prices.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: 40px;">
+      <a href="contact.html" class="btn btn-blue">Get In Touch</a>
+    </div>
+  </div>
+</main>
+
+<!-- ══ FOOTER ══ -->
+<footer id="footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <h3>Hilel 1 LLC</h3>
+        <div class="footer-contact">
+          <p><strong style="color:rgba(255,255,255,.7);">Email</strong>: <a href="mailto:hilel8978@gmail.com">hilel8978@gmail.com</a></p>
+        </div>
+      </div>
+      <div class="footer-links">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="appointment.html">Book a Call</a>
+        <a href="privacy-policy.html">Privacy Policy</a>
+        <a href="terms-and-conditions.html">Terms Conditions</a>
+      </div>
+    </div>
+    <div class="footer-legal">
+      <p>Copyright 2026. All rights reserved</p>
+      <p>Hilel 1 LLC</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('hamburger').addEventListener('click', function() {
+    document.getElementById('nav-links').classList.toggle('active');
+  });
+</script>
+
+</body>
+</html>

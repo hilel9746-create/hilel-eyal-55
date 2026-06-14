@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book a Call - Hilel 1 LLC</title>
+  <meta name="description" content="Book your appointment in minutes with Hilel 1 LLC. Fast, secure scheduling with instant confirmation.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400..800;1,400..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" style="display:block;">
+      <img src="assets/images/hillel_home_logo.png?v=home-yellow-2" alt="Home logo" class="nav-logo-img">
+    </a>
+    <div class="nav-links" id="nav-links">
+      <a href="index.html" class="hide-mob">Home</a>
+      <a href="about.html" class="hide-mob">About</a>
+      <a href="contact.html" class="hide-mob">Contact</a>
+      <a href="Calculator.html" class="hide-mob">Calculator</a>
+      <a href="appointment.html" class="nav-cta">Book a Call</a>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ══ PAGE HEADER ══ -->
+<header class="page-header">
+  <div class="section-label">Schedule</div>
+  <h1 class="page-header-title">Book Your Appointment Online</h1>
+  <p class="page-header-desc">
+    Book your appointment in minutes with Hilel 1 LLC. Choose a time that works for you, share a few details, and you’re all set. We’ll send a confirmation email as soon as your booking is complete.
+  </p>
+</header>
+
+<!-- ══ CONTENT ══ -->
+<main class="content-block" style="background: var(--gray-lt);">
+  <div class="content-inner" style="max-width: 1000px; display: grid; grid-template-columns: 1fr; gap: 40px;">
+    
+    <!-- Calendar Widget Area -->
+    <div style="background: var(--white); padding: 40px; border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border);">
+      <h2 style="margin-top: 0; text-align: center;">Select a date &amp; time</h2>
+      <p style="text-align: center; margin-bottom: 32px;">Use the calendar below to pick a slot that works best for you. Your time zone will be detected automatically.</p>
+      
+      <!-- Custom Booking Widget -->
+      <form id="booking-form" class="booking-widget" data-lead-form="true" style="text-align: left; max-width: 600px; margin: 0 auto;">
+        
+        <div class="booking-step" style="margin-bottom: 32px; padding-bottom: 32px; border-bottom: 1px solid var(--border);">
+          <h3 style="margin-top: 0; color: var(--navy);">1. Select Date & Time</h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div>
+              <label for="booking-date" style="display:block; margin-bottom:8px; font-weight:500; color: var(--navy);">Date</label>
+              <input type="date" id="booking-date" name="date" required style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); font-family: inherit; font-size: 1rem; color: var(--navy); box-sizing: border-box;">
+            </div>
+            <div>
+              <label for="booking-time" style="display:block; margin-bottom:8px; font-weight:500; color: var(--navy);">Time</label>
+              <input type="time" id="booking-time" name="time" required style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); font-family: inherit; font-size: 1rem; color: var(--navy); box-sizing: border-box;">
+            </div>
+          </div>
+        </div>
+
+        <div class="booking-step" style="margin-bottom: 32px;">
+          <h3 style="margin-top: 0; color: var(--navy);">2. Get in Touch</h3>
+          <p style="margin-bottom: 24px; color: var(--navy); font-size: 0.95rem;">Please leave your details below so we can confirm your appointment.</p>
+          
+          <div style="display: grid; grid-template-columns: 1fr; gap: 16px;">
+            <div>
+              <label for="booking-name" style="display:block; margin-bottom:8px; font-weight:500; color: var(--navy);">Full Name</label>
+              <input type="text" id="booking-name" name="name" required placeholder="John Doe" style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); font-family: inherit; font-size: 1rem; color: var(--navy); box-sizing: border-box;">
+            </div>
+            <div>
+              <label for="booking-email" style="display:block; margin-bottom:8px; font-weight:500; color: var(--navy);">Email Address *</label>
+              <input type="email" id="booking-email" name="email" required inputmode="email" autocomplete="email" placeholder="john@example.com" style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); font-family: inherit; font-size: 1rem; color: var(--navy); box-sizing: border-box;">
+            </div>
+            <div>
+              <label for="booking-property-address" style="display:block; margin-bottom:8px; font-weight:500; color: var(--navy);">Property Address *</label>
+              <input type="text" id="booking-property-address" name="property_address" required placeholder="e.g., 123 Main St, Columbus, OH" style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); font-family: inherit; font-size: 1rem; color: var(--navy); box-sizing: border-box;">
+            </div>
+            <div>
+              <label for="booking-phone" style="display:block; margin-bottom:8px; font-weight:500; color: var(--navy);">Phone Number</label>
+              <input type="tel" id="booking-phone" name="phone" required inputmode="tel" autocomplete="tel" pattern="^\+?[0-9\s().-]{9,20}$" title="Please enter a valid phone number" placeholder="(555) 123-4567" style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); font-family: inherit; font-size: 1rem; color: var(--navy); box-sizing: border-box;">
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="nav-cta" style="width: 100%; padding: 16px; font-size: 1.1rem; border: none; cursor: pointer; text-align: center; display: block; border-radius: var(--radius); box-sizing: border-box;">Confirm Appointment</button>
+      </form>
+      
+    </div>
+
+    <!-- Booking FAQs -->
+    <div style="padding: 0 20px;">
+      <h3 style="text-align: center; font-size: 1.8rem; margin-bottom: 32px;">Booking FAQs</h3>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
+        <div>
+          <h4 style="color: var(--navy); font-size: 1.1rem; margin-bottom: 8px;">Can I reschedule my appointment?</h4>
+          <p style="font-size: 0.95rem;">Yes. After you book, your confirmation email will include a link to reschedule or cancel up to the cutoff time defined in our policy. Any changes are instantly synced with our calendar.</p>
+        </div>
+        
+        <div>
+          <h4 style="color: var(--navy); font-size: 1.1rem; margin-bottom: 8px;">Will I receive reminders before my appointment?</h4>
+          <p style="font-size: 0.95rem;">You’ll receive at least one email reminder before your appointment, and optionally a text reminder if you opt in during booking.</p>
+        </div>
+
+        <div style="grid-column: 1 / -1;">
+          <h4 style="color: var(--navy); font-size: 1.1rem; margin-bottom: 8px;">What if I can’t find a time that works?</h4>
+          <p style="font-size: 0.95rem;">Choose the closest available time and leave a note in the details field, or contact us directly. We’ll do our best to find a slot that fits your schedule.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- ══ FOOTER ══ -->
+<footer id="footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <h3>Hilel 1 LLC</h3>
+        <div class="footer-contact">
+          <p><strong style="color:rgba(255,255,255,.7);">Email</strong>: <a href="mailto:hilel8978@gmail.com">hilel8978@gmail.com</a></p>
+        </div>
+      </div>
+      <div class="footer-links">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="appointment.html">Book a Call</a>
+        <a href="privacy-policy.html">Privacy Policy</a>
+        <a href="terms-and-conditions.html">Terms Conditions</a>
+      </div>
+    </div>
+    <div class="footer-legal">
+      <p>Copyright 2026. All rights reserved</p>
+      <p>Hilel 1 LLC</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('hamburger').addEventListener('click', function() {
+    document.getElementById('nav-links').classList.toggle('active');
+  });
+</script>
+<script src="assets/js/lead-form-submit.js"></script>
+
+</body>
+</html>
