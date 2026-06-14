@@ -12,18 +12,18 @@
 | אזור | מה צריך לעשות | סטטוס | הערות |
 |---|---|---|---|
 | אתר ראשי | להחליף `Hilel 1 LLC` ל-`Hilel Steam`, לעדכן CTA, להוסיף מלל ולעדכן עיצוב | לא בוצע | דורש מעבר בכל קבצי האתר |
-| גישה למחשבון | להוסיף הגנת username/password ולהסתיר קישור מהעמוד הראשי | בוצע בקוד | משתמש ב-Netlify Edge Function וב-hash/salt דרך env |
+| גישה למחשבון | להוסיף הגנת username/password ולהסתיר קישור מהעמוד הראשי | בוצע ונפרס | Netlify Edge Function פעיל בפרודקשן; hash/salt שמורים ב-Netlify env; הסיסמה לא נשמרה בקוד |
 | Property Type | למחוק `Condo` ו-`Commercial`; להשאיר `Townhouse` | בוצע | `Calculator.html` שורה ~600: נמחקו `Condo / Townhouse` ו-`Commercial`, נוסף `Townhouse`. נשארו Single Family / Multi-Family / Townhouse |
-| Property Photos / PDF | להכניס תמונות לדוח PDF הסופי | לא בוצע | וידאו לא נדרש |
+| Property Photos / PDF | להכניס תמונות לדוח הסופי (דרך Print) | בוצע | מסלול Export PDF הוסר לחלוטין. התמונות מ-Property Photos מוצגות בדוח ההדפסה בסקשן `Property Photos`, ממוקם מיד אחרי Property Details (כמו מיקום ההעלאה בטופס). וידאו לא נדרש |
 | Assignment Fee | להשאיר פנימי בלבד ולא להציג בדוח הסופי | לא בוצע | חשוב לבדוק גם Share/Print/PDF |
 | Title Costs | להחליף `Title, escrow, recording` ל-`Title` בלבד | לא בוצע | לפי צילום המסך שסומן |
-| Repairs | למחוק עמוד Repairs מלא ולהחליף בבחירת Light/Medium/Heavy | לא בוצע | Light 10k-45k, Medium 45k-85k, Heavy 85k+ |
+| Repairs | למחוק עמוד Repairs מלא ולהחליף בבחירת Light/Medium/Heavy | בוצע | עמוד p3 (Repair Items) נמחק כולו. נוסף בורר `Repair Level` (Light/Medium/Heavy) + שדה `Repair Budget` בסוף עמוד Purchase. Heavy מחייב הזנת מספר ≥85k. המספר מזין את כל החישובים |
 | Buy & Hold / Excel Inputs | לנקות שדות Excel פנימיים וכפילויות | לא בוצע | דורש החלטה סופית על `Cash In Deal` |
-| שדות דיפולטיביים | לאפס מספרים ולהוסיף סימון אדום לשדות שלא נגעו בהם | לא בוצע | אינדיקציית touched/untouched |
+| שדות דיפולטיביים | לאפס מספרים ולהוסיף סימון אדום לשדות שלא נגעו בהם | בוצע | כל שדה מספרי מתחיל ריק (חוץ מהנחות: ריביות/אחוזים/תקופות) ומסומן באדום עד עריכה ראשונה. מנגנון JS גלובלי (`initDefaultFields`) |
 | Hard Money / Flip | להשאיר Hard Money Rates/Points ולנקות שדות לא ברורים | לא בוצע | לוודא שהחישובים נשארים תקינים |
-| Seller Finance | להוסיף Seller Finance ו-Subto לפי ה-Google Sheet | לא בוצע | כולל Buyer Entry Fee ו-Balloon Balances |
+| Seller Finance | להוסיף Seller Finance ו-Subto לפי ה-Google Sheet | בוצע בקוד | נמצא ב-`Calculator.html` בעמוד `Creative`, כרטיס `Seller Financing`; כולל Buyer Entry Fee ו-Balloon Balances |
 | Strategy / Results | לשמר/לבנות המלצת אסטרטגיה ותוצאות יצוא | לא בוצע | לבדוק שלא חושף נתונים פנימיים |
-| Comps | להוסיף עמוד Comparables עם חישוב ARV לפי קומפים | לא בוצע | בשלב ראשון ידני, בלי חיבור Base44 |
+| Comps | להוסיף עמוד Comparables עם חישוב ARV לפי קומפים | בוצע | נוסף step חדש `Comps` (שלב 3) במחשבון. טבלת קומפים ידנית, $/sqft אוטומטי, ממוצע, ARV = ממוצע×subject sqft. תואם בדיוק ללשונית "Fix & Flip Calc" באקסל. בלי חיבור Base44. כפתור "Use this ARV in the deal" מזין את ה-ARV ל-`n-arv`. (MAO 70/75% הוסר — לא דובר בשיחה בהקשר Comps) |
 | SEO / Deployment | Search Console, metadata, sitemap/robots וחיבור Netlify ל-GitHub | חלקית | GitHub כבר חובר והקוד נדחף; SEO/Search Console עדיין לא |
 
 ## אתר ראשי
@@ -50,11 +50,13 @@
 
 ## גישה למחשבון
 
-- המחשבון צריך להיות מוגן בסיסמה.
-- לא צריך מנגנון הרשמה מלא.
-- ליצור כניסה פשוטה עם username/password שמיועדת להלל בלבד.
-- לא לשים קישור גלוי למחשבון מהעמוד הראשי.
-- הלל יקבל קישור ישיר וספציפי למחשבון.
+- בוצע: המחשבון מוגן בסיסמה באמצעות Netlify Edge Function ו-HTTP Basic Auth.
+- בוצע: לא נוצר מנגנון הרשמה מלא.
+- בוצע: נוצרה כניסה פשוטה עם username/password שמיועדת להלל בלבד.
+- בוצע: קישורי `Calculator` גלויים הוסרו מהניווט בעמודים הציבוריים.
+- בוצע: המחשבון נשאר נגיש דרך קישור ישיר בלבד.
+- בוצע: הסיסמה הגולמית לא נשמרה בקוד; ב-Netlify env נשמרים רק username, salt ו-password hash.
+- אומת בפרודקשן: בלי פרטים מתקבל `401`, עם פרטים שגויים מתקבל `401`, ועם פרטים נכונים המחשבון נטען.
 
 ## מחשבון - Property Details
 
@@ -78,6 +80,8 @@
 - אין צורך להכניס וידאו ל-PDF.
 - אם יש וידאו, הלל יעביר אותו חיצונית.
 - לוודא שה-PDF מציג תמונות בצורה נקייה ומסודרת לקונה.
+- ✅ בוצע: ב-`Calculator.html` נוסף סקשן `Property Photos` ל-`renderPrintReport()`, מוצג רק דרך **Print** (`window.print()`). התמונות מגיעות ממערך `photos` (data URLs מ-Property Photos), בגריד 3 עמודות (`.report-photos`) עם `break-inside:avoid`. הסקשן ממוקם מיד אחרי סקשן `Property Details` בדוח — בדיוק כמו מיקום ההעלאה בטופס. אם אין תמונות הסקשן לא מופיע. וידאו לא נכלל.
+- ✅ בוצע: מסלול **Export PDF** הוסר לחלוטין — נמחקו הפונקציה `exportPdf()`, ה-`<script>` של `html2pdf` מ-CDN, וה-CSS של `.report-export-mode`. לא היה לו כפתור בממשק ממילא; היצוא היחיד לדוח מודפס הוא דרך Print.
 
 ## Purchase / Deal Inputs
 
@@ -108,6 +112,12 @@
   - `Heavy`: 85,000 דולר ומעלה.
 - כאשר בוחרים `Heavy`, המשתמש חייב להזין מספר תיקונים בפועל.
 - המטרה: לא לפרט תיקונים כמו קבלן, אלא לסמן רמת שיפוץ ולתת מספר שמזין את החישובים.
+- ✅ בוצע ב-`Calculator.html`:
+  - עמוד ה-Repairs הישן (page `p3`, "Repair Items" עם קטגוריות/קבלן/סטטוס) נמחק כולו, והוסר מה-stepper (הצעדים מוספרו מחדש 1–8).
+  - בסוף עמוד **Purchase** (p2) נוסף card חדש `Repairs`: בורר `Repair Level` עם Light / Medium / Heavy + שדה `Repair Budget` (`#n-rehab`).
+  - בחירת Light ממלאת 27,500 (אמצע 10k–45k), Medium ממלאת 65,000 (אמצע 45k–85k) — שניהם ניתנים לעריכה. Heavy מנקה את השדה ומחייב הזנת מספר; אם <85k מוצגת אזהרה אדומה.
+  - הסכום מ-`#n-rehab` מזין את כל החישובים דרך `getRepairs()` (כמו קודם, רק שעכשיו קורא מספר אחד במקום סכימת טבלה).
+  - נוקו כל ההתליות הישנות: `addRow`/`sumRepairs`/`rtbody`/יבוא CSV של שורות repair/סקשן "Repairs Log" בדוח. בדוח ההדפסה רמת השיפוץ והתקציב מופיעים תחת סקשן Purchase.
 
 ## Buy & Hold / Excel Buy & Hold Inputs
 
@@ -134,6 +144,14 @@
   - שדה שלא נגעו בו יסומן באדום.
   - אחרי הזנה/עריכה, הסימון האדום ייעלם.
 - המטרה היא שהלל ידע מייד אם מספר הוא דיפולטיבי או מספר שהוא הזין בפועל.
+- ✅ בוצע ב-`Calculator.html` (מנגנון JS גלובלי, בלי לערוך ~100 שדות ידנית):
+  - `initDefaultFields()` רץ ב-load ועובר על כל `input[type=number]`:
+    - מאפס (משאיר ריק) את כל השדות הדולריים הספציפיים-לעסקה (purchase, ARV, repairs, hard money loan, service fee, שכירויות/מיסים/ביטוח מעסקאות קודמות וכו').
+    - שומר רק שדות-הנחה (ריביות, אחוזים, תקופות, counts) דרך `KEEP_DEFAULTS` — כדי לא לשבור חישובים סבירים.
+  - כל שדה מספרי מקבל class `untouched` → מסגרת אדומה + רקע אדמדם + פס אדום משמאל. ברגע שהלל מקליד/משנה (`input`/`change`) הסימון האדום נעלם.
+  - שדה `Repair Budget` מאבד את הסימון האדום כשבוחרים Repair Level (לא רק בהקלדה ידנית).
+  - טעינת deal מ-share-link מנקה אוטומטית את הסימון האדום מהשדות שמולאו.
+  - שורות ה-Comps לא מסומנות (הלל ממלא אותן ממילא).
 
 ## Hard Money / Flip / Leverage
 
@@ -148,24 +166,24 @@
 
 ## Seller Finance
 
-- להוסיף למחשבון את אפשרות `Seller Finance`.
-- להוסיף גם את אפשרות `Subto` / `Subject To`, לפי השיחה.
-- החישובים צריכים להתבסס על ה-Google Sheet שנשלח.
-- להכניס את החישובים/מספרים של `Buyer Entry Fee`; זה קריטי.
-- `Buyer Entry Fee` צריך לכלול:
+- בוצע בקוד: החלק נמצא בתוך המחשבון ב-`Calculator.html`, בעמוד מספר 7 `Creative`, בכרטיס `Seller Financing`.
+- בוצע בקוד: נוספה בחירת `Offer Type` עם אפשרויות `Seller Finance` ו-`Subto`.
+- בוצע בקוד: החישובים מבוססים על מבנה ה-Google Sheet שנשלח, כולל Buyer Entry Fee ו-Balloon Balances.
+- בוצע בקוד: הוכנסו החישובים/מספרים של `Buyer Entry Fee`; זה קריטי לפי השיחה.
+- `Buyer Entry Fee` כולל:
   - Down Payment
   - Rehab
   - Assignment Fee
   - Closing / Title
-- להכניס את חישובי `Balloon Balances`; זה קריטי.
-- `Balloon Balances` צריך להציג:
+- בוצע בקוד: הוכנסו חישובי `Balloon Balances`; זה קריטי לפי השיחה.
+- `Balloon Balances` מציג:
   - At end of Year
   - Date
   - Interest Paid
   - Principal Paid
   - Outstanding Balance
   - Total Paid
-- לתמוך בהזנת:
+- בוצע בקוד: נתמך בהזנת:
   - Purchase Price
   - Listed Price
   - Loan Amount
@@ -177,9 +195,9 @@
   - Monthly Payment
   - Annual Payment
   - Balloon Due in years
-- לתמוך בחישובי Cash Flow ו-Cash-on-Cash Return לפי המודל ב-Sheet.
-- לוודא שאם משנים נתון כמו Down Payment, המספרים מתעדכנים.
-- לוודא שיש מקום להזין/לחשב את המספרים שסומנו באדום ב-Sheet.
+- בוצע בקוד: נתמכים חישובי Cash Flow ו-Cash-on-Cash Return לפי המודל ב-Sheet.
+- בוצע בקוד: שינוי נתון כמו Down Payment, Monthly Payment, Rehab או Assignment Fee מעדכן את התוצאות.
+- בוצע בקוד: יש מקום להזין/לחשב את המספרים שסומנו באדום ב-Sheet.
 
 ## Strategy / Results
 
@@ -220,6 +238,15 @@
   - דמיון בסוג הנכס, חדרים, גודל, תוספות, שנת בנייה ומצב.
 - אפשר להסתכל על iComps כהשראה בלבד, אבל הלל לא סומך עליו כמקור אמת.
 - הלל רוצה לבצע בדיקה ידנית של קומפים ולא להסתמך על AI או שירות חיצוני בלי אימות.
+- ✅ בוצע: ב-`Calculator.html` נוסף step חדש `Comps` (שלב 3, בין Purchase ל-Repairs; page id `pcomps`). העיצוב מבוסס על מסך ה-COMPS ב-CRM של הלל (witty-estate-flow-crm.base44.app):
+  - שדה `Subject Property Sqft` שמסונכרן אוטומטית מ-Property Details (`#sqft`), ניתן לעריכה.
+  - טבלת `Comparable Sales` עם Add Comp / מחיקת שורה. עמודות: #, Address, Sqft, Sold Price, **$/sqft (מחושב אוטומטית = Sold/Sqft)**, Sold Date, Bd/Ba, Distance.
+  - שורת `Average (N comps) $X / sqft`.
+  - 2 כרטיסי תוצאה: `Avg $/Sqft` ו-`ARV` (=ממוצע $/sqft × subject sqft) — בדיוק מה שהלל תיאר בשיחה, ותואם ללשונית `Fix & Flip Calc` באקסל (כל קומפ `K=J/I`, ממוצע `K18=AVERAGE`, `Total ARV (E8)=D8*C8`).
+  - כפתור `Use this ARV in the deal →` שמזין את ה-ARV המחושב לשדה `n-arv` בעמוד Purchase (כדי להצדיק את ה-ARV מול הקונה).
+  - הקריטריונים של הלל (עד ~מייל-מייל וחצי, ±200 sqft, תאריך מכירה עדכני, דמיון חדרים/בנייה/מצב) מוצגים כהערה. הזנה ידנית בלבד — אין משיכה אוטומטית מ-Base44/iComps.
+  - 3 שורות קומפים ריקות נטענות בברירת מחדל.
+  - הערה: כרטיסי `MAO 70%`/`MAO 75%` שהיו במסך ה-CRM הוסרו מהעמוד — הלל לא הזכיר אותם בשיחה בהקשר Comps. באקסל ה-MAO הוא חלק מ-Fix & Flip (`(ARV×%) − Rehab − closing`, ואז `Your Offer = MAO − Assignment Fee`), לא מעמוד הקומפים.
 
 ## SEO / Deployment
 
@@ -249,10 +276,10 @@
 ## סדר עדיפות מוצע
 
 1. להחליף בכל האתר את `Hilel 1 LLC` ל-`Hilel Steam`.
-2. להגן על המחשבון בסיסמה ולהסיר קישור גלוי מהאתר.
-3. לנקות את Property Type, Repairs, Excel Inputs ושדות דיפולטיביים.
-4. לתקן PDF כך שיכלול תמונות ולא יציג Assignment Fee.
+2. ✅ להגן על המחשבון בסיסמה ולהסיר קישור גלוי מהאתר. (בוצע)
+3. לנקות את Property Type, Repairs, Excel Inputs ושדות דיפולטיביים. (Property Type ✅ + Repairs ✅ + דיפולטים/סימון אדום ✅ בוצעו; Excel Inputs פתוח)
+4. לתקן PDF/הדפסה כך שיכלול תמונות ולא יציג Assignment Fee. (תמונות בהדפסה ✅ בוצע; הסתרת Assignment Fee עדיין פתוחה)
 5. להוסיף Seller Finance ו-Balloon Balances לפי ה-Google Sheet.
-6. להוסיף Comps ידני עם חישוב ARV.
+6. ✅ להוסיף Comps ידני עם חישוב ARV. (בוצע)
 7. לעבור fine-tuning על כל החישובים מול הלל.
 8. להשלים SEO ו-Google Search Console.

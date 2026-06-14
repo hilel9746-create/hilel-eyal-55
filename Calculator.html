@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Hillel Wholesaler · Deal Analyzer</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="googlebot" content="noindex, nofollow">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -270,6 +272,38 @@ input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-
 .total-bar-label{font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.4)}
 .total-bar-val{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.04em;color:#fff}
 
+/* ===== COMPS ===== */
+.comp-perqft{font-weight:700;color:var(--navy);text-align:right;white-space:nowrap}
+.comp-avg-bar{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-top:1rem;padding:.65rem .9rem;border-radius:8px;
+  background:var(--blue-bg);border:1px solid #BFDBFE;
+  font-size:.9rem;font-weight:600;color:var(--navy);
+}
+.comp-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem;margin-top:1rem}
+.comp-card{
+  background:#F8FAFC;border:1px solid #E5E7EB;border-radius:12px;padding:1rem .9rem;text-align:center;
+}
+.comp-card.primary{background:var(--navy);border-color:var(--navy)}
+.comp-card.primary .comp-card-label{color:rgba(255,255,255,.55)}
+.comp-card.primary .comp-card-val{color:#fff}
+.comp-card-label{font-size:.62rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#64748B;margin-bottom:.45rem}
+.comp-card-val{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.03em;color:var(--navy);line-height:1}
+.comp-card-val.red{color:#C0392B}
+.comp-note{font-size:.74rem;color:var(--ink3);line-height:1.6;margin-top:.85rem}
+@media (max-width:680px){.comp-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* ===== UNTOUCHED FIELD INDICATOR ===== */
+/* Numeric fields the user hasn't entered yet are flagged red; the flag clears on first edit */
+input.untouched{
+  border-color:#E11D48 !important;
+  background:#FEF2F2;
+  box-shadow:inset 2px 0 0 #E11D48;
+}
+.prefixed:has(input.untouched),.suffixed:has(input.untouched){
+  border-color:#E11D48 !important;
+}
+
 /* ===== DATA ROWS ===== */
 .data-rows{display:flex;flex-direction:column;gap:.35rem}
 .dr{
@@ -377,14 +411,6 @@ input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-
 .report-actions{display:flex;gap:.85rem;flex-wrap:wrap;margin:1rem 0 1.25rem}
 .report-actions .btn-secondary{flex:1;min-width:180px}
 .print-report{display:none}
-.report-export-mode .print-report{
-  display:block !important;
-  position:fixed;
-  left:-10000px;
-  top:0;
-  width:960px;
-  pointer-events:none;
-}
 .print-report-shell{
   max-width:960px;margin:0 auto;padding:24px 24px 40px;
   background:#fff;color:#111827;font-family:'Outfit',sans-serif;
@@ -436,6 +462,12 @@ input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-
 .report-note{
   font-size:.74rem;color:var(--ink3);line-height:1.6;margin-top:.6rem;
 }
+.report-photos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.6rem}
+.report-photos .report-photo{
+  aspect-ratio:4/3;border-radius:10px;overflow:hidden;border:1px solid #E5E7EB;background:#F8FAFC;
+  break-inside:avoid;
+}
+.report-photos .report-photo img{width:100%;height:100%;object-fit:cover;display:block}
 
 @media print{
   body{background:#fff}
@@ -554,7 +586,7 @@ footer{background:var(--navy);padding:1.5rem 2rem;display:flex;justify-content:s
 <nav class="stepnav">
   <button class="step-btn active" onclick="goTo('p1')" id="snav-p1"><span class="snum">1</span>Property</button>
   <button class="step-btn" onclick="goTo('p2')" id="snav-p2"><span class="snum">2</span>Purchase</button>
-  <button class="step-btn" onclick="goTo('p3')" id="snav-p3"><span class="snum">3</span>Repairs</button>
+  <button class="step-btn" onclick="goTo('pcomps')" id="snav-pcomps"><span class="snum">3</span>Comps</button>
   <button class="step-btn" onclick="goTo('p4')" id="snav-p4"><span class="snum">4</span>Rental</button>
   <button class="step-btn" onclick="goTo('p5')" id="snav-p5"><span class="snum">5</span>Fix & Flip</button>
   <button class="step-btn" onclick="goTo('p6')" id="snav-p6"><span class="snum">6</span>BRRRR</button>
@@ -597,8 +629,7 @@ footer{background:var(--navy);padding:1.5rem 2rem;display:flex;justify-content:s
         <select id="ptype">
           <option>Single Family</option>
           <option>Multi-Family (2–4 units)</option>
-          <option>Condo / Townhouse</option>
-          <option>Commercial</option>
+          <option>Townhouse</option>
         </select>
       </div>
       <div class="field">
@@ -720,56 +751,103 @@ footer{background:var(--navy);padding:1.5rem 2rem;display:flex;justify-content:s
         <div class="stat-note">ARV − Total All-In</div>
       </div>
       <div class="stat-box blue">
-        <div class="stat-label">Repair Budget (from page 3)</div>
+        <div class="stat-label">Repair Budget</div>
         <div class="stat-val" id="s-repairs-sync">$0</div>
-        <div class="stat-note">Auto-synced from Repairs page</div>
+        <div class="stat-note">From the Repairs selector below</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon">🔨</div>
+      <div><div class="card-title">Repairs</div><div class="card-sub">Pick a rehab level — it sets the repair budget for all calculations</div></div>
+    </div>
+    <div class="grid grid-2">
+      <div class="field">
+        <label>Repair Level</label>
+        <select id="repair-level" onchange="onRepairLevel()">
+          <option value="">Select level...</option>
+          <option value="light">Light ($10k–$45k)</option>
+          <option value="medium">Medium ($45k–$85k)</option>
+          <option value="heavy">Heavy ($85k+)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Repair Budget</label>
+        <div class="prefixed"><input id="n-rehab" type="number" placeholder="0" oninput="onRepairBudget()"></div>
+        <span class="hint" id="repair-hint">Select a level to set the budget</span>
       </div>
     </div>
   </div>
 
   <div class="btn-row">
     <button class="btn-secondary" onclick="goTo('p1')">← Back</button>
-    <button class="btn-primary" onclick="goTo('p3')">Next: Repairs →</button>
+    <button class="btn-primary" onclick="goTo('pcomps')">Next: Comps →</button>
   </div>
 
 </div>
 </div>
 
-<!-- ==================== PAGE 3: REPAIRS ==================== -->
-<div class="page" id="p3">
+<!-- ==================== PAGE: COMPS ==================== -->
+<div class="page" id="pcomps">
 <div class="wrap">
 
   <div class="card">
     <div class="card-head">
-      <div class="card-icon">🔨</div>
-      <div><div class="card-title">Repair Items</div><div class="card-sub">Add each item manually — click + to add more rows</div></div>
+      <div class="card-icon">📊</div>
+      <div><div class="card-title">Comparable Sales</div><div class="card-sub">Justify the ARV with recent nearby sales — price per sqft drives the ARV</div></div>
     </div>
+
+    <div class="grid grid-2" style="margin-bottom:1rem">
+      <div class="field">
+        <label>Subject Property Sqft</label>
+        <div class="suffixed" data-suf="sqft"><input id="cmp-subject-sqft" type="number" placeholder="1,720" oninput="recalcComps()"></div>
+        <span class="hint">Pulled from Property Details — edit here if needed</span>
+      </div>
+    </div>
+
     <div class="repairs-wrap">
-      <table class="repairs-table">
+      <table class="repairs-table" id="comps-table">
         <thead>
           <tr>
-            <th style="min-width:160px">Description</th>
-            <th style="min-width:130px">Category</th>
-            <th style="min-width:110px">Contractor</th>
-            <th style="min-width:90px;text-align:right">Cost</th>
-            <th style="min-width:110px">Status</th>
+            <th style="min-width:40px">#</th>
+            <th style="min-width:200px">Address</th>
+            <th style="min-width:90px;text-align:right">Sqft</th>
+            <th style="min-width:120px;text-align:right">Sold Price</th>
+            <th style="min-width:90px;text-align:right">$/sqft</th>
+            <th style="min-width:120px">Sold Date</th>
+            <th style="min-width:90px">Bd/Ba</th>
+            <th style="min-width:110px">Distance</th>
             <th></th>
           </tr>
         </thead>
-        <tbody id="rtbody"></tbody>
+        <tbody id="comps-body"></tbody>
       </table>
     </div>
-    <button class="add-row-btn" onclick="addRow()">
+    <button class="add-row-btn" onclick="addComp()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      Add Repair Item
+      Add Comp
     </button>
-    <div class="total-bar">
-      <div>
-        <div class="total-bar-label">Total Repair Budget</div>
-        <div style="font-size:.68rem;color:rgba(255,255,255,.3);margin-top:2px">Synced to all calculations</div>
-      </div>
-      <div class="total-bar-val" id="repairs-total">$0</div>
+
+    <div class="comp-avg-bar">
+      <span id="comp-avg-label">Average (0 comps)</span>
+      <span id="comp-avg-val">$0.00 / sqft</span>
     </div>
+
+    <div class="comp-cards">
+      <div class="comp-card">
+        <div class="comp-card-label">Avg $/Sqft</div>
+        <div class="comp-card-val" id="comp-c-avg">$0.00</div>
+      </div>
+      <div class="comp-card primary">
+        <div class="comp-card-label">ARV (Avg $/Sqft × Subject Sqft)</div>
+        <div class="comp-card-val" id="comp-c-arv">$0</div>
+      </div>
+    </div>
+
+    <button class="btn-secondary" style="margin-top:1rem;width:100%" onclick="useCompArv()">Use this ARV in the deal →</button>
+    <div class="comp-note">Criteria: within ~1–1.5 miles, similar sqft (±200), recent sold dates, similar beds/baths, build year &amp; condition. Comps are entered manually — no external source is trusted blindly.</div>
   </div>
 
   <div class="btn-row">
@@ -844,7 +922,7 @@ footer{background:var(--navy);padding:1.5rem 2rem;display:flex;justify-content:s
   </div>
 
   <div class="btn-row">
-    <button class="btn-secondary" onclick="goTo('p3')">← Back</button>
+    <button class="btn-secondary" onclick="goTo('pcomps')">← Back</button>
     <button class="btn-primary" onclick="goTo('p5')">Next: Fix & Flip →</button>
   </div>
 
@@ -1052,30 +1130,38 @@ footer{background:var(--navy);padding:1.5rem 2rem;display:flex;justify-content:s
       <div><div class="card-title">Seller Financing</div><div class="card-sub">Modeled from the spreadsheet's seller-finance workflow</div></div>
     </div>
     <div class="grid grid-3">
-      <div class="field"><label>Purchase Price</label><div class="prefixed"><input id="sf-price" type="number" value="350000" oninput="calc()"></div></div>
-      <div class="field"><label>Cash Buyer / Down</label><div class="prefixed"><input id="sf-down" type="number" value="50000" oninput="calc()"></div></div>
-      <div class="field"><label>Closing Costs</label><div class="prefixed"><input id="sf-closing" type="number" value="7662.5" oninput="calc()"></div></div>
-      <div class="field"><label>Upgrades</label><div class="prefixed"><input id="sf-upgrades" type="number" value="2500" oninput="calc()"></div></div>
+      <div class="field"><label>Offer Type</label><select id="sf-offer-type" onchange="calc()"><option>Seller Finance</option><option>Subto</option></select></div>
+      <div class="field"><label>Purchase Price</label><div class="prefixed"><input id="sf-price" type="number" value="285000" oninput="calc()"></div></div>
+      <div class="field"><label>Listed Price</label><div class="prefixed"><input id="sf-listed" type="number" value="280000" oninput="calc()"></div></div>
+      <div class="field"><label>Down Payment</label><div class="prefixed"><input id="sf-down" type="number" value="34000" oninput="calc()"></div></div>
+      <div class="field"><label>Rehab</label><div class="prefixed"><input id="sf-upgrades" type="number" value="7000" oninput="calc()"></div></div>
+      <div class="field"><label>Assignment Fee</label><div class="prefixed"><input id="sf-assignment" type="number" value="15000" oninput="calc()"></div></div>
+      <div class="field"><label>Closing / Title</label><div class="prefixed"><input id="sf-closing" type="number" value="5700" oninput="calc()"></div></div>
       <div class="field"><label>Interest Rate</label><div class="suffixed" data-suf="%"><input id="sf-rate" type="number" value="0" step="0.1" oninput="calc()"></div></div>
       <div class="field"><label>Amortization</label><div class="suffixed" data-suf="yrs"><input id="sf-term" type="number" value="30" oninput="calc()"></div></div>
-      <div class="field"><label>Principal Monthly</label><div class="prefixed"><input id="sf-principal" type="number" value="825" oninput="calc()"></div></div>
-      <div class="field"><label>Monthly Rent</label><div class="prefixed"><input id="sf-rent" type="number" value="2200" oninput="calc()"></div></div>
-      <div class="field"><label>Property Tax / Year</label><div class="prefixed"><input id="sf-tax" type="number" value="4677" oninput="calc()"></div></div>
-      <div class="field"><label>Insurance / Year</label><div class="prefixed"><input id="sf-insurance" type="number" value="1250" oninput="calc()"></div></div>
+      <div class="field"><label>First Payment Date</label><input id="sf-first-date" type="date" value="2026-06-14" oninput="calc()"></div>
+      <div class="field"><label>Interest Only?</label><select id="sf-interest-only" onchange="calc()"><option>No</option><option>Yes</option></select></div>
+      <div class="field"><label>Monthly Payment</label><div class="prefixed"><input id="sf-principal" type="number" value="697.22" step="0.01" oninput="calc()"></div></div>
+      <div class="field"><label>Balloon Due</label><div class="suffixed" data-suf="yrs"><input id="sf-years" type="number" value="5" oninput="calc()"></div></div>
+      <div class="field"><label>Monthly Rent</label><div class="prefixed"><input id="sf-rent" type="number" value="2800" oninput="calc()"></div></div>
+      <div class="field"><label>Property Tax / Year</label><div class="prefixed"><input id="sf-tax" type="number" value="6288" oninput="calc()"></div></div>
+      <div class="field"><label>Insurance / Year</label><div class="prefixed"><input id="sf-insurance" type="number" value="1344" oninput="calc()"></div></div>
       <div class="field"><label>Maintenance / Year</label><div class="prefixed"><input id="sf-maint" type="number" value="1200" oninput="calc()"></div></div>
       <div class="field"><label>Management</label><div class="suffixed" data-suf="%"><input id="sf-mgmt" type="number" value="10" oninput="calc()"></div></div>
       <div class="field"><label>Current Market Value</label><div class="prefixed"><input id="sf-market" type="number" value="309000" oninput="calc()"></div></div>
       <div class="field"><label>Annual Value Growth</label><div class="suffixed" data-suf="%"><input id="sf-growth" type="number" value="3" oninput="calc()"></div></div>
-      <div class="field"><label>Hold Period</label><div class="suffixed" data-suf="yrs"><input id="sf-years" type="number" value="5" oninput="calc()"></div></div>
-      <div class="field span-2"><span class="hint">Excel logic: cash buyer + closing + upgrades, 0% seller note, monthly principal, balloon balance after 5 years, then cash-out refinance and remaining credit.</span></div>
+      <div class="field span-2"><span class="hint">Seller Finance/Subto from the sheet: Buyer Entry Fee = Down Payment + Rehab + Assignment Fee + Closing/Title. Balloon shows what was paid and what remains at the end of the term.</span></div>
     </div>
     <div style="margin-top:1.1rem;padding-top:1.1rem;border-top:1px solid var(--border)">
       <div class="grid grid-2">
         <div class="data-rows">
           <div class="dr"><span class="dl">Loan Amount</span><span class="dv" id="sf-loan">—</span></div>
+          <div class="dr"><span class="dl">Buyer Entry Fee</span><span class="dv" id="sf-entry-fee">—</span></div>
+          <div class="dr"><span class="dl">Annual Payment</span><span class="dv neg" id="sf-annual-payment">—</span></div>
           <div class="dr"><span class="dl">Monthly Payment</span><span class="dv neg" id="sf-pmt">—</span></div>
           <div class="dr"><span class="dl">Monthly Cash Flow</span><span class="dv" id="sf-cf">—</span></div>
           <div class="dr"><span class="dl">Cash In Deal</span><span class="dv" id="sf-cashin">—</span></div>
+          <div class="dr dr-total"><span class="dl">Balloon Balance</span><span class="dv" id="sf-balloon">—</span></div>
         </div>
         <div style="display:flex;flex-direction:column;gap:.75rem">
           <div class="stat-box green"><div class="stat-label">5Y Credit Balance</div><div class="stat-val" id="sf-profit">—</div></div>
@@ -1083,6 +1169,31 @@ footer{background:var(--navy);padding:1.5rem 2rem;display:flex;justify-content:s
           <div class="stat-box blue"><div class="stat-label">ROI</div><div class="stat-val" id="sf-roi">—</div><div class="stat-note" id="sf-dscr">—</div></div>
         </div>
       </div>
+    </div>
+    <div style="margin-top:1.1rem;padding-top:1.1rem;border-top:1px solid var(--border);overflow:auto">
+      <div style="font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-bottom:.85rem">Balloon Balances</div>
+      <table class="repairs-table" style="min-width:760px">
+        <thead>
+          <tr>
+            <th>At end of Year</th>
+            <th>Date</th>
+            <th>Interest Paid</th>
+            <th>Principal Paid</th>
+            <th>Outstanding Balance</th>
+            <th>Total Paid</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td id="sf-balloon-year">—</td>
+            <td id="sf-balloon-date">—</td>
+            <td id="sf-interest-paid">—</td>
+            <td id="sf-principal-paid">—</td>
+            <td id="sf-outstanding">—</td>
+            <td id="sf-total-paid">—</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
     <div style="margin-top:1.1rem;padding-top:1.1rem;border-top:1px solid var(--border)">
       <div style="font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-bottom:.85rem">Detailed Pro Forma</div>
@@ -1556,10 +1667,9 @@ footer{background:var(--navy);padding:1.5rem 2rem;display:flex;justify-content:s
   </div>
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"></script>
 <script>
 // ===== NAV =====
-var pages=['p1','p2','p3','p4','p5','p6','p7','p8'];
+var pages=['p1','p2','pcomps','p4','p5','p6','p7','p8'];
 function goTo(id){
   pages.forEach(p=>{
     document.getElementById(p).classList.remove('active');
@@ -1649,43 +1759,101 @@ function renderPhotos(){
   g.innerHTML=photos.map((s,i)=>`<div class="photo-item"><img src="${s}"><button class="photo-del" onclick="photos.splice(${i},1);renderPhotos()">✕</button></div>`).join('');
 }
 
-// ===== REPAIRS =====
-var rowId=0;
-var cats=['Foundation/Structural','Roof/Gutters','Electrical','Plumbing','HVAC','Windows/Doors','Siding/Exterior','Kitchen','Bathroom','Flooring','Interior Paint','Exterior Paint','Drywall/Insulation','Fixtures/Hardware','Deck/Garage','Landscaping','Demo/Cleanup','Permits/Fees','Appliances','Misc/Contingency'];
-var statuses=['Estimated','Quoted','Contracted','Completed'];
-function addRow(desc,cat,cont,cost,stat){
-  rowId++;
-  var id='row'+rowId;
-  var catOpts=cats.map(c=>`<option${cat===c?' selected':''}>${c}</option>`).join('');
-  var statOpts=statuses.map(s=>`<option${(stat||'Estimated')===s?' selected':''}>${s}</option>`).join('');
-  var tr=document.createElement('tr');
-  tr.id=id;tr.className='repair-row';
-  tr.innerHTML=`
-    <td><input class="rt-input" type="text" placeholder="e.g. Replace roof" value="${desc||''}" oninput="sumRepairs()"></td>
-    <td><select class="rt-sel" onchange="sumRepairs()"><option value="">Category...</option>${catOpts}</select></td>
-    <td><input class="rt-input" type="text" placeholder="Contractor" value="${cont||''}"></td>
-    <td><div class="rt-cost"><input class="rt-input" type="number" placeholder="0" value="${cost||''}" oninput="sumRepairs()"></div></td>
-    <td><select class="rt-sel">${statOpts}</select></td>
-    <td><button class="del-row" onclick="document.getElementById('${id}').remove();sumRepairs()">✕</button></td>`;
-  document.getElementById('rtbody').appendChild(tr);
-  sumRepairs();
+// ===== REPAIRS (Light / Medium / Heavy) =====
+// Light $10k-$45k, Medium $45k-$85k, Heavy $85k+ (must enter actual amount)
+var REPAIR_MID={light:27500,medium:65000};
+function onRepairLevel(){
+  var lvl=document.getElementById('repair-level').value;
+  var inp=document.getElementById('n-rehab');
+  var hint=document.getElementById('repair-hint');
+  hint.style.color='';
+  if(lvl==='light'){inp.value=REPAIR_MID.light;hint.textContent='Light range: $10k–$45k (editable)';}
+  else if(lvl==='medium'){inp.value=REPAIR_MID.medium;hint.textContent='Medium range: $45k–$85k (editable)';}
+  else if(lvl==='heavy'){inp.value='';hint.textContent='Heavy: $85k+ — enter the actual repair amount';inp.focus();}
+  else{hint.textContent='Select a level to set the budget';}
+  if(lvl){inp.classList.remove('untouched');}
+  syncRepairBudget();
 }
-function sumRepairs(){
-  var total=0;
-  document.querySelectorAll('.rt-cost input').forEach(el=>total+=parseFloat(el.value)||0);
-  var s='$'+Math.round(total).toLocaleString();
-  document.getElementById('repairs-total').textContent=s;
+function onRepairBudget(){
+  // Heavy requires an actual amount of $85k or more
+  var lvl=document.getElementById('repair-level').value;
+  var hint=document.getElementById('repair-hint');
+  if(lvl==='heavy'){
+    var n=parseFloat(document.getElementById('n-rehab').value)||0;
+    if(n<85000){hint.textContent='Heavy must be $85k or more — enter the actual amount';hint.style.color='#C0392B';}
+    else{hint.textContent='Heavy: actual repair amount';hint.style.color='';}
+  }
+  syncRepairBudget();
+}
+function syncRepairBudget(){
   var el=document.getElementById('s-repairs-sync');
-  if(el) el.textContent=s;
-  var ri=document.getElementById('n-rehab-hidden');
-  if(!ri){ri=document.createElement('input');ri.type='hidden';ri.id='n-rehab-hidden';document.body.appendChild(ri);}
-  ri.value=total;
+  if(el) el.textContent='$'+Math.round(getRepairs()).toLocaleString();
   calc();
 }
 function getRepairs(){
-  var t=0;
-  document.querySelectorAll('.rt-cost input').forEach(el=>t+=parseFloat(el.value)||0);
-  return t;
+  var el=document.getElementById('n-rehab');
+  if(!el) return 0;
+  var n=parseFloat(el.value);
+  return isNaN(n)?0:n;
+}
+
+// ===== COMPS =====
+var compId=0;
+function addComp(addr,sqft,sold,date,bd,ba,dist){
+  compId++;
+  var id='comp'+compId;
+  var tr=document.createElement('tr');
+  tr.id=id;tr.className='comp-row';
+  tr.innerHTML=
+    '<td class="comp-idx"></td>'+
+    '<td><input class="rt-input" type="text" placeholder="123 Main St" value="'+(addr||'')+'"></td>'+
+    '<td><input class="rt-input comp-sqft" type="number" placeholder="1,800" style="text-align:right" value="'+(sqft||'')+'" oninput="recalcComps()"></td>'+
+    '<td><div class="rt-cost"><input class="rt-input comp-sold" type="number" placeholder="0" value="'+(sold||'')+'" oninput="recalcComps()"></div></td>'+
+    '<td class="comp-perqft" data-perqft>$0</td>'+
+    '<td><input class="rt-input" type="text" placeholder="mm/yyyy" value="'+(date||'')+'"></td>'+
+    '<td><input class="rt-input" type="text" placeholder="3 / 2" value="'+((bd!=null&&bd!=='')?(bd+(ba?' / '+ba:'')):'')+'" style="min-width:70px"></td>'+
+    '<td><input class="rt-input" type="text" placeholder="0.8 mi" value="'+(dist||'')+'"></td>'+
+    '<td><button class="del-row" onclick="document.getElementById(\''+id+'\').remove();recalcComps()">✕</button></td>';
+  document.getElementById('comps-body').appendChild(tr);
+  recalcComps();
+}
+function recalcComps(){
+  // keep subject sqft in sync with Property Details if left blank
+  var subjEl=document.getElementById('cmp-subject-sqft');
+  if(subjEl && subjEl.value===''){
+    var ps=document.getElementById('sqft');
+    if(ps && ps.value!=='') subjEl.placeholder=ps.value;
+  }
+  var sum=0,count=0,idx=0;
+  document.querySelectorAll('#comps-body tr').forEach(function(tr){
+    idx++;
+    tr.querySelector('.comp-idx').textContent=idx;
+    var sqft=parseFloat(tr.querySelector('.comp-sqft').value)||0;
+    var sold=parseFloat(tr.querySelector('.comp-sold').value)||0;
+    var cell=tr.querySelector('[data-perqft]');
+    if(sqft>0 && sold>0){
+      var pq=sold/sqft;
+      cell.textContent='$'+pq.toFixed(0);
+      sum+=pq;count++;
+    } else {
+      cell.textContent='$0';
+    }
+  });
+  var avg=count>0?sum/count:0;
+  document.getElementById('comp-avg-label').textContent='Average ('+count+' comp'+(count===1?'':'s')+')';
+  document.getElementById('comp-avg-val').textContent='$'+avg.toFixed(2)+' / sqft';
+  document.getElementById('comp-c-avg').textContent='$'+avg.toFixed(2);
+  var subj=parseFloat(subjEl.value)||parseFloat(document.getElementById('sqft').value)||0;
+  var arv=avg*subj;
+  document.getElementById('comp-c-arv').textContent=arv>0?'$'+Math.round(arv).toLocaleString():'$0';
+  window._compArv=arv;
+}
+function useCompArv(){
+  var arv=window._compArv||0;
+  if(arv<=0){alert('Add at least one comp with Sqft and Sold Price first.');return;}
+  var el=document.getElementById('n-arv');
+  if(el){el.value=Math.round(arv);calc();}
+  alert('ARV $'+Math.round(arv).toLocaleString()+' applied to the deal.');
 }
 
 // ===== HELPERS =====
@@ -1853,22 +2021,27 @@ function irrFromCashFlows(values){
   return mid*100;
 }
 function calcSellerFinance(){
-  var price=v('sf-price'), downCash=v('sf-down'), closing=v('sf-closing'), upgrades=v('sf-upgrades');
+  var price=v('sf-price'), downCash=v('sf-down'), closing=v('sf-closing'), upgrades=v('sf-upgrades'), assignment=v('sf-assignment');
   var rate=v('sf-rate'), term=num('sf-term',30), years=num('sf-years',5);
   var rent=v('sf-rent'), tax=v('sf-tax'), insurance=v('sf-insurance'), maint=v('sf-maint'), mgmtPct=v('sf-mgmt')/100;
   var growth=v('sf-growth')/100, marketValue=v('sf-market');
+  var interestOnly=(document.getElementById('sf-interest-only') && document.getElementById('sf-interest-only').value==='Yes');
   var loan=price-downCash;
   var amortPmt=loanPayment(loan, rate, term);
-  var principalMonthly=num('sf-principal',Math.round(amortPmt));
-  var interestMonthly=rate>0?Math.max(0,amortPmt-principalMonthly):0;
-  var annualDebt=(principalMonthly+interestMonthly)*12;
+  var enteredMonthly=num('sf-principal',Math.round(amortPmt));
+  var interestMonthly=rate>0?(loan*(rate/100/12)):0;
+  var principalMonthly=interestOnly?0:Math.max(0,enteredMonthly-interestMonthly);
+  var monthlyPayment=interestOnly?interestMonthly:enteredMonthly;
+  var annualDebt=monthlyPayment*12;
   var principalAnnual=principalMonthly*12;
-  var cashIn=downCash+closing+upgrades;
-  var mgmtAnnual=rent*mgmtPct*10;
+  var buyerEntryFee=downCash+upgrades+assignment+closing;
+  var cashIn=buyerEntryFee;
+  var mgmtAnnual=rent*mgmtPct*12;
   var noi=(rent*12)-tax-insurance-maint-mgmtAnnual;
-  var annualCF=noi-principalAnnual-(interestMonthly*12);
+  var annualCF=noi-annualDebt;
   var cf=annualCF/12;
   var principalPaid=principalAnnual*years;
+  var interestPaid=interestMonthly*12*years;
   var balance=Math.max(0,loan-principalPaid);
   var capRate=(loan+cashIn)>0?(noi/(loan+cashIn))*100:0;
   var cashOnCash=cashIn>0?(annualCF/cashIn)*100:0;
@@ -1878,7 +2051,16 @@ function calcSellerFinance(){
   var totalIncome=cashOut+(annualCF*years);
   var profit=totalIncome-balance;
   var dscr=annualDebt>0?noi/annualDebt:0;
-  return {price:price,loan:loan,pmt:principalMonthly+interestMonthly,cf:cf,annualCF:annualCF,cashIn:cashIn,futureValue:futureValue,balance:balance,exitNet:cashOut,profit:profit,roi:roi,dscr:dscr,years:years,noi:noi,capRate:capRate,cashOnCash:cashOnCash,principalAnnual:principalAnnual};
+  var firstDate=document.getElementById('sf-first-date') ? document.getElementById('sf-first-date').value : '';
+  var balloonDate='';
+  if(firstDate){
+    var d=new Date(firstDate+'T00:00:00');
+    if(!isNaN(d.getTime())){
+      d.setFullYear(d.getFullYear()+years);
+      balloonDate=String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getDate()).padStart(2,'0')+'/'+d.getFullYear();
+    }
+  }
+  return {price:price,loan:loan,pmt:monthlyPayment,cf:cf,annualCF:annualCF,cashIn:cashIn,buyerEntryFee:buyerEntryFee,futureValue:futureValue,balance:balance,exitNet:cashOut,profit:profit,roi:roi,dscr:dscr,years:years,noi:noi,capRate:capRate,cashOnCash:cashOnCash,principalAnnual:principalAnnual,annualDebt:annualDebt,principalPaid:principalPaid,interestPaid:interestPaid,totalPaid:downCash+principalPaid+interestPaid+balance,balloonDate:balloonDate};
 }
 function calcRentToOwn(){
   var finalPrice=v('rto-final'), upfront=v('rto-upfront'), gross=v('rto-gross'), net=v('rto-net');
@@ -2130,9 +2312,17 @@ function calc(){
   // CREATIVE DEALS PREVIEW
   var seller=calcSellerFinance();
   set('sf-loan',fmt(seller.loan));set('sf-pmt','-'+fmt(seller.pmt)+'/mo');
+  set('sf-entry-fee',fmt(seller.buyerEntryFee));
+  set('sf-annual-payment','-'+fmt(seller.annualDebt)+'/yr');
   set('sf-cf',(seller.cf>=0?'+':'')+fmt(seller.cf)+'/mo');
   set('sf-cashin',fmt(seller.cashIn));set('sf-profit',(seller.profit>=0?'+':'')+fmt(seller.profit));
-  set('sf-balance',fmt(seller.balance));set('sf-roi',pct(seller.roi));
+  set('sf-balance',fmt(seller.balance));set('sf-balloon',fmt(seller.balance));set('sf-roi',pct(seller.roi));
+  set('sf-balloon-year',seller.years);
+  set('sf-balloon-date',seller.balloonDate||'—');
+  set('sf-interest-paid',fmt(seller.interestPaid));
+  set('sf-principal-paid',fmt(seller.principalPaid));
+  set('sf-outstanding',fmt(seller.balance));
+  set('sf-total-paid',fmt(seller.totalPaid));
   set('sf-dscr','NOI '+fmt(seller.noi)+' · CoC '+pct(seller.cashOnCash)+' · DSCR '+(seller.dscr>0?seller.dscr.toFixed(2):'—'));
   document.getElementById('sf-profit').style.color=seller.profit>=0?'var(--green)':'var(--red)';
 
@@ -2361,7 +2551,7 @@ function analyze(opts){
 
 // ===== SHARE LINK =====
 function genLink(){
-  var fields=['n-buy','n-arv','n-cc','n-fee','n-rent','n-nightly','n-occ','n-tax','n-ins','n-maint','n-mgmt','n-vac','n-clean','f-csell','f-comm','f-hold','f-mo','f-hmr','f-hmp','b-ltv','b-rate','b-term','b-rcc','sf-price','sf-down','sf-closing','sf-upgrades','sf-rate','sf-term','sf-principal','sf-rent','sf-tax','sf-insurance','sf-maint','sf-mgmt','sf-market','sf-growth','sf-years','rto-final','rto-upfront','rto-gross','rto-net','rto-credit','rto-months','rto-third-rent','rto-growth','rto-ltv','sub-price','sub-cash','sub-mortgage','sub-rate','sub-term','sub-rent','sub-tax','sub-ins','sub-maint','sub-close','sub-principal','sub-interest','sub-buyer-annual-debt','sub2-price','sub2-cash','sub2-mortgage','sub2-seller-loan','sub2-close','sub2-tc','sub2-rent','sub2-tax','sub2-ins','sub2-hoa','sub2-maint','sub2-debt','sub2-seller-debt','sub2-principal','sub3-price','sub3-cash','sub3-mortgage','sub3-close','sub3-rent','sub3-tax','sub3-ins','sub3-maint','sub3-debt','sub3-original-debt','sub3-principal','mf-units','mf-price','mf-cap','mf-ltv','mf-rate','mf-term','mf-growth','mf-exitcap','mf-years','mf-close','mf-acq-fee','mf-legal','mf-renovation','mf-reserve-pct','mf-offer-cap','mf-base-income','mf-income-growth','mf-vacancy','mf-mgmt','mf-maint-pct','mf-capex-pct','mf-utilities','mf-insurance','mf-property-tax','mf-other-fixed','mf-extermination','mf-tenant-replace','mf-late-fees','mf-laundry','mf-deposit-forfeit','mf-garbage','mf-landscaping','mf-pool','mf-marketing','mf-hoa','mf-payroll','brrrr-purchase','brrrr-repairs','brrrr-hard-loan','brrrr-service-fee','brrrr-title-lender-insurance','brrrr-recording-fee','brrrr-hard-monthly-return','brrrr-hard-months','brrrr-lien-search','brrrr-title-search','brrrr-title-fee','brrrr-appraisal','brrrr-refi-ltv','brrrr-rent-monthly','brrrr-management-annual','brrrr-property-tax','brrrr-insurance','brrrr-hoa','brrrr-vacancy','brrrr-maintenance-pct','brrrr-refi-monthly-payment','brrrr-annual-principal','hold-rent-monthly','hold-property-tax','hold-insurance','hold-hoa','hold-vacancy','hold-monthly-payment','hold-annual-principal','hold-cash-in-deal','flip-purchase','flip-repairs','flip-buy-closing','flip-finance-cost','flip-out-of-pocket','flip-selected-target','addr'];
+  var fields=['n-buy','n-arv','n-cc','n-fee','n-rent','n-nightly','n-occ','n-tax','n-ins','n-maint','n-mgmt','n-vac','n-clean','f-csell','f-comm','f-hold','f-mo','f-hmr','f-hmp','b-ltv','b-rate','b-term','b-rcc','sf-offer-type','sf-price','sf-listed','sf-down','sf-closing','sf-upgrades','sf-assignment','sf-rate','sf-term','sf-first-date','sf-interest-only','sf-principal','sf-rent','sf-tax','sf-insurance','sf-maint','sf-mgmt','sf-market','sf-growth','sf-years','rto-final','rto-upfront','rto-gross','rto-net','rto-credit','rto-months','rto-third-rent','rto-growth','rto-ltv','sub-price','sub-cash','sub-mortgage','sub-rate','sub-term','sub-rent','sub-tax','sub-ins','sub-maint','sub-close','sub-principal','sub-interest','sub-buyer-annual-debt','sub2-price','sub2-cash','sub2-mortgage','sub2-seller-loan','sub2-close','sub2-tc','sub2-rent','sub2-tax','sub2-ins','sub2-hoa','sub2-maint','sub2-debt','sub2-seller-debt','sub2-principal','sub3-price','sub3-cash','sub3-mortgage','sub3-close','sub3-rent','sub3-tax','sub3-ins','sub3-maint','sub3-debt','sub3-original-debt','sub3-principal','mf-units','mf-price','mf-cap','mf-ltv','mf-rate','mf-term','mf-growth','mf-exitcap','mf-years','mf-close','mf-acq-fee','mf-legal','mf-renovation','mf-reserve-pct','mf-offer-cap','mf-base-income','mf-income-growth','mf-vacancy','mf-mgmt','mf-maint-pct','mf-capex-pct','mf-utilities','mf-insurance','mf-property-tax','mf-other-fixed','mf-extermination','mf-tenant-replace','mf-late-fees','mf-laundry','mf-deposit-forfeit','mf-garbage','mf-landscaping','mf-pool','mf-marketing','mf-hoa','mf-payroll','brrrr-purchase','brrrr-repairs','brrrr-hard-loan','brrrr-service-fee','brrrr-title-lender-insurance','brrrr-recording-fee','brrrr-hard-monthly-return','brrrr-hard-months','brrrr-lien-search','brrrr-title-search','brrrr-title-fee','brrrr-appraisal','brrrr-refi-ltv','brrrr-rent-monthly','brrrr-management-annual','brrrr-property-tax','brrrr-insurance','brrrr-hoa','brrrr-vacancy','brrrr-maintenance-pct','brrrr-refi-monthly-payment','brrrr-annual-principal','hold-rent-monthly','hold-property-tax','hold-insurance','hold-hoa','hold-vacancy','hold-monthly-payment','hold-annual-principal','hold-cash-in-deal','flip-purchase','flip-repairs','flip-buy-closing','flip-finance-cost','flip-out-of-pocket','flip-selected-target','addr'];
   var data={};
   // Only include fields with actual values to keep URL short
   fields.forEach(id=>{var el=document.getElementById(id);if(el&&el.value&&el.value!=='0')data[id]=el.value;});
@@ -2483,24 +2673,8 @@ function collectCsvInputRows(){
   return rows;
 }
 function collectCsvRepairRows(){
-  var rows=[];
-  document.querySelectorAll('#rtbody tr').forEach(function(tr,idx){
-    var inputs=tr.querySelectorAll('input,select');
-    if(!inputs.length) return;
-    var desc=(inputs[0] && inputs[0].value || '').trim();
-    var cat=(inputs[1] && inputs[1].value || '').trim();
-    var cont=(inputs[2] && inputs[2].value || '').trim();
-    var cost=(inputs[3] && inputs[3].value || '').trim();
-    var stat=(inputs[4] && inputs[4].value || '').trim();
-    if(!desc && !cat && !cont && !cost && !stat) return;
-    var n=rows.length+1;
-    rows.push({key:'repair_'+n+'_desc',label:'Repair '+n+' Description',value:desc,section:'Repairs',type:'input'});
-    rows.push({key:'repair_'+n+'_cat',label:'Repair '+n+' Category',value:cat,section:'Repairs',type:'input'});
-    rows.push({key:'repair_'+n+'_cont',label:'Repair '+n+' Contractor',value:cont,section:'Repairs',type:'input'});
-    rows.push({key:'repair_'+n+'_cost',label:'Repair '+n+' Cost',value:cost,section:'Repairs',type:'input'});
-    rows.push({key:'repair_'+n+'_stat',label:'Repair '+n+' Status',value:stat,section:'Repairs',type:'input'});
-  });
-  return rows;
+  // Repairs are now a single budget field (#n-rehab) captured by collectCsvInputRows.
+  return [];
 }
 function collectCsvComputedRows(){
   var rows=[];
@@ -2557,39 +2731,17 @@ function importCsvFile(input){
 }
 function importCsvText(text){
   var rows=csvObjects(text);
-  var direct=[];
-  var repairs={};
   rows.forEach(function(row){
     if(String(row.type||'').toLowerCase()!=='input') return;
     var key=String(row.key||'').trim();
+    // Skip legacy per-item repair rows from older exports
+    if(/^repair_\d+_(desc|cat|cont|cost|stat)$/.test(key)) return;
     var val=row.value===undefined ? '' : String(row.value);
-    var m=key.match(/^repair_(\d+)_(desc|cat|cont|cost|stat)$/);
-    if(m){
-      var idx=parseInt(m[1],10);
-      if(!repairs[idx]) repairs[idx]={desc:'',cat:'',cont:'',cost:'',stat:'Estimated'};
-      repairs[idx][m[2]]=val;
-      return;
-    }
-    direct.push({key:key,value:val});
-  });
-  direct.forEach(function(item){
-    var el=document.getElementById(item.key);
+    var el=document.getElementById(key);
     if(!el || el.type==='file') return;
-    el.value=item.value;
+    el.value=val;
   });
-  var tbody=document.getElementById('rtbody');
-  tbody.innerHTML='';
-  rowId=0;
-  var keys=Object.keys(repairs).map(function(k){return parseInt(k,10);}).sort(function(a,b){return a-b;});
-  if(keys.length){
-    keys.forEach(function(k){
-      var r=repairs[k];
-      addRow(r.desc||'',r.cat||'',r.cont||'',r.cost||'',r.stat||'Estimated');
-    });
-  }else{
-    addRow('','','','','Estimated');
-  }
-  sumRepairs();
+  syncRepairBudget();
   calc();
   if(document.getElementById('p8').classList.contains('active')){
     analyze({navigate:false,openBestTab:true});
@@ -2652,25 +2804,8 @@ function collectFormSections(){
   return sections;
 }
 function collectRepairRows(){
-  var rows=[];
-  document.querySelectorAll('#rtbody tr').forEach(function(tr){
-    var inputs=tr.querySelectorAll('input,select');
-    if(!inputs.length) return;
-    var desc=(inputs[0]&&inputs[0].value||'').trim();
-    var cat=(inputs[1]&&inputs[1].value||'').trim();
-    var cont=(inputs[2]&&inputs[2].value||'').trim();
-    var cost=(inputs[3]&&inputs[3].value||'').trim();
-    var stat=(inputs[4]&&inputs[4].value||'').trim();
-    if(!desc && !cat && !cont && !cost && !stat) return;
-    rows.push({
-      desc:desc||'—',
-      cat:cat||'—',
-      cont:cont||'—',
-      cost:cost ? formatCurrencyValue(cost) : '—',
-      stat:stat||'—'
-    });
-  });
-  return rows;
+  // Repairs are now a single Light/Medium/Heavy budget shown in the Purchase section.
+  return [];
 }
 function buildReportData(){
   analyze({navigate:false,openBestTab:false});
@@ -2696,12 +2831,33 @@ function buildReportData(){
   };
 }
 function renderPrintReport(data){
+  var photosHtml='';
+  if(photos.length){
+    photosHtml='<section class="report-section"><h2>Property Photos</h2><div class="report-photos">'+
+      photos.map(function(src){
+        return '<div class="report-photo"><img src="'+src+'"></div>';
+      }).join('')+
+      '</div></section>';
+  }
+
+  var photosInserted=false;
   var sectionsHtml=data.sections.map(function(section){
     var itemsHtml=section.items.map(function(item){
       return '<div class="report-item"><div class="label">'+escHtml(item.label)+'</div><div class="value">'+escHtml(item.value)+'</div></div>';
     }).join('');
-    return '<section class="report-section"><h2>'+escHtml(section.title)+'</h2><div class="report-grid">'+itemsHtml+'</div></section>';
+    var html='<section class="report-section"><h2>'+escHtml(section.title)+'</h2><div class="report-grid">'+itemsHtml+'</div></section>';
+    // Keep photos next to the property info, mirroring where they're uploaded in the form
+    if(!photosInserted && /property details/i.test(section.title)){
+      html+=photosHtml;
+      photosInserted=true;
+    }
+    return html;
   }).join('');
+  // Fallback: if there was no Property Details section, show photos before repairs
+  if(!photosInserted){
+    sectionsHtml+=photosHtml;
+    photosInserted=true;
+  }
 
   var repairsHtml='';
   if(data.repairs.length){
@@ -2750,41 +2906,58 @@ function printReport(){
   renderPrintReport(data);
   window.print();
 }
-function exportPdf(){
-  var data=buildReportData();
-  if(!window.html2pdf){
-    alert('PDF library did not load. Please try again.');
-    return;
-  }
-  renderPrintReport(data);
-  document.body.classList.add('report-export-mode');
-  var report=document.getElementById('print-report');
-  var opt={
-    margin:0,
-    filename:'hillel-deal-analysis.pdf',
-    image:{type:'jpeg',quality:0.98},
-    html2canvas:{scale:2,useCORS:true,scrollY:0,backgroundColor:'#ffffff'},
-    jsPDF:{unit:'pt',format:'a4',orientation:'portrait'},
-    pagebreak:{mode:['css','legacy']}
-  };
-  Promise.resolve(window.html2pdf().set(opt).from(report).save()).finally(function(){
-    document.body.classList.remove('report-export-mode');
+
+// ===== DEFAULT FIELDS: zero deal-specific numbers + red "untouched" flag =====
+// Keep only assumption-type inputs (rates, %, terms, counts) prefilled.
+// Every other numeric field starts blank so old deal numbers don't linger,
+// and every numeric field is flagged red until Hillel actually edits it.
+var KEEP_DEFAULTS=new Set([
+  'n-occ','n-mgmt','n-vac',
+  'f-comm','f-mo','f-hmr','f-hmp','flip-selected-target',
+  'b-ltv','b-rate','b-term',
+  'brrrr-hard-months','brrrr-refi-ltv','brrrr-maintenance-pct',
+  'sf-rate','sf-term','sf-mgmt','sf-growth','sf-years',
+  'mf-income-growth','mf-mgmt','mf-maint-pct','mf-capex-pct','mf-reserve-pct',
+  'rto-growth','rto-months','rto-ltv',
+  'sub-rate','sub-term','sub2-rate','sub3-rate',
+  'mf-cap','mf-ltv','mf-rate','mf-term','mf-growth','mf-exitcap','mf-years','mf-close','mf-offer-cap','mf-units'
+]);
+function numFields(){
+  return Array.prototype.filter.call(
+    document.querySelectorAll('input[type=number]'),
+    function(el){ return !el.classList.contains('comp-sqft') && !el.classList.contains('comp-sold'); }
+  );
+}
+function clearUntouched(el){ el.classList.remove('untouched'); }
+function initDefaultFields(){
+  numFields().forEach(function(el){
+    // zero out deal-specific dollar fields (keep assumptions and the repair budget)
+    if(el.id!=='n-rehab' && !KEEP_DEFAULTS.has(el.id)) el.value='';
+    // flag every numeric field as untouched (red) until first edit
+    el.classList.add('untouched');
+    el.addEventListener('input',function(){clearUntouched(el);});
+    el.addEventListener('change',function(){clearUntouched(el);});
   });
 }
 
 // ===== INIT =====
 window.addEventListener('load',()=>{
-  addRow('','','','','Estimated');
-  addRow('','','','','Estimated');
-  addRow('','','','','Estimated');
+  initDefaultFields();
+  addComp();
+  addComp();
+  addComp();
+  // keep Comps subject sqft in sync with Property Details
+  var ps=document.getElementById('sqft');
+  if(ps) ps.addEventListener('input',recalcComps);
   if(window.location.hash.startsWith('#d=')){
     try{
       var data=JSON.parse(decodeURIComponent(atob(window.location.hash.slice(3))));
-      Object.entries(data).forEach(([k,val])=>{var el=document.getElementById(k);if(el)el.value=val;});
+      Object.entries(data).forEach(([k,val])=>{var el=document.getElementById(k);if(el){el.value=val;clearUntouched(el);}});
       if(data['addr']) onAddr(data['addr']);
       analyze();
     }catch(e){}
   }
+  calc();
 });
 </script>
 </body>
