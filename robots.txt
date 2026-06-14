@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Private / app-only pages
+Disallow: /Calculator.html
+Disallow: /Calculator
+Disallow: /calculator
+Disallow: /home.html
+
+Sitemap: https://cashbuyersohio.net/sitemap.xml
