@@ -204,9 +204,9 @@ input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-
 .drop-zone svg{margin:0 auto .6rem;display:block;stroke:var(--gold)}
 .drop-zone p{font-size:.85rem;font-weight:500;color:var(--ink2)}
 .drop-zone span{font-size:.72rem;color:var(--ink3)}
-.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:.65rem;margin-top:.85rem}
-.photo-item{aspect-ratio:4/3;border-radius:8px;overflow:hidden;position:relative;background:var(--bg);border:1px solid var(--border)}
-.photo-item img{width:100%;height:100%;object-fit:cover;display:block}
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:.65rem;margin-top:.85rem;align-items:start}
+.photo-item{border-radius:8px;overflow:hidden;position:relative;background:var(--bg);border:1px solid var(--border)}
+.photo-item img{width:100%;height:auto;display:block;cursor:zoom-in}
 .photo-del{
   position:absolute;top:4px;right:4px;
   width:22px;height:22px;border-radius:50%;
@@ -215,6 +215,21 @@ input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-
   opacity:0;transition:opacity .15s;
 }
 .photo-item:hover .photo-del{opacity:1}
+
+/* ===== LIGHTBOX ===== */
+.lightbox{
+  display:none;position:fixed;inset:0;z-index:9999;
+  background:rgba(0,0,0,.88);align-items:center;justify-content:center;
+  padding:2rem;cursor:zoom-out;
+}
+.lightbox.open{display:flex}
+.lightbox img{max-width:95vw;max-height:92vh;width:auto;height:auto;border-radius:6px;box-shadow:0 10px 40px rgba(0,0,0,.5);cursor:default}
+.lightbox-close{
+  position:absolute;top:18px;right:24px;width:42px;height:42px;border-radius:50%;
+  background:rgba(255,255,255,.15);color:#fff;font-size:1.4rem;border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;line-height:1;
+}
+.lightbox-close:hover{background:rgba(255,255,255,.3)}
 
 /* ===== REPAIRS TABLE ===== */
 .repairs-wrap{overflow-x:auto}
@@ -462,12 +477,12 @@ input.untouched{
 .report-note{
   font-size:.74rem;color:var(--ink3);line-height:1.6;margin-top:.6rem;
 }
-.report-photos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.6rem}
+.report-photos{display:flex;flex-direction:column;gap:.6rem}
 .report-photos .report-photo{
-  aspect-ratio:4/3;border-radius:10px;overflow:hidden;border:1px solid #E5E7EB;background:#F8FAFC;
-  break-inside:avoid;
+  border-radius:10px;overflow:hidden;border:1px solid #E5E7EB;background:#F8FAFC;
+  break-inside:avoid;text-align:center;
 }
-.report-photos .report-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.report-photos .report-photo img{max-width:100%;width:auto;height:auto;display:block;margin:0 auto}
 
 @media print{
   body{background:#fff}
@@ -475,6 +490,9 @@ input.untouched{
   .print-report{display:block !important}
   .print-report-shell{padding:0;max-width:none}
   .report-section,.report-item,.report-summary{break-inside:avoid}
+  .report-photos{display:grid;grid-template-columns:repeat(2,1fr);gap:6mm;align-items:start}
+  .report-photos .report-photo{break-inside:avoid;page-break-inside:avoid}
+  .report-photos .report-photo img{max-width:100%;max-height:110mm;width:auto;height:auto;object-fit:contain;margin:0 auto}
   @page{margin:12mm}
 }
 
@@ -700,6 +718,11 @@ footer{background:var(--navy);padding:1.5rem 2rem;display:flex;justify-content:s
     </div>
     <input type="file" id="fi" multiple accept="image/*" style="display:none" onchange="addPhotos(this)">
     <div class="photo-grid" id="pg"></div>
+  </div>
+
+  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <button class="lightbox-close" onclick="closeLightbox()" aria-label="Close">✕</button>
+    <img id="lightbox-img" src="" alt="" onclick="event.stopPropagation()">
   </div>
 
   <input type="file" id="csv-import" accept=".csv,text/csv" style="display:none" onchange="importCsvFile(this)">
@@ -1756,8 +1779,15 @@ function onDrop(e){
 }
 function renderPhotos(){
   var g=document.getElementById('pg');
-  g.innerHTML=photos.map((s,i)=>`<div class="photo-item"><img src="${s}"><button class="photo-del" onclick="photos.splice(${i},1);renderPhotos()">✕</button></div>`).join('');
+  g.innerHTML=photos.map((s,i)=>`<div class="photo-item"><img src="${s}" onclick="openLightbox(${i})"><button class="photo-del" onclick="photos.splice(${i},1);renderPhotos()">✕</button></div>`).join('');
 }
+function openLightbox(i){
+  var lb=document.getElementById('lightbox');
+  document.getElementById('lightbox-img').src=photos[i];
+  lb.classList.add('open');
+}
+function closeLightbox(){document.getElementById('lightbox').classList.remove('open');}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeLightbox();});
 
 // ===== REPAIRS (Light / Medium / Heavy) =====
 // Light $10k-$45k, Medium $45k-$85k, Heavy $85k+ (must enter actual amount)
