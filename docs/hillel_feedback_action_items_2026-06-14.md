@@ -9,9 +9,10 @@
 
 ## מה נשאר לתקן
 
-- להחליף בכל האתר את `Hilel 1 LLC` / `Hillel-1 LLC` ל-`Hilel Steam`.
+- ✅ בוצע: הוחלף בכל האתר `Hilel 1 LLC` / `Hillel-1 LLC` ל-`Hillel's Team` (כולל עמודים משפטיים, לפי החלטת הלל).
 - להשלים את עמוד הבית וה-About עם המלל שהלל ישלח בוואטסאפ.
-- להוסיף Secondary Phone עם ניסוח `Only for texting`.
+- ✅ בוצע: נוסף Secondary Phone `+1 (216) 489-7809` עם ניסוח `Only for texting`.
+- ✅ בוצע: נוספו אזורי שירות (Cleveland OH, Columbus OH, Indianapolis IN, Marion County, Cuyahoga County) בעמוד הבית וב-About.
 - להחליט אם `Cash In Deal` נשאר בממשק או מוסתר/מחושב מאחורי הקלעים.
 - לסגור את `Excel Buy & Hold Inputs` ולמחוק שדות Excel פנימיים לא ברורים.
 - ✅ בוצע: `Wholesale Assignment Fee` מוסתר מכל הפלטים החיצוניים (Share/Print/CSV) ונשאר פנימי בחישובים.
@@ -22,7 +23,9 @@
 
 | אזור | מה צריך לעשות | סטטוס | הערות |
 |---|---|---|---|
-| אתר ראשי | להחליף `Hilel 1 LLC` ל-`Hilel Steam`, לעדכן CTA, להוסיף מלל ולעדכן עיצוב | לא בוצע | דורש מעבר בכל קבצי האתר |
+| אתר ראשי | להחליף `Hilel 1 LLC` ל-`Hillel's Team`, לעדכן CTA, להוסיף מלל ולעדכן עיצוב | חלקית | השם הוחלף בכל הקבצים ל-`Hillel's Team` ✅; Secondary Phone + אזורי שירות נוספו ✅; עדיין חסר: מלל WhatsApp, עדכון CTA ועיצוב |
+| Secondary Phone | להוסיף מספר טקסט בלבד בכל המקומות הרלוונטיים | בוצע | `+1 (216) 489-7809` עם `Only for texting`; בעמוד Contact (קישור `sms:`) וב-footer של כל 5 העמודים |
+| אזורי שירות | להטמיע את האזורים שהלל עובד בהם | בוצע | Cleveland OH, Columbus OH, Indianapolis IN, Marion County, Cuyahoga County. סקשן `Areas We Buy In` בעמוד הבית + בלוק ב-About. צ'יפים מעוצבים (`.area-chip`). תוקנו שגיאות איות (Indianapolis, Cuyahoga) |
 | Assignment Fee | להשאיר פנימי בלבד ולא להציג בדוח הסופי | בוצע | מסונן מ-Share (`genLink`), מ-Print (`collectFormSections`) ומ-CSV (`collectCsvInputRows`) דרך `INTERNAL_ONLY_FIELDS`. נשאר בחישובים הפנימיים |
 | Title Costs | להשאיר רק `Title` בלי פירוט נוסף | בוצע | `Title, escrow, recording` הוחלף ל-`Title` בלבד |
 | Buy & Hold / Excel Inputs | לנקות שדות Excel פנימיים וכפילויות ולשמור רק מה שנחוץ | בוצע | שדות Excel פנימיים וכפילויות הוסרו מהטופס; נשארה החלטה פתוחה רק לגבי `Cash In Deal` אם צריך להציגו |
@@ -280,7 +283,7 @@
 
 ## סדר עדיפות מוצע
 
-1. להחליף בכל האתר את `Hilel 1 LLC` ל-`Hilel Steam`.
+1. ✅ להחליף בכל האתר את `Hilel 1 LLC` ל-`Hillel's Team`. (בוצע)
 2. ✅ להגן על המחשבון בסיסמה ולהסיר קישור גלוי מהאתר. (בוצע)
 3. לנקות את Property Type, Repairs, Excel Inputs ושדות דיפולטיביים. (Property Type ✅ + Repairs ✅ + דיפולטים/סימון אדום ✅ בוצעו; Excel Inputs פתוח)
 4. ✅ לתקן PDF/הדפסה כך שיכלול תמונות ולא יציג Assignment Fee. (תמונות בהדפסה ✅ + הסתרת Assignment Fee מ-Share/Print/CSV ✅ בוצעו)
@@ -288,3 +291,17 @@
 6. ✅ להוסיף Comps ידני עם חישוב ARV. (בוצע)
 7. לעבור fine-tuning על כל החישובים מול הלל.
 8. להשלים SEO ו-Google Search Console.
+
+## מה תיקנתי עכשיו - בשפה פשוטה (עדכון 2026-06-15)
+
+הסבר פשוט של כל מה שנעשה בסבב התיקונים האחרון:
+
+1. **שם העסק שונה בכל האתר** — בכל מקום שהיה כתוב "Hilel 1 LLC" עכשיו כתוב **"Hillel's Team"**. זה כולל את הכותרות של כל העמודים, החלק התחתון (footer) של כל עמוד, עמוד ה-About, הטקסט בטפסים, וגם את העמודים המשפטיים (תקנון ומדיניות פרטיות). הסיבה: הלל ביקש שלא יוכלו לחפש אותו לפי שם ה-LLC.
+   - ⚠️ שים לב: בעמוד הפרטיות נשארה הכתובת הרשומה של העסק. אם ספק ה-SMS דורש את השם הרשום המדויק בטקסט ההסכמה, אולי צריך להחזיר אותו רק שם.
+
+2. **נוסף מספר טלפון משני להודעות בלבד** — המספר **+1 (216) 489-7809** נוסף בעמוד "צור קשר" וגם בחלק התחתון של כל העמודים. ליד המספר כתוב במפורש "Only for texting" (רק להודעות), והקישור פותח אפליקציית הודעות ולא שיחה.
+
+3. **נוספו האזורים שבהם הלל עובד** — נוסף סקשן חדש "Areas We Buy In" בעמוד הבית, וגם בלוק דומה בעמוד About. האזורים: Cleveland OH, Columbus OH, Indianapolis IN, Marion County, Cuyahoga County. הם מוצגים כתגיות מעוצבות.
+   - תוקנו שגיאות איות שהלל שלח: "Indenapolis" → Indianapolis, "Cayuga" → **Cuyahoga County** (המחוז של קליבלנד באוהיו).
+
+4. **בדיקת תקינות** — נבדק שהעיצוב (CSS) נטען כמו שצריך דרך שרת מקומי, ושלא נשאר בשום מקום מספר הטלפון הזמני הישן או השם הישן של העסק.

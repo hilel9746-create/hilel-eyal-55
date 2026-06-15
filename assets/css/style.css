@@ -323,3 +323,18 @@ footer { background: #0f172a; padding: 40px 20px; }
 }
 .nav-links.active a { width: 100%; text-align: center; }
 .nav-links.active .hide-mob { display: block; }
+
+/* Service area chips */
+.area-chip {
+  display: inline-block;
+  padding: 12px 22px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--navy);
+  font-weight: 600;
+  font-size: 0.98rem;
+  box-shadow: var(--shadow-sm);
+  transition: border-color .15s, color .15s;
+}
+.area-chip:hover { border-color: var(--blue); color: var(--blue); }
