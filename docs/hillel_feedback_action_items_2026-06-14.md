@@ -24,9 +24,9 @@
 |---|---|---|---|
 | אתר ראשי | להחליף `Hilel 1 LLC` ל-`Hilel Steam`, לעדכן CTA, להוסיף מלל ולעדכן עיצוב | לא בוצע | דורש מעבר בכל קבצי האתר |
 | Assignment Fee | להשאיר פנימי בלבד ולא להציג בדוח הסופי | בוצע | מסונן מ-Share (`genLink`), מ-Print (`collectFormSections`) ומ-CSV (`collectCsvInputRows`) דרך `INTERNAL_ONLY_FIELDS`. נשאר בחישובים הפנימיים |
-| Title Costs | להחליף `Title, escrow, recording` ל-`Title` בלבד | לא בוצע | לפי צילום המסך שסומן |
-| Buy & Hold / Excel Inputs | לנקות שדות Excel פנימיים וכפילויות | לא בוצע | דורש החלטה סופית על `Cash In Deal` |
-| Hard Money / Flip | להשאיר Hard Money Rates/Points ולנקות שדות לא ברורים | לא בוצע | לוודא שהחישובים נשארים תקינים |
+| Title Costs | להשאיר רק `Title` בלי פירוט נוסף | בוצע | `Title, escrow, recording` הוחלף ל-`Title` בלבד |
+| Buy & Hold / Excel Inputs | לנקות שדות Excel פנימיים וכפילויות ולשמור רק מה שנחוץ | בוצע | שדות Excel פנימיים וכפילויות הוסרו מהטופס; נשארה החלטה פתוחה רק לגבי `Cash In Deal` אם צריך להציגו |
+| Hard Money / Flip | להשאיר Hard Money Rates/Points ולנקות שדות לא ברורים | בוצע | `Excel Flip + Leverage Inputs`, `Excel Purchase` ו-`Select Scenario` נמחקו מהטופס; נשארו Hard Money Rates/Points והחישובים ממשיכים לעבוד |
 | Strategy / Results | לשמר/לבנות המלצת אסטרטגיה ותוצאות יצוא | בוצע | המלצת אסטרטגיה + טבלת השוואה קיימות. נוספה רשימה מרכזית `INTERNAL_ONLY_FIELDS` (`n-fee`, `sf-assignment`) שמסוננת מ-Share, Print ו-CSV. ה-Assignment Fee נשאר בחישובים הפנימיים בלבד ולא חושף לקונה |
 | SEO / Deployment | Search Console, metadata, sitemap/robots וחיבור Netlify ל-GitHub | חלקית | GitHub כבר חובר והקוד נדחף; SEO/Search Console עדיין לא |
 | גישה למחשבון | להוסיף הגנת username/password ולהסתיר קישור מהעמוד הראשי | בוצע ונפרס | Netlify Edge Function פעיל בפרודקשן; hash/salt שמורים ב-Netlify env; הסיסמה לא נשמרה בקוד |
@@ -105,8 +105,8 @@
   - לוודא שהוא לא מופיע בדוח הסופי לקונה.
   - בדוח החיצוני אסור שהקונה יראה כמה הלל מרוויח בעסקה.
 - בשדה/טקסט `Title, escrow, recording`:
-  - למחוק את `escrow, recording`.
-  - להשאיר רק `Title`.
+  - ✅ בוצע: נשאר רק `Title`.
+  - `escrow, recording` נמחקו.
 
 ## Repairs
 
@@ -140,12 +140,9 @@
   - Management Fee
   - Vacancy Rate
   - Airbnb Cleaning / Supplies, אם עדיין רלוונטי לאסטרטגיה
-- למחוק/להעיף את כל החלק שסומן כ-`Excel Buy & Hold Inputs` אם הוא כפילות או נתוני Excel פנימיים שלא צריכים להיות בממשק.
-- למחוק שדות שמגיעים מה-Excel ולא ברורים למשתמש, לדוגמה:
-  - `Excel Purchase`
-  - `Excel Repairs`
-  - `Selected Scenario`, אם אין לו משמעות ברורה בממשק.
-- לבדוק האם `Cash In Deal` נדרש להצגה; אם נשאר, לוודא שהוא לא גורם ל-ROI/CoC להיראות שבור כשהוא 0.
+- ✅ בוצע: הוסר כל החלק שסומן כ-`Excel Buy & Hold Inputs` כשהוא כפילות או נתוני Excel פנימיים.
+- ✅ בוצע: שדות Excel לא ברורים הוסרו מהטופס, כולל `Excel Purchase`, `Excel Repairs` ו-`Select Scenario`.
+- נשאר לבדוק רק אם `Cash In Deal` צריך להופיע למשתמש או להישאר מאחורי הקלעים.
 
 ## ברירות מחדל וסימון שדות שלא נגעו בהם
 
@@ -167,13 +164,10 @@
 ## Hard Money / Flip / Leverage
 
 - להשאיר `Hard Money Rates` ו-`Hard Money Points`; הם קריטיים.
-- לבדוק את אזור `Excel Flip + Leverage Inputs`.
-- למחוק או להסתיר שדות Excel פנימיים שלא מובנים למשתמש:
-  - `Excel Purchase`
-  - `Excel Repairs`
-  - `Selected Scenario`, אם אינו משרת חישוב ברור.
-- שדות כמו `Purchase`, `Repair`, `Hard Money Loan`, `Service Fee` צריכים להתחיל ב-0 אם אין נתון אמיתי.
-- לוודא שכל החישובים עדיין עובדים אחרי ניקוי השדות.
+- ✅ בוצע: האזור `Excel Flip + Leverage Inputs` נמחק מהטופס.
+- ✅ בוצע: השדות `Excel Purchase`, `Excel Repairs` ו-`Select Scenario` הוסרו.
+- ✅ בוצע: `Hard Money Rates` ו-`Hard Money Points` נשארו.
+- ✅ בוצע: החישובים נבדקו אחרי הניקוי והמשיכו לעבוד.
 
 ## Seller Finance
 
