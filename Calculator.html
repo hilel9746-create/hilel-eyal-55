@@ -628,15 +628,15 @@ footer{background:var(--navy);padding:1.5rem 2rem;display:flex;justify-content:s
       </div>
       <div id="addr-links-wrap" style="display:none;grid-column:span 2">
         <div class="addr-links">
-          <a id="al-maps" href="#" target="_blank" class="addr-link">
+          <a id="al-maps" href="#" target="_blank" rel="noopener noreferrer" class="addr-link">
             <svg viewBox="0 0 24 24" fill="none" stroke="#4285F4" stroke-width="2" width="16" height="16"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
             Google Maps
           </a>
-          <a id="al-street" href="#" target="_blank" class="addr-link">
+          <a id="al-street" href="#" target="_blank" rel="noopener noreferrer" class="addr-link">
             <svg viewBox="0 0 24 24" fill="none" stroke="#34A853" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
             Street View
           </a>
-          <a id="al-zillow" href="#" target="_blank" class="addr-link">
+          <a id="al-zillow" href="#" target="_blank" rel="noopener noreferrer" class="addr-link">
             <svg viewBox="0 0 24 24" fill="none" stroke="#006AFF" stroke-width="2" width="16" height="16"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
             Search Zillow
           </a>
@@ -1779,7 +1779,21 @@ function onDrop(e){
 }
 function renderPhotos(){
   var g=document.getElementById('pg');
-  g.innerHTML=photos.map((s,i)=>`<div class="photo-item"><img src="${s}" onclick="openLightbox(${i})"><button class="photo-del" onclick="photos.splice(${i},1);renderPhotos()">✕</button></div>`).join('');
+  g.innerHTML='';
+  photos.forEach(function(s,i){
+    var item=document.createElement('div');
+    item.className='photo-item';
+    var img=document.createElement('img');
+    img.src=s; // set via property, never string-interpolated into HTML
+    img.addEventListener('click',function(){openLightbox(i);});
+    var del=document.createElement('button');
+    del.className='photo-del';
+    del.textContent='✕';
+    del.addEventListener('click',function(){photos.splice(i,1);renderPhotos();});
+    item.appendChild(img);
+    item.appendChild(del);
+    g.appendChild(item);
+  });
 }
 function openLightbox(i){
   var lb=document.getElementById('lightbox');
@@ -1836,13 +1850,13 @@ function addComp(addr,sqft,sold,date,bd,ba,dist){
   tr.id=id;tr.className='comp-row';
   tr.innerHTML=
     '<td class="comp-idx"></td>'+
-    '<td><input class="rt-input" type="text" placeholder="123 Main St" value="'+(addr||'')+'"></td>'+
-    '<td><input class="rt-input comp-sqft" type="number" placeholder="1,800" style="text-align:right" value="'+(sqft||'')+'" oninput="recalcComps()"></td>'+
-    '<td><div class="rt-cost"><input class="rt-input comp-sold" type="number" placeholder="0" value="'+(sold||'')+'" oninput="recalcComps()"></div></td>'+
+    '<td><input class="rt-input" type="text" placeholder="123 Main St" value="'+escHtml(addr||'')+'"></td>'+
+    '<td><input class="rt-input comp-sqft" type="number" placeholder="1,800" style="text-align:right" value="'+escHtml(sqft||'')+'" oninput="recalcComps()"></td>'+
+    '<td><div class="rt-cost"><input class="rt-input comp-sold" type="number" placeholder="0" value="'+escHtml(sold||'')+'" oninput="recalcComps()"></div></td>'+
     '<td class="comp-perqft" data-perqft>$0</td>'+
-    '<td><input class="rt-input" type="text" placeholder="mm/yyyy" value="'+(date||'')+'"></td>'+
-    '<td><input class="rt-input" type="text" placeholder="3 / 2" value="'+((bd!=null&&bd!=='')?(bd+(ba?' / '+ba:'')):'')+'" style="min-width:70px"></td>'+
-    '<td><input class="rt-input" type="text" placeholder="0.8 mi" value="'+(dist||'')+'"></td>'+
+    '<td><input class="rt-input" type="text" placeholder="mm/yyyy" value="'+escHtml(date||'')+'"></td>'+
+    '<td><input class="rt-input" type="text" placeholder="3 / 2" value="'+escHtml((bd!=null&&bd!=='')?(bd+(ba?' / '+ba:'')):'')+'" style="min-width:70px"></td>'+
+    '<td><input class="rt-input" type="text" placeholder="0.8 mi" value="'+escHtml(dist||'')+'"></td>'+
     '<td><button class="del-row" onclick="document.getElementById(\''+id+'\').remove();recalcComps()">✕</button></td>';
   document.getElementById('comps-body').appendChild(tr);
   recalcComps();
@@ -2579,12 +2593,22 @@ function analyze(opts){
   }
 }
 
+// ===== INTERNAL-ONLY FIELDS =====
+// Fields that are Hillel's private margin and must NEVER leave the calculator in
+// any buyer/partner-facing export (Share link, Print report) or in the CSV.
+// They still participate in all internal calculations — they are only stripped
+// from the exported output.
+var INTERNAL_ONLY_FIELDS=new Set([
+  'n-fee',        // Wholesale / Assignment Fee (Purchase page)
+  'sf-assignment' // Assignment Fee inside Seller Financing
+]);
+
 // ===== SHARE LINK =====
 function genLink(){
   var fields=['n-buy','n-arv','n-cc','n-fee','n-rent','n-nightly','n-occ','n-tax','n-ins','n-maint','n-mgmt','n-vac','n-clean','f-csell','f-comm','f-hold','f-mo','f-hmr','f-hmp','b-ltv','b-rate','b-term','b-rcc','sf-offer-type','sf-price','sf-listed','sf-down','sf-closing','sf-upgrades','sf-assignment','sf-rate','sf-term','sf-first-date','sf-interest-only','sf-principal','sf-rent','sf-tax','sf-insurance','sf-maint','sf-mgmt','sf-market','sf-growth','sf-years','rto-final','rto-upfront','rto-gross','rto-net','rto-credit','rto-months','rto-third-rent','rto-growth','rto-ltv','sub-price','sub-cash','sub-mortgage','sub-rate','sub-term','sub-rent','sub-tax','sub-ins','sub-maint','sub-close','sub-principal','sub-interest','sub-buyer-annual-debt','sub2-price','sub2-cash','sub2-mortgage','sub2-seller-loan','sub2-close','sub2-tc','sub2-rent','sub2-tax','sub2-ins','sub2-hoa','sub2-maint','sub2-debt','sub2-seller-debt','sub2-principal','sub3-price','sub3-cash','sub3-mortgage','sub3-close','sub3-rent','sub3-tax','sub3-ins','sub3-maint','sub3-debt','sub3-original-debt','sub3-principal','mf-units','mf-price','mf-cap','mf-ltv','mf-rate','mf-term','mf-growth','mf-exitcap','mf-years','mf-close','mf-acq-fee','mf-legal','mf-renovation','mf-reserve-pct','mf-offer-cap','mf-base-income','mf-income-growth','mf-vacancy','mf-mgmt','mf-maint-pct','mf-capex-pct','mf-utilities','mf-insurance','mf-property-tax','mf-other-fixed','mf-extermination','mf-tenant-replace','mf-late-fees','mf-laundry','mf-deposit-forfeit','mf-garbage','mf-landscaping','mf-pool','mf-marketing','mf-hoa','mf-payroll','brrrr-purchase','brrrr-repairs','brrrr-hard-loan','brrrr-service-fee','brrrr-title-lender-insurance','brrrr-recording-fee','brrrr-hard-monthly-return','brrrr-hard-months','brrrr-lien-search','brrrr-title-search','brrrr-title-fee','brrrr-appraisal','brrrr-refi-ltv','brrrr-rent-monthly','brrrr-management-annual','brrrr-property-tax','brrrr-insurance','brrrr-hoa','brrrr-vacancy','brrrr-maintenance-pct','brrrr-refi-monthly-payment','brrrr-annual-principal','hold-rent-monthly','hold-property-tax','hold-insurance','hold-hoa','hold-vacancy','hold-monthly-payment','hold-annual-principal','hold-cash-in-deal','flip-purchase','flip-repairs','flip-buy-closing','flip-finance-cost','flip-out-of-pocket','flip-selected-target','addr'];
   var data={};
   // Only include fields with actual values to keep URL short
-  fields.forEach(id=>{var el=document.getElementById(id);if(el&&el.value&&el.value!=='0')data[id]=el.value;});
+  fields.forEach(id=>{if(INTERNAL_ONLY_FIELDS.has(id))return;var el=document.getElementById(id);if(el&&el.value&&el.value!=='0')data[id]=el.value;});
   var enc=btoa(encodeURIComponent(JSON.stringify(data)));
   document.getElementById('share-url').value=window.location.href.split('#')[0]+'#d='+enc;
   document.getElementById('link-wrap').style.display='block';
@@ -2691,6 +2715,7 @@ function collectCsvInputRows(){
     var labelEl=field.querySelector('label');
     var control=field.querySelector('input,select,textarea');
     if(!labelEl || !control || !control.id || control.type==='file') return;
+    if(INTERNAL_ONLY_FIELDS.has(control.id)) return; // keep internal margin out of CSV export
     var card=field.closest('.card');
     rows.push({
       key:control.id,
@@ -2826,6 +2851,7 @@ function collectFormSections(){
       var labelEl=field.querySelector('label');
       var inputEl=field.querySelector('input,select,textarea');
       if(!labelEl || !inputEl || inputEl.type==='hidden') return;
+      if(INTERNAL_ONLY_FIELDS.has(inputEl.id)) return; // never show internal margin in buyer report
       var value=formatFieldValue(inputEl);
       items.push({label:labelEl.textContent.trim(),value:value});
     });

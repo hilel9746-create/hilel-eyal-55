@@ -95,5 +95,9 @@ export default async (request, context) => {
     return unauthorized();
   }
 
-  return context.next();
+  // Authenticated: serve the page but prevent shared/proxy caches from storing
+  // the protected content.
+  const response = await context.next();
+  response.headers.set("Cache-Control", "private, no-store");
+  return response;
 };

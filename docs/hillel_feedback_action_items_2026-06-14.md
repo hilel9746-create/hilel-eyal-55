@@ -7,24 +7,35 @@
 - צילומי מסך שסומנו במהלך השיחה
 - נקודות ידניות שנרשמו אחרי השיחה
 
+## מה נשאר לתקן
+
+- להחליף בכל האתר את `Hilel 1 LLC` / `Hillel-1 LLC` ל-`Hilel Steam`.
+- להשלים את עמוד הבית וה-About עם המלל שהלל ישלח בוואטסאפ.
+- להוסיף Secondary Phone עם ניסוח `Only for texting`.
+- להחליט אם `Cash In Deal` נשאר בממשק או מוסתר/מחושב מאחורי הקלעים.
+- לסגור את `Excel Buy & Hold Inputs` ולמחוק שדות Excel פנימיים לא ברורים.
+- ✅ בוצע: `Wholesale Assignment Fee` מוסתר מכל הפלטים החיצוניים (Share/Print/CSV) ונשאר פנימי בחישובים.
+- לוודא ש-SEO, `Google Search Console`, metadata, sitemap ו-robots הושלמו.
+- להשלים גישת Base44 אם רוצים חיבור נתוני Comps אוטומטי בעתיד.
+
 ## טבלת מעקב תיקונים
 
 | אזור | מה צריך לעשות | סטטוס | הערות |
 |---|---|---|---|
 | אתר ראשי | להחליף `Hilel 1 LLC` ל-`Hilel Steam`, לעדכן CTA, להוסיף מלל ולעדכן עיצוב | לא בוצע | דורש מעבר בכל קבצי האתר |
+| Assignment Fee | להשאיר פנימי בלבד ולא להציג בדוח הסופי | בוצע | מסונן מ-Share (`genLink`), מ-Print (`collectFormSections`) ומ-CSV (`collectCsvInputRows`) דרך `INTERNAL_ONLY_FIELDS`. נשאר בחישובים הפנימיים |
+| Title Costs | להחליף `Title, escrow, recording` ל-`Title` בלבד | לא בוצע | לפי צילום המסך שסומן |
+| Buy & Hold / Excel Inputs | לנקות שדות Excel פנימיים וכפילויות | לא בוצע | דורש החלטה סופית על `Cash In Deal` |
+| Hard Money / Flip | להשאיר Hard Money Rates/Points ולנקות שדות לא ברורים | לא בוצע | לוודא שהחישובים נשארים תקינים |
+| Strategy / Results | לשמר/לבנות המלצת אסטרטגיה ותוצאות יצוא | בוצע | המלצת אסטרטגיה + טבלת השוואה קיימות. נוספה רשימה מרכזית `INTERNAL_ONLY_FIELDS` (`n-fee`, `sf-assignment`) שמסוננת מ-Share, Print ו-CSV. ה-Assignment Fee נשאר בחישובים הפנימיים בלבד ולא חושף לקונה |
+| SEO / Deployment | Search Console, metadata, sitemap/robots וחיבור Netlify ל-GitHub | חלקית | GitHub כבר חובר והקוד נדחף; SEO/Search Console עדיין לא |
 | גישה למחשבון | להוסיף הגנת username/password ולהסתיר קישור מהעמוד הראשי | בוצע ונפרס | Netlify Edge Function פעיל בפרודקשן; hash/salt שמורים ב-Netlify env; הסיסמה לא נשמרה בקוד |
 | Property Type | למחוק `Condo` ו-`Commercial`; להשאיר `Townhouse` | בוצע | `Calculator.html` שורה ~600: נמחקו `Condo / Townhouse` ו-`Commercial`, נוסף `Townhouse`. נשארו Single Family / Multi-Family / Townhouse |
 | Property Photos / PDF | להכניס תמונות לדוח הסופי (דרך Print) | בוצע | מסלול Export PDF הוסר לחלוטין. התמונות מ-Property Photos מוצגות בדוח ההדפסה בסקשן `Property Photos`, ממוקם מיד אחרי Property Details (כמו מיקום ההעלאה בטופס). וידאו לא נדרש |
-| Assignment Fee | להשאיר פנימי בלבד ולא להציג בדוח הסופי | לא בוצע | חשוב לבדוק גם Share/Print/PDF |
-| Title Costs | להחליף `Title, escrow, recording` ל-`Title` בלבד | לא בוצע | לפי צילום המסך שסומן |
 | Repairs | למחוק עמוד Repairs מלא ולהחליף בבחירת Light/Medium/Heavy | בוצע | עמוד p3 (Repair Items) נמחק כולו. נוסף בורר `Repair Level` (Light/Medium/Heavy) + שדה `Repair Budget` בסוף עמוד Purchase. Heavy מחייב הזנת מספר ≥85k. המספר מזין את כל החישובים |
-| Buy & Hold / Excel Inputs | לנקות שדות Excel פנימיים וכפילויות | לא בוצע | דורש החלטה סופית על `Cash In Deal` |
 | שדות דיפולטיביים | לאפס מספרים ולהוסיף סימון אדום לשדות שלא נגעו בהם | בוצע | כל שדה מספרי מתחיל ריק (חוץ מהנחות: ריביות/אחוזים/תקופות) ומסומן באדום עד עריכה ראשונה. מנגנון JS גלובלי (`initDefaultFields`) |
-| Hard Money / Flip | להשאיר Hard Money Rates/Points ולנקות שדות לא ברורים | לא בוצע | לוודא שהחישובים נשארים תקינים |
 | Seller Finance | להוסיף Seller Finance ו-Subto לפי ה-Google Sheet | בוצע בקוד | נמצא ב-`Calculator.html` בעמוד `Creative`, כרטיס `Seller Financing`; כולל Buyer Entry Fee ו-Balloon Balances |
-| Strategy / Results | לשמר/לבנות המלצת אסטרטגיה ותוצאות יצוא | לא בוצע | לבדוק שלא חושף נתונים פנימיים |
 | Comps | להוסיף עמוד Comparables עם חישוב ARV לפי קומפים | בוצע | נוסף step חדש `Comps` (שלב 3) במחשבון. טבלת קומפים ידנית, $/sqft אוטומטי, ממוצע, ARV = ממוצע×subject sqft. תואם בדיוק ללשונית "Fix & Flip Calc" באקסל. בלי חיבור Base44. כפתור "Use this ARV in the deal" מזין את ה-ARV ל-`n-arv`. (MAO 70/75% הוסר — לא דובר בשיחה בהקשר Comps) |
-| SEO / Deployment | Search Console, metadata, sitemap/robots וחיבור Netlify ל-GitHub | חלקית | GitHub כבר חובר והקוד נדחף; SEO/Search Console עדיין לא |
 
 ## אתר ראשי
 
@@ -208,7 +219,7 @@
   - Generate Share
   - Export CSV
   - Print
-- לוודא ש-Share/Print/PDF לא חושפים נתונים פנימיים כמו Assignment Fee אם הם מיועדים רק להלל.
+- ✅ בוצע: Share/Print/CSV לא חושפים נתונים פנימיים. נוספה רשימה מרכזית אחת `INTERNAL_ONLY_FIELDS` (כרגע `n-fee` ו-`sf-assignment`); כל מסלולי הייצוא מדלגים על שדות ברשימה, אך הם ממשיכים להשתתף בכל החישובים הפנימיים. כדי להוסיף שדה סודי בעתיד — מספיק להוסיף את ה-id לרשימה הזו.
 
 ## Comps / Comparables
 
@@ -278,7 +289,7 @@
 1. להחליף בכל האתר את `Hilel 1 LLC` ל-`Hilel Steam`.
 2. ✅ להגן על המחשבון בסיסמה ולהסיר קישור גלוי מהאתר. (בוצע)
 3. לנקות את Property Type, Repairs, Excel Inputs ושדות דיפולטיביים. (Property Type ✅ + Repairs ✅ + דיפולטים/סימון אדום ✅ בוצעו; Excel Inputs פתוח)
-4. לתקן PDF/הדפסה כך שיכלול תמונות ולא יציג Assignment Fee. (תמונות בהדפסה ✅ בוצע; הסתרת Assignment Fee עדיין פתוחה)
+4. ✅ לתקן PDF/הדפסה כך שיכלול תמונות ולא יציג Assignment Fee. (תמונות בהדפסה ✅ + הסתרת Assignment Fee מ-Share/Print/CSV ✅ בוצעו)
 5. להוסיף Seller Finance ו-Balloon Balances לפי ה-Google Sheet.
 6. ✅ להוסיף Comps ידני עם חישוב ARV. (בוצע)
 7. לעבור fine-tuning על כל החישובים מול הלל.

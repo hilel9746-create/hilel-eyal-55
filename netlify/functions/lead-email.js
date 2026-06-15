@@ -1,5 +1,48 @@
 const RESEND_API_URL = "https://api.resend.com/emails";
 
+// Comma-separated list of allowed origins, e.g. "https://cashbuyersohio.com,https://www.cashbuyersohio.com"
+const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || "")
+  .split(",")
+  .map((o) => o.trim())
+  .filter(Boolean);
+
+// Simple in-memory, per-IP rate limit. Survives only for the lifetime of a warm
+// function instance, but meaningfully slows down scripted abuse / spam bursts.
+const RATE_LIMIT_MAX = Number(process.env.RATE_LIMIT_MAX || 5); // requests
+const RATE_LIMIT_WINDOW_MS = Number(process.env.RATE_LIMIT_WINDOW_MS || 60_000); // per window
+const rateBuckets = new Map();
+
+function getClientIp(event) {
+  const headers = event.headers || {};
+  return (
+    headers["x-nf-client-connection-ip"] ||
+    (headers["x-forwarded-for"] || "").split(",")[0].trim() ||
+    "unknown"
+  );
+}
+
+function isRateLimited(ip) {
+  const now = Date.now();
+  const bucket = rateBuckets.get(ip);
+
+  if (!bucket || now > bucket.resetAt) {
+    rateBuckets.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return false;
+  }
+
+  bucket.count += 1;
+  return bucket.count > RATE_LIMIT_MAX;
+}
+
+function resolveAllowedOrigin(event) {
+  const origin = (event.headers && (event.headers.origin || event.headers.Origin)) || "";
+  if (ALLOWED_ORIGINS.length === 0) {
+    // Not configured: fall back to same-origin only (no CORS header emitted).
+    return "";
+  }
+  return ALLOWED_ORIGINS.includes(origin) ? origin : "";
+}
+
 function isValidEmail(value) {
   const email = String(value || "").trim();
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -12,13 +55,17 @@ function isValidPhone(value) {
   return digitCount >= 9 && digitCount <= 15;
 }
 
-function buildHeaders() {
-  return {
-    "Access-Control-Allow-Origin": "*",
+function buildHeaders(allowedOrigin) {
+  const headers = {
     "Access-Control-Allow-Headers": "Content-Type, Authorization",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Content-Type": "application/json",
+    Vary: "Origin",
   };
+  if (allowedOrigin) {
+    headers["Access-Control-Allow-Origin"] = allowedOrigin;
+  }
+  return headers;
 }
 
 function escapeHtml(value) {
@@ -49,10 +96,12 @@ function buildFieldRows(data) {
 }
 
 exports.handler = async (event) => {
+  const allowedOrigin = resolveAllowedOrigin(event);
+
   if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 204,
-      headers: buildHeaders(),
+      headers: buildHeaders(allowedOrigin),
       body: "",
     };
   }
@@ -60,8 +109,16 @@ exports.handler = async (event) => {
   if (event.httpMethod !== "POST") {
     return {
       statusCode: 405,
-      headers: buildHeaders(),
+      headers: buildHeaders(allowedOrigin),
       body: JSON.stringify({ ok: false, error: "Method not allowed" }),
+    };
+  }
+
+  if (isRateLimited(getClientIp(event))) {
+    return {
+      statusCode: 429,
+      headers: buildHeaders(allowedOrigin),
+      body: JSON.stringify({ ok: false, error: "Too many requests. Please try again later." }),
     };
   }
 
@@ -71,7 +128,7 @@ exports.handler = async (event) => {
   } catch {
     return {
       statusCode: 400,
-      headers: buildHeaders(),
+      headers: buildHeaders(allowedOrigin),
       body: JSON.stringify({ ok: false, error: "Invalid JSON payload" }),
     };
   }
@@ -79,7 +136,7 @@ exports.handler = async (event) => {
   if ((payload.company_website || "").toString().trim()) {
     return {
       statusCode: 200,
-      headers: buildHeaders(),
+      headers: buildHeaders(allowedOrigin),
       body: JSON.stringify({ ok: true }),
     };
   }
@@ -96,7 +153,7 @@ exports.handler = async (event) => {
   if (!apiKey) {
     return {
       statusCode: 500,
-      headers: buildHeaders(),
+      headers: buildHeaders(allowedOrigin),
       body: JSON.stringify({ ok: false, error: "Missing RESEND_API_KEY" }),
     };
   }
@@ -104,7 +161,7 @@ exports.handler = async (event) => {
   if (!fromEmailRaw) {
     return {
       statusCode: 500,
-      headers: buildHeaders(),
+      headers: buildHeaders(allowedOrigin),
       body: JSON.stringify({ ok: false, error: "Missing FROM_EMAIL" }),
     };
   }
@@ -115,7 +172,7 @@ exports.handler = async (event) => {
   if (!isValidEmail(emailValue)) {
     return {
       statusCode: 400,
-      headers: buildHeaders(),
+      headers: buildHeaders(allowedOrigin),
       body: JSON.stringify({ ok: false, error: "Invalid email address" }),
     };
   }
@@ -123,7 +180,7 @@ exports.handler = async (event) => {
   if (!isValidPhone(phoneValue)) {
     return {
       statusCode: 400,
-      headers: buildHeaders(),
+      headers: buildHeaders(allowedOrigin),
       body: JSON.stringify({ ok: false, error: "Invalid phone number" }),
     };
   }
@@ -252,7 +309,7 @@ exports.handler = async (event) => {
     const result = await adminResponse.json().catch(() => ({}));
     return {
       statusCode: 500,
-      headers: buildHeaders(),
+      headers: buildHeaders(allowedOrigin),
       body: JSON.stringify({
         ok: false,
         error: result.message || result.error || "Resend request failed",
@@ -262,7 +319,7 @@ exports.handler = async (event) => {
 
   return {
     statusCode: 200,
-    headers: buildHeaders(),
+    headers: buildHeaders(allowedOrigin),
     body: JSON.stringify({ ok: true }),
   };
 };
