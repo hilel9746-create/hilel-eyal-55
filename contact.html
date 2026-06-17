@@ -29,21 +29,17 @@
 <body>
 
 <!-- ══ NAV ══ -->
-<nav>
-  <div class="nav-inner">
-    <a href="index.html" style="display:block;">
-      <img src="assets/images/hillel_home_logo.png?v=home-yellow-2" alt="Home logo" class="nav-logo-img">
-    </a>
-    <div class="nav-links" id="nav-links">
-      <a href="index.html" class="hide-mob">Home</a>
-      <a href="about.html" class="hide-mob">About</a>
-      <a href="contact.html" class="hide-mob">Contact</a>
-      <a href="appointment.html" class="nav-cta">Book a Call</a>
-    </div>
-    <button class="hamburger" id="hamburger" aria-label="Toggle navigation">
-      <span></span><span></span><span></span>
-    </button>
+<nav class="nav-d5">
+  <div class="n-logo"><a href="index.html" style="text-decoration:none;color:inherit;">Cash<em>Buyers</em>Ohio</a></div>
+  <div class="n-links" id="mobile-menu">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
   </div>
+  <a href="appointment.html" class="n-cta">Get Cash Offer &rarr;</a>
+  <button class="hamburger" id="nav-toggle" aria-label="Toggle navigation">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
 
 <!-- ══ PAGE HEADER ══ -->
@@ -57,7 +53,7 @@
 
 <!-- ══ CONTENT ══ -->
 <main class="content-block">
-  <div class="content-inner" style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+  <div class="content-inner internal-grid-d5">
     
     <!-- Contact Details -->
     <div>
@@ -157,11 +153,27 @@
 </footer>
 
 <script>
-  document.getElementById('hamburger').addEventListener('click', function() {
-    document.getElementById('nav-links').classList.toggle('active');
-  });
+  const navToggle = document.getElementById('nav-toggle');
+  const mobileMenu = document.getElementById('mobile-menu');
+  if (navToggle && mobileMenu) {
+    navToggle.addEventListener('click', function() {
+      navToggle.classList.toggle('open');
+      mobileMenu.classList.toggle('open');
+    });
+    mobileMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        navToggle.classList.remove('open');
+        mobileMenu.classList.remove('open');
+      });
+    });
+  }
 </script>
 <script src="assets/js/lead-form-submit.js"></script>
 
+
+<!-- Sticky Bottom CTA (Mobile Only) -->
+<div class="mobile-bottom-cta-d5">
+  <a href="appointment.html" class="n-cta-bottom">Get My Cash Offer</a>
+</div>
 </body>
 </html>
