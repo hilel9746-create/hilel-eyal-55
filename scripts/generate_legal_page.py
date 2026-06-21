@@ -50,7 +50,7 @@ def clean_text_to_html(input_file, output_file, title):
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{title} - Hilel 1 llc</title>
+  <title>{title} - Hillel's Team</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -93,7 +93,7 @@ def clean_text_to_html(input_file, output_file, title):
   <div class="footer-inner">
     <div class="footer-top">
       <div class="footer-brand">
-        <h3>Hilel 1 llc</h3>
+        <h3>Hillel's Team</h3>
         <div class="footer-contact">
           <p><strong style="color:rgba(255,255,255,.7);">Email</strong>: <a href="mailto:hilel8978@gmail.com">hilel8978@gmail.com</a></p>
         </div>
@@ -109,7 +109,7 @@ def clean_text_to_html(input_file, output_file, title):
     </div>
     <div class="footer-legal">
       <p>Copyright 2026. All rights reserved</p>
-      <p>Hilel 1 llc</p>
+      <p>Hillel's Team</p>
     </div>
   </div>
 </footer>
