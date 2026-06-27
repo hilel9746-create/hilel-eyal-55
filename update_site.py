@@ -27,7 +27,7 @@ new_content = """<!-- ══ HERO ══ -->
 
     <div class="trust-row-d5">
       <div class="trust-item-d5">Cash Offer in 24 Hours</div>
-      <div class="trust-item-d5">Close in 7–14 Days</div>
+      <div class="trust-item-d5">Close in 7–14 Days (subject to clean title)</div>
       <div class="trust-item-d5">Zero Agent Fees</div>
       <div class="trust-item-d5">No Repairs Needed</div>
     </div>
@@ -55,7 +55,7 @@ new_content = """<!-- ══ HERO ══ -->
 <!-- DIVIDER -->
 <div class="divider-strip-d5">
   <div class="ds-item-d5"><div class="ds-num-d5">24 Hrs</div><div class="ds-label-d5">Cash Offer</div></div>
-  <div class="ds-item-d5"><div class="ds-num-d5">7–14 Days</div><div class="ds-label-d5">To Close</div></div>
+  <div class="ds-item-d5"><div class="ds-num-d5">7–14 Days</div><div class="ds-label-d5">To Close (subject to clean title)</div></div>
   <div class="ds-item-d5"><div class="ds-num-d5">$0</div><div class="ds-label-d5">Agent Fees</div></div>
   <div class="ds-item-d5"><div class="ds-num-d5">As-Is</div><div class="ds-label-d5">No Repairs</div></div>
 </div>

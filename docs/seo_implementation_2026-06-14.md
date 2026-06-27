@@ -1,8 +1,8 @@
-# SEO Implementation — Cash Buyers Ohio (Hilel 1 LLC)
+# SEO Implementation — Cash Buyers Ohio (Hillel's Team)
 
 **Date:** 2026-06-14
 **Site:** https://cashbuyersohio.net (static site, hosted on Netlify)
-**Business:** Hilel 1 LLC — direct cash home buyer in Ohio
+**Business:** Hillel's Team — direct cash home buyer in Ohio
 **Key details used:** Phone (216) 744-7725 · Email hilel8978@gmail.com · Area served: Ohio
 
 ---
@@ -27,15 +27,15 @@ Rewrote `<title>` and `<meta name="description">` for all 6 public pages:
 
 | Page | New title |
 |------|-----------|
-| index.html | Sell Your House Fast for Cash in Ohio \| Hilel 1 LLC |
-| about.html | About Hilel 1 LLC \| Trusted Cash Home Buyers in Ohio |
-| contact.html | Contact Us \| Get a Cash Offer for Your Ohio Home — Hilel 1 LLC |
-| appointment.html | Book a Call \| Get Your Cash Offer in 24 Hours — Hilel 1 LLC |
-| privacy-policy.html | Privacy Policy \| Hilel 1 LLC — Cash Buyers Ohio |
-| terms-and-conditions.html | Terms & Conditions \| Hilel 1 LLC — Cash Buyers Ohio |
+| index.html | Sell Your House Fast for Cash in Ohio \| Hillel's Team |
+| about.html | About Hillel's Team \| Trusted Cash Home Buyers in Ohio |
+| contact.html | Contact Us \| Get a Cash Offer for Your Ohio Home — Hillel's Team |
+| appointment.html | Book a Call \| Get Your Cash Offer in 24 Hours — Hillel's Team |
+| privacy-policy.html | Privacy Policy \| Hillel's Team — Cash Buyers Ohio |
+| terms-and-conditions.html | Terms & Conditions \| Hillel's Team — Cash Buyers Ohio |
 
 ### 2. Replaced placeholder business data
-Author meta and on-page references now use the real business name (**Hilel 1 LLC**), area (**Ohio**), and phone (**216-744-7725**).
+Author meta and on-page references now use the business name (**Hillel's Team**), area (**Ohio**), and phone (**216-744-7725**).
 
 ### 3. Structured data (Local SEO)
 Added `RealEstateAgent` JSON-LD to the homepage (`index.html`): name, area served (Ohio), telephone, email, logo, image. Validated as valid JSON.
