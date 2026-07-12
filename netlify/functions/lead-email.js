@@ -142,7 +142,9 @@ exports.handler = async (event) => {
   }
 
   const apiKey = process.env.RESEND_API_KEY;
-  const toEmail = process.env.LEAD_TO_EMAIL || "hilel9746@gmail.com";
+  // Default to the public owner inbox used across the site so leads do not
+  // disappear if the Netlify env var is missing or stale.
+  const toEmail = process.env.LEAD_TO_EMAIL || "hilel8978@gmail.com";
   const fromEmailRaw = (process.env.FROM_EMAIL || "").trim();
 
   const leadName = payload.name || payload.full_name || payload.first_name || "New lead";

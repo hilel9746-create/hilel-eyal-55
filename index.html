@@ -25,25 +25,109 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "RealEstateAgent",
+    "@type": ["RealEstateAgent", "LocalBusiness"],
+    "@id": "https://cashbuyersohio.net/#business",
     "name": "Hillel's Team",
     "alternateName": "Cash Buyers Ohio",
-    "description": "Direct cash home buyer in Ohio. We buy houses as-is for cash with no repairs, no agent fees, and no commissions — closing in as little as 7–14 days (subject to clean title).",
+    "description": "Direct cash home buyer in Ohio. We buy houses as-is for cash with no repairs, no agent fees, and no commissions — closing in as little as 7–14 days, subject to clean title.",
     "url": "https://cashbuyersohio.net/",
     "logo": "https://cashbuyersohio.net/assets/images/hillel_logo_clean.png",
     "image": "https://cashbuyersohio.net/assets/images/hero-owner-professional.png",
     "telephone": "+1-216-744-7725",
     "email": "hilel8978@gmail.com",
-    "areaServed": {
-      "@type": "State",
-      "name": "Ohio"
+    "founder": {
+      "@type": "Person",
+      "name": "Hilel"
     },
+    "areaServed": [
+      { "@type": "State", "name": "Ohio" },
+      { "@type": "City", "name": "Cleveland" },
+      { "@type": "City", "name": "Columbus" },
+      { "@type": "City", "name": "Cincinnati" },
+      { "@type": "City", "name": "Dayton" },
+      { "@type": "City", "name": "Akron" },
+      { "@type": "City", "name": "Canton" },
+      { "@type": "City", "name": "Toledo" },
+      { "@type": "City", "name": "Youngstown" }
+    ],
     "address": {
       "@type": "PostalAddress",
       "addressRegion": "OH",
       "addressCountry": "US"
     },
-    "priceRange": "$$"
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+1-216-744-7725",
+      "contactType": "customer service",
+      "areaServed": "US-OH",
+      "availableLanguage": "English"
+    },
+    "priceRange": "$$",
+    "makesOffer": [
+      {
+        "@type": "Offer",
+        "name": "Cash offer for Ohio houses sold as-is",
+        "description": "No-obligation cash offer for Ohio homeowners who want to sell without repairs, showings, agent fees, or commissions."
+      }
+    ]
+  }
+  </script>
+
+  <!-- FAQ structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Do I need to make repairs before selling?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. Hillel's Team buys Ohio houses as-is, including homes that need updates, cleanout, major repairs, or have been sitting vacant."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How fast can I close?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Many sales can close in 7-14 days, subject to clean title and the details of the property. Sellers can also choose a later date if that works better."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do you buy inherited homes?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Hillel's Team can review inherited properties in Ohio and explain the next steps for a simple as-is cash offer."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do I pay agent commissions or hidden fees?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No agent commissions are charged by Hillel's Team, and there is no obligation to accept the offer."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I sell my house fast in Ohio?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Call or send your address, get a written cash offer within 24 hours, and pick your closing date. Many sales close in 7-14 days, subject to clean title."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I sell my house without a realtor?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Hillel's Team buys directly for cash, so you sell straight to us with no realtor, no listing, and no agent commissions or closing costs on your side."
+        }
+      }
+    ]
   }
   </script>
 
@@ -72,14 +156,14 @@
 <div class="hero-d5">
   <div class="hero-left-d5">
     <div class="h-eyebrow-d5">Ohio's Direct Cash Home Buyer</div>
-    <h1>Sell Your Home. <em>Skip the</em><br>Hassle.</h1>
-    <p class="h-desc-d5">As-is. No repairs, no fees, no agent commissions. A direct cash offer and closing on the date you choose.</p>
+    <h1>Sell Your House Fast<br><em>for Cash in Ohio</em></h1>
+    <p class="h-desc-d5">Need to sell your house fast in Ohio? We buy houses as-is for cash — no repairs, no realtor, no agent commissions, no closing costs. Just a direct cash offer and closing on the date you choose.</p>
 
     <div class="owner-card-d5">
-      <img src="https://cashbuyersohio.net/assets/images/hero-owner-professional.png" alt="Hilel" class="owner-thumb-d5"/>
+      <img src="https://cashbuyersohio.net/assets/images/hero-owner-professional.png" alt="Hilel, founder of Hillel's Team cash home buyers in Ohio" class="owner-thumb-d5"/>
       <div class="owner-info-d5">
         <div class="owner-name-d5">Hilel — Founder &amp; Owner</div>
-        <div class="owner-role-d5">Hillel's Team · Direct Buyer</div>
+        <div class="owner-role-d5">Hillel's Team</div>
         <div class="owner-quote-d5">"You deal with me personally from first call to closing — no call centers, no middlemen."</div>
       </div>
     </div>
@@ -100,13 +184,13 @@
   <div class="hero-right-d5">
     <div class="hero-right-bg-d5">
       <div class="portrait-zone-d5">
-        <img src="https://cashbuyersohio.net/assets/images/hero-owner-professional.png" alt="Hilel, Founder"/>
+        <img src="https://cashbuyersohio.net/assets/images/hero-owner-professional.png" alt="Hilel, founder and direct cash home buyer in Ohio"/>
         <div class="portrait-overlay-d5"></div>
       </div>
       <div class="house-strip-d5">
-        <div class="hs-d5"><img src="assets/images/condition-single-family.jpg" alt="home"/></div>
-        <div class="hs-d5"><img src="assets/images/condition-fixer-upper.jpg" alt="home"/></div>
-        <div class="hs-d5"><img src="assets/images/condition-any-situation.jpg" alt="home"/></div>
+        <div class="hs-d5"><img src="assets/images/condition-single-family.jpg" alt="Ohio single family house bought for cash"/></div>
+        <div class="hs-d5"><img src="assets/images/condition-fixer-upper.jpg" alt="Ohio fixer upper house sold as-is for cash"/></div>
+        <div class="hs-d5"><img src="assets/images/condition-any-situation.jpg" alt="Ohio house in any condition eligible for a cash offer"/></div>
       </div>
     </div>
     <div class="badge-float-d5">
@@ -128,7 +212,7 @@
 <div class="about-d5">
   <div class="about-img-wrap-d5 reveal-left">
     <div class="about-img-frame-d5">
-      <img src="assets/images/hillel_logo_clean.png" alt="Hillel's Team Logo"/>
+      <img src="assets/images/hillel_logo_clean.png" alt="Hillel's Team Cash Buyers Ohio logo"/>
     </div>
     <div class="about-accent-d5"></div>
   </div>
@@ -156,16 +240,98 @@
     </div>
     <div class="prop-grid-d5">
       <div class="pcard-d5 reveal">
-        <div class="pcard-img-d5"><img src="assets/images/condition-single-family.jpg" alt="Single family home"/></div>
+        <div class="pcard-img-d5"><img src="assets/images/condition-single-family.jpg" alt="Single family home in Ohio bought for cash"/></div>
         <div class="pcard-body-d5"><div class="pcard-tag-d5">Single Family</div><div class="pcard-title-d5">Move-In Ready Homes</div><div class="pcard-desc-d5">Great condition or just needs some love — we'll make a fair offer either way.</div></div>
       </div>
       <div class="pcard-d5 reveal">
-        <div class="pcard-img-d5"><img src="assets/images/condition-fixer-upper.jpg" alt="Fixer upper"/></div>
+        <div class="pcard-img-d5"><img src="assets/images/condition-fixer-upper.jpg" alt="Fixer upper house in Ohio sold as-is"/></div>
         <div class="pcard-body-d5"><div class="pcard-tag-d5">Needs Repairs</div><div class="pcard-title-d5">Fixer-Uppers Welcome</div><div class="pcard-desc-d5">Don't spend a dollar on repairs. Sell it exactly as it sits today.</div></div>
       </div>
       <div class="pcard-d5 reveal">
-        <div class="pcard-img-d5"><img src="assets/images/condition-any-situation.jpg" alt="Any condition"/></div>
+        <div class="pcard-img-d5"><img src="assets/images/condition-any-situation.jpg" alt="Ohio house in difficult situation bought for cash"/></div>
         <div class="pcard-body-d5"><div class="pcard-tag-d5">Any Situation</div><div class="pcard-title-d5">Difficult Situations</div><div class="pcard-desc-d5">Inherited property, relocation, financial pressure — we can help.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AREAS -->
+<div class="seo-band-d5 areas-seo-d5">
+  <div class="seo-band-inner-d5">
+    <div class="section-header-d5 reveal">
+      <div class="sec-tag-d5">Areas We Serve</div>
+      <h2 class="sec-h-d5">Cash Home Buyers Across Ohio</h2>
+      <p class="sec-sub-d5">Whether you want to sell your house fast in Cleveland, Columbus, or Cincinnati, we buy houses for cash throughout Ohio — major cities and the communities around them. If your property is outside the list below, reach out and we can still review it.</p>
+    </div>
+    <div class="situation-grid-d5">
+      <div class="situation-card-d5 reveal"><h3>Sell My House Fast in Cleveland</h3><p>We buy houses for cash across Cleveland and Cuyahoga County — as-is, with no realtor and no agent fees.</p></div>
+      <div class="situation-card-d5 reveal"><h3>We Buy Houses in Columbus</h3><p>Get a fair cash offer on your Columbus or Franklin County home, with no repairs and no showings.</p></div>
+      <div class="situation-card-d5 reveal"><h3>Cash Home Buyers in Cincinnati</h3><p>Sell your Cincinnati house fast for cash, on the closing date that works best for you.</p></div>
+      <div class="situation-card-d5 reveal"><h3>Sell Your House Fast in Dayton</h3><p>Cash offers for Dayton homes in any condition, including inherited, vacant, and rental properties.</p></div>
+    </div>
+    <div class="seo-chip-grid-d5 reveal">
+      <span>Cleveland</span>
+      <span>Columbus</span>
+      <span>Cincinnati</span>
+      <span>Dayton</span>
+      <span>Akron</span>
+      <span>Canton</span>
+      <span>Toledo</span>
+      <span>Youngstown</span>
+      <span>Cuyahoga County</span>
+      <span>Franklin County</span>
+    </div>
+  </div>
+</div>
+
+<!-- SITUATIONS -->
+<div class="seo-band-d5 situations-seo-d5">
+  <div class="seo-band-inner-d5">
+    <div class="section-header-d5 reveal">
+      <div class="sec-tag-d5">Situations We Help With</div>
+      <h2 class="sec-h-d5">Sell Your House As-Is, Without Extra Stress</h2>
+      <p class="sec-sub-d5">A cash sale can be useful when a traditional listing would take too long, cost too much, or require repairs you do not want to make.</p>
+    </div>
+    <div class="situation-grid-d5">
+      <div class="situation-card-d5 reveal"><h3>Inherited &amp; Probate Property</h3><p>Get a clear cash offer when you need to settle an estate, handle a probate sale, or sell a property you do not plan to keep.</p></div>
+      <div class="situation-card-d5 reveal"><h3>Avoid Foreclosure</h3><p>Move quickly to avoid foreclosure when timing matters and you need a direct buyer who can review the home fast.</p></div>
+      <div class="situation-card-d5 reveal"><h3>Major Repairs</h3><p>Sell as-is without spending money on roofing, plumbing, cleanup, code issues, or cosmetic updates.</p></div>
+      <div class="situation-card-d5 reveal"><h3>Vacant or Problem Rental</h3><p>Avoid more holding costs, tenant headaches, utilities, taxes, and maintenance on an unwanted property.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ -->
+<div class="faq-d5">
+  <div class="faq-inner-d5">
+    <div class="section-header-d5 reveal">
+      <div class="sec-tag-d5">Questions Sellers Ask</div>
+      <h2 class="sec-h-d5">Ohio Cash Offer FAQ</h2>
+    </div>
+    <div class="faq-grid-d5">
+      <div class="faq-item-d5 reveal">
+        <h3>Do I need to make repairs before selling?</h3>
+        <p>No. We buy houses as-is, including homes that need updates, cleanout, major repairs, or have been sitting vacant.</p>
+      </div>
+      <div class="faq-item-d5 reveal">
+        <h3>How fast can I close?</h3>
+        <p>Many sales can close in 7-14 days, subject to clean title and the details of the property. You can also choose a later date if that works better.</p>
+      </div>
+      <div class="faq-item-d5 reveal">
+        <h3>Do you buy inherited homes?</h3>
+        <p>Yes. We can review inherited properties and explain the next steps for a simple as-is cash offer.</p>
+      </div>
+      <div class="faq-item-d5 reveal">
+        <h3>Do I pay agent commissions or hidden fees?</h3>
+        <p>No agent commissions are charged by us, and there is no obligation to accept the offer. The goal is a clear net number before you decide.</p>
+      </div>
+      <div class="faq-item-d5 reveal">
+        <h3>How do I sell my house fast in Ohio?</h3>
+        <p>Call or send your address, get a written cash offer within 24 hours, and pick your closing date. Many sales close in 7–14 days, subject to clean title.</p>
+      </div>
+      <div class="faq-item-d5 reveal">
+        <h3>Can I sell my house without a realtor?</h3>
+        <p>Yes. We are direct cash buyers, so you sell straight to us — no realtor, no listing, and no agent commissions or closing costs on your side.</p>
       </div>
     </div>
   </div>

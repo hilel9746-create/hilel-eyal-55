@@ -15,7 +15,7 @@ new_content = """<!-- ══ HERO ══ -->
       <img src="https://cashbuyersohio.net/assets/images/hero-owner-professional.png" alt="Hilel" class="owner-thumb-d5"/>
       <div class="owner-info-d5">
         <div class="owner-name-d5">Hilel — Founder &amp; Owner</div>
-        <div class="owner-role-d5">Hillel's Team · Direct Buyer</div>
+        <div class="owner-role-d5">Hillel's Team</div>
         <div class="owner-quote-d5">"You deal with me personally from first call to closing — no call centers, no middlemen."</div>
       </div>
     </div>
