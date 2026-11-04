@@ -12,7 +12,7 @@
     Permissions-Policy = "geolocation=(), microphone=(), camera=()"
     # Report-Only first so inline scripts in Calculator.html keep working while
     # you verify nothing breaks. Switch to "Content-Security-Policy" once clean.
-    Content-Security-Policy-Report-Only = "default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; connect-src 'self' https://api.resend.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+    Content-Security-Policy-Report-Only = "default-src 'self'; img-src 'self' data: blob: https://www.googletagmanager.com https://*.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; connect-src 'self' https://api.resend.com https://*.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
 
 [[edge_functions]]
   function = "calculator-auth"
