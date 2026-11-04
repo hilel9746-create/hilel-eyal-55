@@ -39,6 +39,11 @@
   status = 404
 
 [[redirects]]
+  from = "/local-llm-rig/*"
+  to = "/404.html"
+  status = 404
+
+[[redirects]]
   from = "/Calculator"
   to = "/Calculator.html"
   status = 200
